@@ -414,7 +414,7 @@ endfunction
 
 " TODO fix this, it doesn't work
 " Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
+" autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Remap for rename current word
 nmap <silent> ,er <Plug>(coc-rename)
