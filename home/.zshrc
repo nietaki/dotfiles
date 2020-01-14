@@ -171,3 +171,8 @@ function gitroot () {
 
 export PATH="/home/nietaki/Android/Sdk/platform-tools:$PATH"
 export ERL_AFLAGS="-kernel shell_history enabled"
+
+# dotifiles and puter directory aliases
+export df="$HOME/.homesick/repos/dotfiles"
+export dotfiles="$df"
+export puter="$HOME/repos/puter"
