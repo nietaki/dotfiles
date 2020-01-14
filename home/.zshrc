@@ -114,7 +114,7 @@ export EDITOR='nvim'
 export VISUAL='nvim'
 
 # export PATH="/home/nietaki/.pyenv/bin:$PATH"
-export PATH="/home/nietaki/apps:$PATH"
+export PATH="/home/nietaki/bin:$PATH"
 # export PATH="/home/nietaki/apps/exercism:$PATH"
 # eval "$(pyenv init -)"
 # eval "$(pyenv virtualenv-init -)"
