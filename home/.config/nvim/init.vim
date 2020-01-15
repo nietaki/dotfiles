@@ -26,6 +26,10 @@ if (empty($TMUX))
   endif
 endif
 
+if (has("termguicolors"))
+  set termguicolors
+endif
+
 " Nuclear option
 "set termguicolors
 
@@ -243,7 +247,7 @@ nnoremap <Leader>qq :qa<CR>
 "nmap <Leader>ss :%s//g<Left><Left>
 
 " --hidden makes ag not skip the hidden files when searching
-let $FZF_DEFAULT_COMMAND = 'ag --hidden -g ""'
+let $FZF_DEFAULT_COMMAND = 'ag --ignore-dir .git --hidden -g ""'
 
 " ctrl-p and ctrl-n for previous fzf searches
 let g:fzf_history_dir = '~/.fzf-history'
