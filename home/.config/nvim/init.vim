@@ -346,8 +346,8 @@ nnoremap K i<CR><Esc>l
 
 " just use :te
 " nmap <Leader>tt :terminal<CR>
-" exiting terminal mode with <C-i>
-tnoremap <C-i> <C-\><C-n>
+" easy exiting terminal mode
+tnoremap <C-w> <C-\><C-n>
 " openint terminal in Terminal-mode (ready to go)
 autocmd TermOpen * startinsert
 
