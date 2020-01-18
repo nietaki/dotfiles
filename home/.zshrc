@@ -113,9 +113,9 @@ source $ZSH/oh-my-zsh.sh
 export EDITOR='nvim'
 export VISUAL='nvim'
 
-# export PATH="/home/nietaki/.pyenv/bin:$PATH"
-export PATH="/home/nietaki/bin:$PATH"
-# export PATH="/home/nietaki/apps/exercism:$PATH"
+# export PATH="/$HOME/.pyenv/bin:$PATH"
+export PATH="/$HOME/bin:$PATH"
+# export PATH="/$HOME/apps/exercism:$PATH"
 # eval "$(pyenv init -)"
 # eval "$(pyenv virtualenv-init -)"
 #
@@ -142,8 +142,8 @@ unsetopt AUTO_CD
 # export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-# export SDKMAN_DIR="/home/nietaki/.sdkman"
-# [[ -s "/home/nietaki/.sdkman/bin/sdkman-init.sh" ]] && source "/home/nietaki/.sdkman/bin/sdkman-init.sh"
+# export SDKMAN_DIR="/$HOME/.sdkman"
+# [[ -s "/$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "/ome/nietaki/.sdkman/bin/sdkman-init.sh"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -169,7 +169,7 @@ function gitroot () {
   cd $(git rev-parse --show-toplevel)
 }
 
-export PATH="/home/nietaki/Android/Sdk/platform-tools:$PATH"
+export PATH="/$HOME/Android/Sdk/platform-tools:$PATH"
 export ERL_AFLAGS="-kernel shell_history enabled"
 
 # dotifiles and puter directory aliases
