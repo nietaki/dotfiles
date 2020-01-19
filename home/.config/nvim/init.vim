@@ -102,9 +102,8 @@ set smartcase           " ... unless the query has capital letters.
 "set gdefault            " Use 'g' flag by default with :s/foo/bar/.
 
 " see :checkhealth for if this works
-" those are virtualenv paths, could be any python executables
-let g:python_host_prog='/home/nietaki/.pyenv/versions/neovim-27/bin/python'
-let g:python3_host_prog='/home/nietaki/.pyenv/versions/neovim-370/bin/python3'
+let g:python_host_prog='$HOME/.asdf/shims/python2'
+let g:python3_host_prog='$HOME/.asdf/shims/python3'
 
 """
 """ Plugins
