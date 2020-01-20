@@ -268,9 +268,12 @@ nnoremap <Leader>bh :CtrlPMRUFiles<CR>
 nnoremap <Leader>bc :Buffers<CR>
 
 "search just the contents
-" TODO search hidden files too
-command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--no-sort --delimiter : --nth 4..'}, <bang>0)
-command! -bang -nargs=* AgFuzzy call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
+"  " Default options are --nogroup --column --color
+let s:ag_options = ' --nogroup --column --color --hidden --skip-vcs-ignores'
+" command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--no-sort --delimiter : --nth 4..'}, <bang>0)
+command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, s:ag_options, {'options': '--no-sort --delimiter : --nth 4..'}, <bang>0)
+" command! -bang -nargs=* AgFuzzy call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
+command! -bang -nargs=* AgFuzzy call fzf#vim#ag(<q-args>, s:ag_options, {'options': '--delimiter : --nth 4..'}, <bang>0)
 
 " TODO and set this to <Leader>*
 "fu! FzfAgCurrWord()
