@@ -172,7 +172,10 @@ function gitroot () {
 export PATH="/$HOME/Android/Sdk/platform-tools:$PATH"
 export ERL_AFLAGS="-kernel shell_history enabled"
 
-# dotifiles and puter directory aliases
+# convenience directory aliases
+export repos="$HOME/repos"
+export fresha="$repos/fresha"
+export system="$fresha/system"
 export df="$HOME/.homesick/repos/dotfiles"
 export dotfiles="$df"
 export puter="$HOME/repos/puter"
