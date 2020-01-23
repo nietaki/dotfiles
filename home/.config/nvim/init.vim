@@ -118,6 +118,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 Plug 'rbong/vim-flog'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'elixir-lang/vim-elixir'
@@ -195,8 +196,7 @@ nnoremap <Leader>wd :hide<CR>
 " save all open buffers
 nnoremap <Leader>ps :wa<CR>
 " set Project Root to directory containing current file
-nnoremap <Leader>pr :lcd %:p:h<CR>
-nmap ,pr <Leader>pr
+nnoremap <Leader>pr :tcd %:p:h<CR>
 nnoremap <Leader>pR :pwd<CR>
 " refresh the currently edited file from disk
 nnoremap <Leader>fR :e!<CR>
@@ -269,7 +269,7 @@ nnoremap <Leader>bc :Buffers<CR>
 
 "search just the contents
 "  " Default options are --nogroup --column --color
-let s:ag_options = ' --nogroup --column --color --hidden --skip-vcs-ignores'
+let s:ag_options = ' --nogroup --column --color --hidden --ignore .git/ --ignore deps/ --ignore _build/'
 " command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--no-sort --delimiter : --nth 4..'}, <bang>0)
 command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, s:ag_options, {'options': '--no-sort --delimiter : --nth 4..'}, <bang>0)
 " command! -bang -nargs=* AgFuzzy call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
@@ -307,7 +307,7 @@ nmap <Leader>gs :Gstatus<CR>
 nmap <Leader>gc :Gcommit<CR>
 nmap <Leader>gp :Git shove<CR>
 nmap <Leader>gb :Gblame<CR>
-" nmap <Leader>gll :Gbrowse<CR>
+nmap <Leader>gll :.Gbrowse!<CR>
 let g:flog_default_arguments = { 'max_count': 1000 }
 nmap <Leader>gl :Flog<CR>
 nmap <Leader>gL :Flogsplit<CR>

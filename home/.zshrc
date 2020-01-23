@@ -179,3 +179,12 @@ export system="$fresha/system"
 export df="$HOME/.homesick/repos/dotfiles"
 export dotfiles="$df"
 export puter="$HOME/repos/puter"
+
+# docker helper aliases
+alias dkc='docker-compose'
+alias dkcr='dkc run --rm'
+alias dkcu='dkc up -d'
+alias dkcb='dkc build'
+alias dkcl='dkc logs -f --tail 200'
+
+source $HOME/.homesick/repos/homeshick/homeshick.sh
