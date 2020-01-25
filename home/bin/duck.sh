@@ -17,4 +17,6 @@ if [ -z "$DOMAIN" ] || [ -z "$TOKEN" ]; then
     exit 1;
 fi
 
-curl "https://www.duckdns.org/update?domains=$DOMAIN&token=$TOKEN&ip="
+mkdir -p ~/.duckdns
+
+curl -k -o ~/.duckdns/duck.log "https://www.duckdns.org/update?domains=$DOMAIN&token=$TOKEN&ip="
