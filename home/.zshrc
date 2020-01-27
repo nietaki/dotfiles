@@ -188,3 +188,7 @@ alias dkcb='dkc build'
 alias dkcl='dkc logs -f --tail 200'
 
 source $HOME/.homesick/repos/homeshick/homeshick.sh
+
+# Rust stuff
+
+export PATH="$HOME/.cargo/bin:$PATH"
