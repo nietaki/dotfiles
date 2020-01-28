@@ -138,6 +138,7 @@ Plug 'sudar/vim-arduino-syntax'
 
 Plug 'janko/vim-test'
 Plug 'tpope/vim-dispatch'
+Plug 'tpope/vim-eunuch'
 
 Plug 'thaerkh/vim-workspace'
 

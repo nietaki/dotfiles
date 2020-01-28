@@ -38,3 +38,4 @@ syntax sync minlines=2000
 
 " highlight the line the cursor is in
 set cursorline
+set autoread
