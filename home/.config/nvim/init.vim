@@ -139,6 +139,8 @@ Plug 'sudar/vim-arduino-syntax'
 Plug 'janko/vim-test'
 Plug 'tpope/vim-dispatch'
 
+Plug 'thaerkh/vim-workspace'
+
 " themes
 Plug 'joshdick/onedark.vim'
 Plug 'tomasr/molokai'
@@ -195,6 +197,9 @@ nnoremap <Leader>w- :sp <CR>
 nnoremap <Leader>wd :hide<CR>
 " save all open buffers
 nnoremap <Leader>ps :wa<CR>
+
+nnoremap <Leader>tw :ToggleWorkspace<CR>
+
 " set Project Root to directory containing current file
 nnoremap <Leader>pr :tcd %:p:h<CR>
 nnoremap <Leader>pR :pwd<CR>
@@ -282,7 +287,7 @@ command! -bang -nargs=* AgFuzzy call fzf#vim#ag(<q-args>, s:ag_options, {'option
 
 nmap <Leader>sf :Ag<CR>
 " intentional space
-"nmap <Leader>/ :Ag 
+"nmap <Leader>/ :Ag
 nmap <Leader>/ :AgFuzzy<CR>
 " resume last :Ag search
 nmap <Leader>sl :Ag<CR><C-p>
@@ -404,6 +409,7 @@ nmap <silent> ,gg <Plug>(coc-definition)
 nmap <silent> ,gy <Plug>(coc-type-definition)
 nmap <silent> ,gi <Plug>(coc-implementation)
 nmap <silent> ,gr <Plug>(coc-references)
+" nmap <silent> ,gr :<C-u>call CocActionAsync('jumpReferences')<CR>
 
 " THIS IS BEAUTIFUL
 " show documentation in preview window
@@ -451,6 +457,7 @@ nnoremap <silent> ,cc  :<C-u>CocList commands<cr>
 
 " show completion server logs
 nmap <silent> ,ll :CocCommand workspace.showOutput<CR>
+nmap <silent> ,lc :CocOpenLog<CR>
 " nmap <silent> ,cl :CocCommand workspace.showOutput<CR>
 nmap ,cr :<C-u>CocRestart<CR>
 
@@ -500,3 +507,10 @@ nnoremap <Leader>cd :cclose<CR>
 
 " it's this time again
 nmap ,cl :silent !pdflatex %<CR>
+
+" vim workspace
+
+" let g:workspace_session_directory = $HOME . '/.vim/sessions/'
+let g:workspace_session_disable_on_args = 1
+let g:workspace_autosave = 0
+let g:workspace_autosave_untrailspaces = 0
