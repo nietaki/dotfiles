@@ -172,6 +172,8 @@ function gitroot () {
 export PATH="/$HOME/Android/Sdk/platform-tools:$PATH"
 export ERL_AFLAGS="-kernel shell_history enabled"
 
+. "$HOME/repos/z/z.sh"
+
 # convenience directory aliases
 export repos="$HOME/repos"
 export fresha="$repos/fresha"
