@@ -9,6 +9,7 @@ antigen bundle shrink-path
 # antigen bundle z
 
 antigen bundle agkozak/zsh-z
+antigen bundle zsh-users/zsh-completions
 
 antigen theme bira
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
