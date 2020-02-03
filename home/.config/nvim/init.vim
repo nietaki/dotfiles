@@ -468,8 +468,10 @@ nnoremap <silent> ,wl  :<C-u>CocList diagnostics<cr>
 nmap <silent> [c <Plug>(coc-diagnostic-prev)
 nmap <silent> ,wN <Plug>(coc-diagnostic-prev)
 nmap <silent> ,wp <Plug>(coc-diagnostic-prev)
+nmap <silent> ,wk <Plug>(coc-diagnostic-prev)
 nmap <silent> ]c <Plug>(coc-diagnostic-next)
 nmap <silent> ,wn <Plug>(coc-diagnostic-next)
+nmap <silent> ,wj <Plug>(coc-diagnostic-next)
 nmap <silent> ,wf  <Plug>(coc-fix-current)
 
 nmap <silent> ,ws <Plug>(coc-diagnostic-info)
@@ -515,3 +517,12 @@ nmap ,cl :silent !pdflatex %<CR>
 let g:workspace_session_disable_on_args = 1
 let g:workspace_autosave = 0
 let g:workspace_autosave_untrailspaces = 0
+
+" https://vi.stackexchange.com/a/456/23407
+fun! TrimWhitespace()
+    let l:save = winsaveview()
+    keeppatterns %s/\s\+$//e
+    call winrestview(l:save)
+endfun
+
+autocmd BufWritePre *.ex,*.exs :call TrimWhitespace()

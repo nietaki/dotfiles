@@ -1,5 +1,6 @@
 {
     "suggest.timeout": 5000,
+    "suggest.floatEnable": true,
     "languageserver": {
      "elixirLS": {
       "command": "~/repos/elixir-ls/language_server.sh",
