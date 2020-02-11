@@ -105,6 +105,13 @@ set smartcase           " ... unless the query has capital letters.
 let g:python_host_prog='$HOME/.asdf/shims/python2'
 let g:python3_host_prog='$HOME/.asdf/shims/python3'
 
+let g:coc_global_extensions = [
+\ 'coc-solargraph',
+\ 'coc-json',
+\ 'coc-html',
+\ 'coc-yaml'
+\ ]
+
 """
 """ Plugins
 """
