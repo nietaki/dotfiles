@@ -1,5 +1,6 @@
 *~
 .DS_Store
+.project
 .elixir_ls
 .elixir_ls/*
 # these are dubious changes that are hackily helping my ag fuzzy search
