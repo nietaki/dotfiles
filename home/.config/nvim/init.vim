@@ -298,7 +298,7 @@ nmap <Leader>sf :Ag<CR>
 "nmap <Leader>/ :Ag
 nmap <Leader>/ :AgFuzzy<CR>
 " resume last :Ag search
-nmap <Leader>sl :Ag<CR><C-p>
+nmap <Leader>sl :AgFuzzy<CR><C-p>
 nmap <Leader>b/ :BLines<CR>
 
 " count literal searches in this file
