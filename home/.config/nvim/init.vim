@@ -223,7 +223,9 @@ let NERDTreeQuitOnOpen = 1
 let NERDTreeAutoDeleteBuffer = 1
 map <C-\> :NERDTreeToggle<CR>
 " opens the current file in nerdtree 
-map <C-o> :NERDTreeFind<CR>
+" map <C-o> :NERDTreeFind<CR>
+" map <C-o> :NERDTreeFind<CR>
+map <C-]> :NERDTreeFind<CR>
 
 " tabs
 
