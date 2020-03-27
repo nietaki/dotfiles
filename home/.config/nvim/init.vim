@@ -131,6 +131,7 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'elixir-lang/vim-elixir'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'jremmen/vim-ripgrep'
 Plug 'mhinz/vim-signify'
 
 Plug 'sbdchd/neoformat'
@@ -290,6 +291,8 @@ command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, s:ag_options, {'options': '
 " command! -bang -nargs=* AgFuzzy call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
 command! -bang -nargs=* AgFuzzy call fzf#vim#ag(<q-args>, s:ag_options, {'options': '--delimiter : --nth 4..'}, <bang>0)
 
+nnoremap <Leader>* :Ag <C-R><C-W><CR>
+
 " TODO and set this to <Leader>*
 "fu! FzfAgCurrWord()
   "call fzf#vim#ag(expand('<cword>'))
@@ -301,11 +304,27 @@ nmap <Leader>sf :Ag<CR>
 nmap <Leader>/ :AgFuzzy<CR>
 " resume last :Ag search
 nmap <Leader>sl :AgFuzzy<CR><C-p>
+nmap <Leader>sL :Ag<CR><C-p>
 nmap <Leader>b/ :BLines<CR>
 
 " count literal searches in this file
 nmap <Leader>sc :vimgrep //g%
+
+" example:
+" :vimgrep /dostuff()/j ../**/*.c
 " afterwards you can move between them using :cnext and :cprev
+nnoremap ]e :cnext<CR>
+nnoremap [e :cprevious<CR>
+" :grep '^\s*Application.ensure_all'
+" https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
+" set grepprg=ag\ --vimgrep\ --all-text
+
+if executable("rg")
+    set grepprg=rg\ --vimgrep\ --no-heading
+    set grepformat=%f:%l:%c:%m,%f:%l:%m
+endif
+
+" :Rg Application
 
 """
 """ Git stuff
@@ -535,3 +554,6 @@ fun! TrimWhitespace()
 endfun
 
 autocmd BufWritePre *.ex,*.exs :call TrimWhitespace()
+
+" https://vim.fandom.com/wiki/Replace_a_word_with_yanked_text
+nnoremap S "_diwP
