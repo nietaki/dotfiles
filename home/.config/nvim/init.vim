@@ -52,12 +52,6 @@ set timeoutlen=4000
 set foldmethod=syntax
 set foldlevel=20
 
-" turn comment/text spellcheck on
-" set spell
-autocmd FileType tex setlocal spell
-autocmd FileType markdown setlocal spell
-autocmd FileType text setlocal spell
-set spelllang=en
 
 " disable continuing of the comments
 " autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
@@ -315,6 +309,8 @@ nmap <Leader>sc :vimgrep //g%
 " afterwards you can move between them using :cnext and :cprev
 nnoremap ]e :cnext<CR>
 nnoremap [e :cprevious<CR>
+nnoremap <Leader>cn :cnext<CR>
+nnoremap <Leader>cp :cprevious<CR>
 " :grep '^\s*Application.ensure_all'
 " https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
 " set grepprg=ag\ --vimgrep\ --all-text
@@ -325,6 +321,7 @@ if executable("rg")
 endif
 
 " :Rg Application
+" :cfdo %s/old/new/g
 
 """
 """ Git stuff
@@ -557,3 +554,13 @@ autocmd BufWritePre *.ex,*.exs :call TrimWhitespace()
 
 " https://vim.fandom.com/wiki/Replace_a_word_with_yanked_text
 nnoremap S "_diwP
+
+"" SPELL CHECKING 
+
+" turn comment/text spellcheck on
+" set spell
+set nospell
+autocmd FileType tex setlocal spell
+autocmd FileType markdown setlocal spell
+autocmd FileType text setlocal spell
+set spelllang=en

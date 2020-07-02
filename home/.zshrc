@@ -125,3 +125,7 @@ source $HOME/.homesick/repos/homeshick/homeshick.sh
 # Rust stuff
 
 export PATH="$HOME/.cargo/bin:$PATH"
+
+export PATH="$HOME/.local/bin:$PATH"
+
+unsetopt autopushd
