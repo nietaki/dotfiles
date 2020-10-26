@@ -49,8 +49,9 @@ set timeoutlen=4000
 
 " set foldmethod=manual
 "set foldmethod=indent
-set foldmethod=syntax
-set foldlevel=20
+" set foldmethod=syntax
+" set foldlevel=20
+set nofoldenable
 
 
 " disable continuing of the comments
@@ -86,10 +87,10 @@ if &listchars ==# 'eol:$'
 endif
 set list                " Show problematic characters.
 
-" TODO fix this
-" Also highlight all tabs and trailing whitespace characters.
-highlight ExtraWhitespace ctermbg=darkgreen guibg=darkgreen
-match ExtraWhitespace /\s\+$\|\t/
+" " TODO fix this
+" " Also highlight all tabs and trailing whitespace characters.
+" highlight ExtraWhitespace ctermbg=darkgreen guibg=darkgreen
+" match ExtraWhitespace /\s\+$\|\t/
 
 set ignorecase          " Make searching case insensitive
 set smartcase           " ... unless the query has capital letters.
@@ -99,8 +100,8 @@ set smartcase           " ... unless the query has capital letters.
 let g:python_host_prog='$HOME/.asdf/shims/python2'
 let g:python3_host_prog='$HOME/.asdf/shims/python3'
 
+" \ 'coc-solargraph',
 let g:coc_global_extensions = [
-\ 'coc-solargraph',
 \ 'coc-json',
 \ 'coc-html',
 \ 'coc-yaml'
@@ -149,6 +150,9 @@ Plug 'joshdick/onedark.vim'
 Plug 'tomasr/molokai'
 Plug 'srcery-colors/srcery-vim'
 Plug 'gcmt/taboo.vim'
+
+" experimental
+Plug 'tpope/vim-rails'
 
 call plug#end()
 
@@ -211,6 +215,7 @@ nnoremap <Leader>fR :e!<CR>
 
 " https://vi.stackexchange.com/questions/458/how-can-i-reload-all-buffers-at-once
 nnoremap <Leader>fr :checktime<CR>
+cnoreabbrev ct checktime
 
 " close nerdtree when you open a file
 let NERDTreeQuitOnOpen = 1
@@ -359,7 +364,7 @@ vmap <C-_> gc
 set clipboard=unnamedplus
 
 " relative path (src/foo.txt)
-nnoremap <leader>cf :let @+=expand("%")<CR>
+nnoremap <leader>cf :let @+=expand("%")<CR><C-g>
 
 " absolute path (/something/src/foo.txt)
 nnoremap <leader>cF :let @+=expand("%:p")<CR>
@@ -550,7 +555,7 @@ fun! TrimWhitespace()
     call winrestview(l:save)
 endfun
 
-autocmd BufWritePre *.ex,*.exs :call TrimWhitespace()
+autocmd BufWritePre *.ex,*.exs,*.rb :call TrimWhitespace()
 
 " https://vim.fandom.com/wiki/Replace_a_word_with_yanked_text
 nnoremap S "_diwP
@@ -564,3 +569,6 @@ autocmd FileType tex setlocal spell
 autocmd FileType markdown setlocal spell
 autocmd FileType text setlocal spell
 set spelllang=en
+
+" https://github.com/tpope/vim-fugitive/issues/1446
+let g:fugitive_pty=0

@@ -133,3 +133,10 @@ unsetopt autopushd
 # Platform.io
 export PATH="$HOME/.platformio/penv/bin:$PATH"
 alias pi=platformio
+
+
+# start a shell session authenticated to AWS
+alias aws-shell='aws-vault exec -d 8h -n'
+
+# login to AWS console
+alias aws-login='aws-vault login -d 8h'
