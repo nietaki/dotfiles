@@ -1,7 +1,7 @@
 [user]
-	name = Jacek Królikowski
-	email = nietaki@gmail.com
-	useconfigonly = true
+  name = Jacek Królikowski
+  email = nietaki@gmail.com
+  useconfigonly = true
 [core]
   excludesfile = ~/.gitignore_global
 [alias]
@@ -16,15 +16,16 @@
   push-simple = push -u origin HEAD
   shove = push -u origin HEAD
   delete-merged-branches = ! git branch --merged master | grep -v \"\\* master\" | xargs -n 1 git branch -d
-	ego = line-summary
-	visual = log --oneline --decorate --graph --all
-	recent = branch --sort=-committerdate 
+  ego = line-summary
+  visual = log --oneline --decorate --graph --all
+  recent = branch --sort=-committerdate 
   recents = for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
+  empty = commit --allow-empty -m \"empty commit\"
 [difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
+  cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+  path = 
 [mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
+  cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+  trustExitCode = true
 [push]
-	default = simple
+  default = simple
