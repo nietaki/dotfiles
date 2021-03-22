@@ -134,6 +134,12 @@ Plug 'wesQ3/vim-windowswap'
 Plug 'tpope/vim-commentary'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+" start: <C-n> start multicursor and add a virtual cursor + selection on the match
+"     next: <C-n> add a new virtual cursor + selection on the next match
+"     skip: <C-x> skip the next match
+"     prev: <C-p> remove current virtual cursor + selection and go back on previous match
+" select all: <A-n> start multicursor and directly select all matches
 Plug 'terryma/vim-multiple-cursors'
 Plug 'nelstrom/vim-visual-star-search'
 Plug 'vale1410/vim-minizinc'
@@ -316,6 +322,7 @@ nnoremap ]e :cnext<CR>
 nnoremap [e :cprevious<CR>
 nnoremap <Leader>cn :cnext<CR>
 nnoremap <Leader>cp :cprevious<CR>
+nnoremap <Leader>cN :cprevious<CR>
 " :grep '^\s*Application.ensure_all'
 " https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
 " set grepprg=ag\ --vimgrep\ --all-text
@@ -535,8 +542,15 @@ nnoremap ,ta :TestSuite<CR>
 " nnoremap <Leader>co :copen<CR>
 nnoremap <Leader>co :copen 30<CR>
 nnoremap <Leader>cO :copen 10<CR>
-nnoremap <Leader>cc :cclose<CR>
+nnoremap <Leader>cc :copen<CR>
 nnoremap <Leader>cd :cclose<CR>
+
+nnoremap <Leader>m<Leader> :Make 
+nnoremap <Leader>mtt :Make test<CR>
+nnoremap <Leader>mtn :Make test_native<CR>
+nnoremap <Leader>mte :Make test_embedded<CR>
+nnoremap <Leader>mtf :Make test_filesystem<CR>
+nnoremap <Leader>mm :Make<CR>
 
 " it's this time again
 nmap ,cl :silent !pdflatex %<CR>
@@ -555,7 +569,7 @@ fun! TrimWhitespace()
     call winrestview(l:save)
 endfun
 
-autocmd BufWritePre *.ex,*.exs,*.rb :call TrimWhitespace()
+autocmd BufWritePre *.ex,*.exs,*.rb,*.cpp,*.h,*.hpp :call TrimWhitespace()
 
 " https://vim.fandom.com/wiki/Replace_a_word_with_yanked_text
 nnoremap S "_diwP
