@@ -131,7 +131,7 @@ export PATH="$HOME/.local/bin:$PATH"
 unsetopt autopushd
 
 # Platform.io
-export PATH="$HOME/.platformio/penv/bin:$PATH"
+export PATH="$PATH:$HOME/.platformio/penv/bin"
 alias pi=platformio
 
 
