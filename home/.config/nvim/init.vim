@@ -132,6 +132,8 @@ Plug 'mhinz/vim-signify'
 Plug 'sbdchd/neoformat'
 Plug 'wesQ3/vim-windowswap'
 Plug 'tpope/vim-commentary'
+" for the :%S and cr_
+Plug 'tpope/vim-abolish'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
