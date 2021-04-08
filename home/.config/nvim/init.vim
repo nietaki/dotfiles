@@ -197,8 +197,6 @@ nnoremap <Leader>wj <C-W><C-J>
 nnoremap <Leader>wk <C-W><C-K>
 nnoremap <Leader>wh <C-W><C-H>
 nnoremap <Leader>wn <C-W><C-W>
-" open file:line under cursor in new window
-nnoremap <Leader>wf <C-W>F
 
 " maximize the window
 nmap <Leader>wm <C-W>_ <C-W>\|
@@ -279,7 +277,9 @@ nmap <C-l> :FZF<CR>
 
 " remember, we can always go to file under cursor with gf
 nnoremap <Leader>gf gF
+" open file:line under cursor in new window
 nnoremap <Leader>wf <C-w>F
+
 " map <Leader>wf :vertical wincmd f<CR>
 " ,, is the working directory
 set path=.,,apps/chat,apps/auth,apps/shared,/usr/include,
@@ -372,17 +372,18 @@ vmap <C-_> gc
 
 set clipboard=unnamedplus
 
+" yank
 " relative path (src/foo.txt)
-nnoremap <leader>cf :let @+=expand("%")<CR><C-g>
+nnoremap <leader>yf :let @+=expand("%")<CR><C-g>
 
 " absolute path (/something/src/foo.txt)
-nnoremap <leader>cF :let @+=expand("%:p")<CR>
+nnoremap <leader>yF :let @+=expand("%:p")<CR>
 
 " filename (foo.txt)
-nnoremap <leader>ct :let @+=expand("%:t")<CR>
+nnoremap <leader>yt :let @+=expand("%:t")<CR>
 
 " directory name (/something/src)
-nnoremap <leader>ch :let @+=expand("%:p:h")<CR>
+nnoremap <leader>yh :let @+=expand("%:p:h")<CR>
 
 "insert newline where the cursor is
 nnoremap K i<CR><Esc>l
@@ -395,7 +396,9 @@ nnoremap K i<CR><Esc>l
 " nmap <Leader>tt :terminal<CR>
 " easy exiting terminal mode
 tnoremap <C-w> <C-\><C-n>
-tnoremap <Esc> <C-\><C-n>
+tnoremap <C-s> <C-\><C-n>
+
+" tnoremap <Esc><Esc> <C-\><C-n>
 " openint terminal in Terminal-mode (ready to go)
 autocmd TermOpen * startinsert
 
@@ -543,17 +546,23 @@ nnoremap ,ta :TestSuite<CR>
 
 " test results can be open in the quickfix window
 " nnoremap <Leader>co :copen<CR>
-nnoremap <Leader>co :copen 30<CR>
-nnoremap <Leader>cO :copen 10<CR>
-nnoremap <Leader>cc :copen<CR>
+
+" nnoremap <Leader>co :copen 30<CR>
+let g:dispatch_quickfix_height=30
+nnoremap <Leader>co :Copen<CR>
+nnoremap <Leader>cO :Copen<CR>/.*\[FAILED\]<CR>
+nnoremap <Leader>cf /.*\[FAILED\]<CR>
+" nnoremap <Leader>cO :copen 10<CR>
+" nnoremap <Leader>cc :copen<CR>
 nnoremap <Leader>cd :cclose<CR>
 
 nnoremap <Leader>m<Leader> :Make 
-nnoremap <Leader>mtt :Make test<CR>
-nnoremap <Leader>mtn :Make test_native<CR>
-nnoremap <Leader>mte :Make test_embedded<CR>
-nnoremap <Leader>mtf :Make test_filesystem<CR>
-nnoremap <Leader>mm :Make<CR>
+nnoremap <Leader>mtt :Make! test<CR>
+nnoremap <Leader>mtn :Make! test_native<CR>
+nnoremap <Leader>mte :Make! test_embedded<CR>
+nnoremap <Leader>mtf :Make! test_filesystem<CR>
+nnoremap <Leader>mm :Make!<CR>
+
 
 " it's this time again
 nmap ,cl :silent !pdflatex %<CR>
