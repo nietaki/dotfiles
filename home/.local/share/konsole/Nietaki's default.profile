@@ -1,7 +1,7 @@
 [Appearance]
 AntiAliasFonts=true
 BoldIntense=true
-ColorScheme=Linux
+ColorScheme=srcery_konsole
 DimmValue=128
 Font=Hack,10,-1,7,50,0,0,0,0,0
 LineSpacing=0

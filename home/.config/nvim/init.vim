@@ -277,7 +277,7 @@ let g:fzf_history_dir = '~/.fzf-history'
 " go to file in project
 nmap <C-l> :FZF<CR>
 
-" remember, we can always go to file with gf
+" remember, we can always go to file under cursor with gf
 nnoremap <Leader>gf gF
 nnoremap <Leader>wf <C-w>F
 " map <Leader>wf :vertical wincmd f<CR>
@@ -395,6 +395,7 @@ nnoremap K i<CR><Esc>l
 " nmap <Leader>tt :terminal<CR>
 " easy exiting terminal mode
 tnoremap <C-w> <C-\><C-n>
+tnoremap <Esc> <C-\><C-n>
 " openint terminal in Terminal-mode (ready to go)
 autocmd TermOpen * startinsert
 
