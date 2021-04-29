@@ -562,7 +562,7 @@ nnoremap <Leader>mtn :Make! test_native<CR>
 nnoremap <Leader>mte :Make! test_embedded<CR>
 nnoremap <Leader>mtf :Make! test_filesystem<CR>
 nnoremap <Leader>mm :Make!<CR>
-
+nnoremap <Leader>mk :AbortDispatch<CR>
 
 " it's this time again
 nmap ,cl :silent !pdflatex %<CR>
