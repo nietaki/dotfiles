@@ -40,7 +40,12 @@ esac
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
 
+
 . $HOME/.asdf/asdf.sh
+
+# this fixes bash completions fucking up
+autoload bashcompinit
+bashcompinit
 . $HOME/.asdf/completions/asdf.bash
 
 export EDITOR='nvim'
