@@ -348,7 +348,7 @@ nmap <C-k> <plug>(signify-prev-hunk)
 "nmap <leader>gK 9999<leader>gk
 
 
-nmap <Leader>gs :Gstatus<CR>
+nmap <Leader>gs :Git<CR>
 nmap <Leader>gc :Gcommit<CR>
 nmap <Leader>gp :Git shove<CR>
 nmap <Leader>gb :Gblame<CR>
