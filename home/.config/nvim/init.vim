@@ -101,13 +101,6 @@ set smartcase           " ... unless the query has capital letters.
 let g:python_host_prog='$HOME/.asdf/shims/python2'
 let g:python3_host_prog='$HOME/.asdf/shims/python3'
 
-" \ 'coc-solargraph',
-let g:coc_global_extensions = [
-\ 'coc-json',
-\ 'coc-html',
-\ 'coc-yaml'
-\ ]
-
 """
 """ Plugins
 """
@@ -139,7 +132,6 @@ Plug 'tpope/vim-abolish'
 " highlighting, completion and stuff
 Plug 'nvim-treesitter/nvim-treesitter', { 'branch': '0.5-compat', 'do': ':TSUpdate' }
 Plug 'neovim/nvim-lspconfig'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " start: <C-n> start multicursor and add a virtual cursor + selection on the match
 "     next: <C-n> add a new virtual cursor + selection on the next match
@@ -420,123 +412,9 @@ let g:airline_section_b = airline#section#create(['hunks'])
 " this disables the utf-8[unix] part
 let g:airline_section_y = airline#section#create([])
 
-"""
-""" IDE stuff / completion / CoC nvim
-"""
-
-""" Copied from CoC nvim README
-
 set hidden
 set nobackup
 set nowritebackup
-
-" uske tab for trigger completion with characters ahead and navigate.
-" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"<Paste>
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
-
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
-" Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-
-
-" Remap keys for gotos
-nmap <silent> ,gd <Plug>(coc-definition)
-nmap <silent> ,gg <Plug>(coc-definition)
-nmap <silent> ,gy <Plug>(coc-type-definition)
-nmap <silent> ,gi <Plug>(coc-implementation)
-nmap <silent> ,gr <Plug>(coc-references)
-" nmap <silent> ,gr :<C-u>call CocActionAsync('jumpReferences')<CR>
-
-" THIS IS BEAUTIFUL
-" show documentation in preview window
-"nnoremap <silent> K :call <SID>show_documentation()<CR>
-nmap <silent> ,hh :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
-" TODO fix this, it doesn't work
-" Highlight symbol under cursor on CursorHold
-" autocmd CursorHold * silent call CocActionAsync('highlight')
-
-" Remap for rename current word
-nmap <silent> ,er <Plug>(coc-rename)
-
-" Remap for do codeAction of current line
-nmap <silent> ,al  <Plug>(coc-codeaction)
-
-" nmap <silent> ,ff :Format<CR>
-" TODO configure this to run mix from a subdirectory (to inherit same .tool_versions)
-" but not compile the whole project
-nmap <silent> ,ff :Neoformat<CR>
-"command! -nargs=0 FormatBuffer :call CocAction('format')
-
-" Use `:Format` to format current buffer
-command! -nargs=0 Format :call CocAction('format')
-
-" Use `:Fold` to fold current buffer
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-
-" use `:OR` for organize import of current buffer
-command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
-
-"xmap <leader>f  <Plug>(coc-format-selected)
-"nmap <leader>f  <Plug>(coc-format-selected)
-
-" Show commands
-nnoremap <silent> ,cc  :<C-u>CocList commands<cr>
-
-" show completion server logs
-nmap <silent> ,ll :CocCommand workspace.showOutput<CR>
-nmap <silent> ,lc :CocOpenLog<CR>
-" nmap <silent> ,cl :CocCommand workspace.showOutput<CR>
-nmap ,cr :<C-u>CocRestart<CR>
-
-" Warnings List
-nnoremap <silent> ,wl  :<C-u>CocList diagnostics<cr>
-" Use `[c` and `]c` to navigate diagnostics
-nmap <silent> [c <Plug>(coc-diagnostic-prev)
-nmap <silent> ,wN <Plug>(coc-diagnostic-prev)
-nmap <silent> ,wp <Plug>(coc-diagnostic-prev)
-nmap <silent> ,wk <Plug>(coc-diagnostic-prev)
-nmap <silent> ]c <Plug>(coc-diagnostic-next)
-nmap <silent> ,wn <Plug>(coc-diagnostic-next)
-nmap <silent> ,wj <Plug>(coc-diagnostic-next)
-nmap <silent> ,wf  <Plug>(coc-fix-current)
-
-nmap <silent> ,ws <Plug>(coc-diagnostic-info)
-nmap <silent> ,ww <Plug>(coc-diagnostic-info)
-
-" Manage extensions
-nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
-" Find symbol of current document
-nnoremap <silent> ,o  :<C-u>CocList outline<cr>
-" Search workspace symbols
-nnoremap <silent> ,s  :<C-u>CocList -I symbols<cr>
-" Do default action for next item.
-nnoremap <silent> ,n  :<C-u>CocNext<CR>
-" Do default action for previous item.
-nnoremap <silent> ,N  :<C-u>CocPrev<CR>
-nnoremap <silent> ,p  :<C-u>CocPrev<CR>
-" Resume latest coc list
-nnoremap <silent> ,sl  :<C-u>CocListResume<CR>
 
 " Testing using vim test
 " let test#strategy = "neovim"
