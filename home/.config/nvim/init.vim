@@ -136,6 +136,7 @@ Plug 'tpope/vim-commentary'
 " for the :%S and cr_
 Plug 'tpope/vim-abolish'
 
+Plug 'nvim-treesitter/nvim-treesitter', { 'branch': '0.5-compat', 'do': ':TSUpdate' }
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " start: <C-n> start multicursor and add a virtual cursor + selection on the match
@@ -349,7 +350,7 @@ nmap <C-k> <plug>(signify-prev-hunk)
 "nmap <leader>gK 9999<leader>gk
 
 
-nmap <Leader>gs :Gstatus<CR>
+nmap <Leader>gs :Git<CR>
 nmap <Leader>gc :Git commit<CR>
 nmap <Leader>gp :Git shove<CR>
 nmap <Leader>gb :Gblame<CR>
@@ -575,6 +576,28 @@ nmap ,cl :silent !pdflatex %<CR>
 let g:workspace_session_disable_on_args = 1
 let g:workspace_autosave = 0
 let g:workspace_autosave_untrailspaces = 0
+
+
+" treesitter
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
+  ignore_install = { "julia" }, -- List of parsers to ignore installing
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+    disable = { "julia" },  -- list of language that will be disabled
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+  incremental_selection = { enable = true },
+  textobjects = { enable = true },
+}
+EOF
+" :TSUpdate all
 
 " https://vi.stackexchange.com/a/456/23407
 fun! TrimWhitespace()
