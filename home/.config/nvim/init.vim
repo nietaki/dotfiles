@@ -86,6 +86,7 @@ if &listchars ==# 'eol:$'
   set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
 endif
 set list                " Show problematic characters.
+set fileformats=unix
 
 " " TODO fix this
 " " Also highlight all tabs and trailing whitespace characters.
@@ -348,8 +349,8 @@ nmap <C-k> <plug>(signify-prev-hunk)
 "nmap <leader>gK 9999<leader>gk
 
 
-nmap <Leader>gs :Git<CR>
-nmap <Leader>gc :Gcommit<CR>
+nmap <Leader>gs :Gstatus<CR>
+nmap <Leader>gc :Git commit<CR>
 nmap <Leader>gp :Git shove<CR>
 nmap <Leader>gb :Gblame<CR>
 nmap <Leader>gll :.Gbrowse!<CR>
@@ -557,6 +558,7 @@ nnoremap <Leader>cf /.*\[FAILED\]<CR>
 nnoremap <Leader>cd :cclose<CR>
 
 nnoremap <Leader>m<Leader> :Make 
+nnoremap <Leader>mtc :Make! compile<CR>
 nnoremap <Leader>mtt :Make! test<CR>
 nnoremap <Leader>mtn :Make! test_native<CR>
 nnoremap <Leader>mte :Make! test_embedded<CR>
@@ -583,6 +585,10 @@ endfun
 
 autocmd BufWritePre *.ex,*.exs,*.rb,*.cpp,*.h,*.hpp :call TrimWhitespace()
 
+" jumps between c++ header and definition files
+" thank you internet https://vim.fandom.com/wiki/Easily_switch_between_source_and_header_file
+map <Leader>fh :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+
 " https://vim.fandom.com/wiki/Replace_a_word_with_yanked_text
 nnoremap S "_diwP
 
@@ -593,7 +599,7 @@ nnoremap S "_diwP
 set nospell
 autocmd FileType tex setlocal spell
 autocmd FileType markdown setlocal spell
-autocmd FileType text setlocal spell
+" autocmd FileType text setlocal spell
 set spelllang=en
 
 " https://github.com/tpope/vim-fugitive/issues/1446
