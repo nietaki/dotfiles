@@ -136,7 +136,9 @@ Plug 'tpope/vim-commentary'
 " for the :%S and cr_
 Plug 'tpope/vim-abolish'
 
+" highlighting, completion and stuff
 Plug 'nvim-treesitter/nvim-treesitter', { 'branch': '0.5-compat', 'do': ':TSUpdate' }
+Plug 'neovim/nvim-lspconfig'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " start: <C-n> start multicursor and add a virtual cursor + selection on the match
@@ -598,6 +600,16 @@ require'nvim-treesitter.configs'.setup {
 }
 EOF
 " :TSUpdate all
+
+" LSP servers
+
+lua << EOF
+-- require'lspconfig'.pyright.setup{}
+require'lspconfig'.bashls.setup{}
+EOF
+
+nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
+
 
 " https://vi.stackexchange.com/a/456/23407
 fun! TrimWhitespace()
