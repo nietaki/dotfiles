@@ -485,10 +485,8 @@ require'nvim-treesitter.configs'.setup {
   textobjects = { enable = true },
 }
 EOF
-" :TSUpdate all
 
-" CMP completion, LSP servers
-
+" mostly copied from https://github.com/neovim/nvim-lspconfig/wiki/Autocompletion
 lua <<EOF
 -- Add additional capabilities supported by nvim-cmp
 local nvim_lsp = require 'lspconfig'
@@ -520,6 +518,7 @@ cmp.setup {
     end,
   },
   completion = {
+      -- only autocomplete with C-Space
       autocomplete = false
     },
   mapping = {
@@ -528,6 +527,7 @@ cmp.setup {
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete(),
+    -- this is to close the autocompletion
     ['<C-e>'] = cmp.mapping.close(),
     ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
@@ -593,6 +593,17 @@ nnoremap <Leader>ff <cmd>lua vim.lsp.buf.formatting()<CR>
 
 " vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
 " vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
+"
+
+" TODO configure some snippets
+imap <silent><expr> <Tab> luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<Tab>' 
+inoremap <silent> <S-Tab> <cmd>lua require'luasnip'.jump(-1)<Cr>
+
+snoremap <silent> <Tab> <cmd>lua require('luasnip').jump(1)<Cr>
+snoremap <silent> <S-Tab> <cmd>lua require('luasnip').jump(-1)<Cr>
+
+imap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-E>'
+smap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-E>'
 
 
 " https://vi.stackexchange.com/a/456/23407
