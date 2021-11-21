@@ -175,6 +175,9 @@ call plug#end()
 nnoremap <Leader>pu :PlugUpdate<CR>
 nnoremap <Leader>pc :PlugClean<CR>
 
+:set runtimepath+=~/repos/utils/awesome-flutter-snippets
+lua require("luasnip/loaders/from_vscode").load()
+
 """
 """ Navigating to standard files, reloading the config
 """
@@ -555,8 +558,8 @@ cmp.setup {
     end,
   },
   sources = {
-    { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = 'nvim_lsp' },
     { name = 'buffer' },
   },
 }
@@ -605,7 +608,6 @@ snoremap <silent> <S-Tab> <cmd>lua require('luasnip').jump(-1)<Cr>
 
 imap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-E>'
 smap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-E>'
-
 
 " https://vi.stackexchange.com/a/456/23407
 fun! TrimWhitespace()
