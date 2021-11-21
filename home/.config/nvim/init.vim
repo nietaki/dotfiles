@@ -143,6 +143,8 @@ Plug 'L3MON4D3/LuaSnip'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'akinsho/flutter-tools.nvim'
 
+Plug 'townk/vim-autoclose'
+
 " start: <C-n> start multicursor and add a virtual cursor + selection on the match
 "     next: <C-n> add a new virtual cursor + selection on the next match
 "     skip: <C-x> skip the next match
@@ -595,7 +597,6 @@ nnoremap <Leader>ff <cmd>lua vim.lsp.buf.formatting()<CR>
 " vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
 "
 
-" TODO configure some snippets
 imap <silent><expr> <Tab> luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<Tab>' 
 inoremap <silent> <S-Tab> <cmd>lua require'luasnip'.jump(-1)<Cr>
 
@@ -614,6 +615,7 @@ fun! TrimWhitespace()
 endfun
 
 autocmd BufWritePre *.ex,*.exs,*.rb,*.cpp,*.h,*.hpp :call TrimWhitespace()
+autocmd BufWritePre *.dart lua vim.lsp.buf.formatting_sync(nil, 100)
 
 " jumps between c++ header and definition files
 " thank you internet https://vim.fandom.com/wiki/Easily_switch_between_source_and_header_file
