@@ -548,6 +548,9 @@ cmp.setup {
 require("flutter-tools").setup{} -- use defaults
 EOF
 
+let g:dart_format_on_save = 0
+let g:dart_style_guide = 2
+
 " help
 nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
