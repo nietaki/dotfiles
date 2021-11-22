@@ -598,8 +598,8 @@ let g:dart_style_guide = 2
 
 nnoremap <Leader>cfd :FlutterDevices<CR>
 nnoremap <Leader>cfs :FlutterRun<CR>
-nnoremap <Leader>cfr :FlutterReload<CR>
-nnoremap <Leader>cfR :FlutterRestart<CR>
+nnoremap <Leader>cfr :FlutterRestart<CR>
+nnoremap <Leader>cfR :FlutterReload<CR>
 nnoremap <Leader>cfo :FlutterOutlineToggle<CR>
 
 " https://vi.stackexchange.com/a/456/23407

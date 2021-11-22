@@ -8,6 +8,7 @@ antigen bundle git
 antigen bundle shrink-path
 # antigen bundle z
 
+ZSHZ_UNCOMMON=1
 antigen bundle agkozak/zsh-z
 antigen bundle zsh-users/zsh-completions
 
