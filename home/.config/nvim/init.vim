@@ -130,7 +130,6 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-abolish'
 
 " highlighting, completion and stuff
-Plug 'nvim-treesitter/nvim-treesitter', { 'branch': '0.5-compat', 'do': ':TSUpdate' }
 Plug 'neovim/nvim-lspconfig'
 
 Plug 'hrsh7th/nvim-cmp'
@@ -469,27 +468,6 @@ nmap ,cl :silent !pdflatex %<CR>
 let g:workspace_session_disable_on_args = 1
 let g:workspace_autosave = 0
 let g:workspace_autosave_untrailspaces = 0
-
-
-" treesitter
-lua <<EOF
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-  sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
-  ignore_install = { "julia" }, -- List of parsers to ignore installing
-  highlight = {
-    enable = true,              -- false will disable the whole extension
-    disable = { "julia" },  -- list of language that will be disabled
-    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-    -- Using this option may slow down your editor, and you may see some duplicate highlights.
-    -- Instead of true it can also be a list of languages
-    additional_vim_regex_highlighting = false,
-  },
-  incremental_selection = { enable = true },
-  textobjects = { enable = true },
-}
-EOF
 
 " mostly copied from https://github.com/neovim/nvim-lspconfig/wiki/Autocompletion
 lua <<EOF
