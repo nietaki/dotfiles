@@ -140,6 +140,7 @@ Plug 'saadparwaiz1/cmp_luasnip'
 Plug 'L3MON4D3/LuaSnip'
 
 Plug 'nvim-lua/plenary.nvim'
+Plug 'dart-lang/dart-vim-plugin'
 Plug 'akinsho/flutter-tools.nvim'
 
 Plug 'townk/vim-autoclose'
