@@ -448,7 +448,7 @@ nnoremap ,ta :TestSuite<CR>
 let g:dispatch_quickfix_height=30
 nnoremap <Leader>co :Copen<CR>
 nnoremap <Leader>cO :Copen<CR>/.*\[FAILED\]<CR>
-nnoremap <Leader>cf /.*\[FAILED\]<CR>
+" nnoremap <Leader>cf /.*\[FAILED\]<CR>
 " nnoremap <Leader>cO :copen 10<CR>
 " nnoremap <Leader>cc :copen<CR>
 nnoremap <Leader>cd :cclose<CR>
@@ -548,8 +548,6 @@ cmp.setup {
 require("flutter-tools").setup{} -- use defaults
 EOF
 
-let g:dart_format_on_save = 0
-let g:dart_style_guide = 2
 
 " help
 nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
@@ -592,6 +590,17 @@ snoremap <silent> <S-Tab> <cmd>lua require('luasnip').jump(-1)<Cr>
 
 imap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-E>'
 smap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-E>'
+
+" flutter / dart config
+"
+let g:dart_format_on_save = 0
+let g:dart_style_guide = 2
+
+nnoremap <Leader>cfd :FlutterDevices<CR>
+nnoremap <Leader>cfs :FlutterRun<CR>
+nnoremap <Leader>cfr :FlutterReload<CR>
+nnoremap <Leader>cfR :FlutterRestart<CR>
+nnoremap <Leader>cfo :FlutterOutlineToggle<CR>
 
 " https://vi.stackexchange.com/a/456/23407
 fun! TrimWhitespace()
