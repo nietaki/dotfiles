@@ -292,9 +292,11 @@ nnoremap <Leader>wf <C-w>F
 " ,, is the working directory
 set path=.,,apps/chat,apps/auth,apps/shared,/usr/include,
 
-nnoremap <Leader>bb :CtrlPBuffer<CR>
+" nnoremap <Leader>bb :CtrlPBuffer<CR>
+nnoremap <Leader>bb :Buffers<CR>
 " recent buffer history
-nnoremap <Leader>bh :CtrlPMRUFiles<CR>
+" nnoremap <Leader>bh :CtrlPMRUFiles<CR>
+nnoremap <Leader>bh :Buffers<CR>
 " c stands for "current"
 nnoremap <Leader>bc :Buffers<CR>
 
@@ -569,9 +571,9 @@ nnoremap <silent> <Leader>pwr <cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>
 nnoremap <silent> <Leader>wfp <cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>
 
 " refactor stuff
-nnoremap <silent> <Leader>rn <cmd>lua vim.lsp.buf.rename()<CR>
+nnoremap <Leader>cr <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <silent> <Leader>ca <cmd>lua vim.lsp.buf.code_action()<CR>
-nnoremap <silent> <Leader>ca <cmd>lua vim.lsp.buf.range_code_action()<CR>
+nnoremap <silent> <Leader>cA <cmd>lua vim.lsp.buf.range_code_action()<CR>
 nnoremap <Leader>ff <cmd>lua vim.lsp.buf.formatting()<CR>
 
 " vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
