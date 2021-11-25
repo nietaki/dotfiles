@@ -176,6 +176,8 @@ nnoremap <Leader>pu :PlugUpdate<CR>
 nnoremap <Leader>pc :PlugClean<CR>
 
 :set runtimepath+=~/repos/utils/awesome-flutter-snippets
+
+lua require("luasnip").snippets={}
 lua require("luasnip/loaders/from_vscode").load()
 
 """
@@ -453,6 +455,7 @@ nnoremap <Leader>cO :Copen<CR>/.*\[FAILED\]<CR>
 " nnoremap <Leader>cc :copen<CR>
 nnoremap <Leader>cd :cclose<CR>
 
+:command! -nargs=* Makes :Make! <args>
 nnoremap <Leader>m<Leader> :Make 
 nnoremap <Leader>mtc :Make! compile<CR>
 nnoremap <Leader>mtt :Make! test<CR>
@@ -555,8 +558,8 @@ nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
 nnoremap <silent> <Leader>gr <cmd>lua vim.lsp.buf.references()<CR>
 
 " GOTO something
-nnoremap <silent> <Leader>gd <cmd>lua vim.lsp.buf.declaration()<CR>
-nnoremap <silent> <Leader>gD <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> <Leader>gD <cmd>lua vim.lsp.buf.declaration()<CR>
+nnoremap <silent> <Leader>gd <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> <Leader>gi <cmd>lua vim.lsp.buf.implementation()<CR>
 nnoremap <silent> <Leader>D <cmd>lua vim.lsp.buf.type_definition()<CR>
 " nnoremap <silent> <Leader>so', [[<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>]], opts)
@@ -573,9 +576,9 @@ nnoremap <silent> <Leader>pwr <cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>
 nnoremap <silent> <Leader>wfp <cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>
 
 " refactor stuff
-nnoremap <Leader>cr <cmd>lua vim.lsp.buf.rename()<CR>
-nnoremap <silent> <Leader>ca <cmd>lua vim.lsp.buf.code_action()<CR>
-nnoremap <silent> <Leader>cA <cmd>lua vim.lsp.buf.range_code_action()<CR>
+nnoremap <Leader>nr <cmd>lua vim.lsp.buf.rename()<CR>
+nnoremap <Leader>na <cmd>lua vim.lsp.buf.code_action()<CR>
+vnoremap <Leader>na <cmd>lua vim.lsp.buf.range_code_action()<CR>
 nnoremap <Leader>ff <cmd>lua vim.lsp.buf.formatting()<CR>
 
 " vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
@@ -596,11 +599,15 @@ smap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-next-choice' 
 let g:dart_format_on_save = 0
 let g:dart_style_guide = 2
 
-nnoremap <Leader>cfd :FlutterDevices<CR>
-nnoremap <Leader>cfs :FlutterRun<CR>
-nnoremap <Leader>cfr :FlutterRestart<CR>
-nnoremap <Leader>cfR :FlutterReload<CR>
-nnoremap <Leader>cfo :FlutterOutlineToggle<CR>
+nnoremap <Leader>nfd :FlutterDevices<CR>
+nnoremap <Leader>nfs :FlutterRun<CR>
+nnoremap <Leader>nfR :FlutterRestart<CR>
+nnoremap <Leader>nfr :FlutterReload<CR>
+nnoremap <Leader>nfq :FlutterQuit<CR>
+nnoremap <Leader>nfo :FlutterOutlineToggle<CR>
+nnoremap <Leader>nfpg :FlutterPubGet<CR>
+nnoremap <Leader>nfpu :FlutterPubUpgrade<CR>
+nnoremap <Leader>nfpc :FlutterCopyProfilerUrl<CR>
 
 " https://vi.stackexchange.com/a/456/23407
 fun! TrimWhitespace()
