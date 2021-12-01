@@ -53,6 +53,12 @@ set timeoutlen=4000
 " set foldlevel=20
 set nofoldenable
 
+" cpp syntax highlighting config
+let g:cpp_class_scope_highlight = 1
+let g:cpp_member_variable_highlight = 1
+let g:cpp_class_decl_highlight = 1
+let g:cpp_posix_standard = 1
+let g:cpp_experimental_template_highlight = 1
 
 " disable continuing of the comments
 " autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
@@ -153,7 +159,8 @@ Plug 'townk/vim-autoclose'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'nelstrom/vim-visual-star-search'
 Plug 'vale1410/vim-minizinc'
-Plug 'sudar/vim-arduino-syntax'
+" Plug 'sudar/vim-arduino-syntax'
+Plug 'octol/vim-cpp-enhanced-highlight'
 
 Plug 'janko/vim-test'
 Plug 'tpope/vim-dispatch'
@@ -565,10 +572,10 @@ nnoremap <silent> <Leader>D <cmd>lua vim.lsp.buf.type_definition()<CR>
 " nnoremap <silent> <Leader>so', [[<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>]], opts)
 
 " diagnostics
-nnoremap <silent> <Leader>el <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
+nnoremap <silent> <Leader>ee <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
 nnoremap <silent> <Leader>ep <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
 nnoremap <silent> <Leader>en <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
-nnoremap <silent> <Leader>ee <cmd>lua vim.lsp.diagnostic.set_loclist()<CR>
+nnoremap <silent> <Leader>el <cmd>lua vim.lsp.diagnostic.set_loclist()<CR>
 
 " workspace stuff
 nnoremap <silent> <Leader>pwa <cmd>lua vim.lsp.buf.add_workspace_folder()<CR>
@@ -577,8 +584,11 @@ nnoremap <silent> <Leader>wfp <cmd>lua print(vim.inspect(vim.lsp.buf.list_worksp
 
 " refactor stuff
 nnoremap <Leader>nr <cmd>lua vim.lsp.buf.rename()<CR>
+nnoremap ,r <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <Leader>na <cmd>lua vim.lsp.buf.code_action()<CR>
+nnoremap ,a <cmd>lua vim.lsp.buf.code_action()<CR>
 vnoremap <Leader>na <cmd>lua vim.lsp.buf.range_code_action()<CR>
+vnoremap ,a <cmd>lua vim.lsp.buf.range_code_action()<CR>
 nnoremap <Leader>ff <cmd>lua vim.lsp.buf.formatting()<CR>
 
 " vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
@@ -608,6 +618,17 @@ nnoremap <Leader>nfo :FlutterOutlineToggle<CR>
 nnoremap <Leader>nfpg :FlutterPubGet<CR>
 nnoremap <Leader>nfpu :FlutterPubUpgrade<CR>
 nnoremap <Leader>nfpc :FlutterCopyProfilerUrl<CR>
+
+"same but , becomes <Leader> n
+nnoremap ,fd :FlutterDevices<CR>
+nnoremap ,fs :FlutterRun<CR>
+nnoremap ,fR :FlutterRestart<CR>
+nnoremap ,fr :FlutterReload<CR>
+nnoremap ,fq :FlutterQuit<CR>
+nnoremap ,fo :FlutterOutlineToggle<CR>
+nnoremap ,fpg :FlutterPubGet<CR>
+nnoremap ,fpu :FlutterPubUpgrade<CR>
+nnoremap ,fpc :FlutterCopyProfilerUrl<CR>
 
 " https://vi.stackexchange.com/a/456/23407
 fun! TrimWhitespace()
