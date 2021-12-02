@@ -103,6 +103,9 @@ set ignorecase          " Make searching case insensitive
 set smartcase           " ... unless the query has capital letters.
 "set gdefault            " Use 'g' flag by default with :s/foo/bar/.
 
+"smart case search and replace is done using %S/FooBar/BazBan/g from
+"abolish.vim
+
 " see :checkhealth for if this works
 let g:python_host_prog='/home/nietaki/.asdf/shims/python2'
 let g:python3_host_prog='/home/nietaki/.asdf/shims/python3'

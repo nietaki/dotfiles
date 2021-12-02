@@ -108,10 +108,10 @@ function gitroot () {
   cd $(git rev-parse --show-toplevel)
 }
 
-export PATH="/$HOME/Android/Sdk/tools:$PATH"
-export PATH="/$HOME/Android/Sdk/tools/bin:$PATH"
-export PATH="/$HOME/Android/Sdk/platform-tools:$PATH"
-export PATH="/$HOME/android-studio/bin:$PATH"
+export PATH="$HOME/Android/Sdk/tools:$PATH"
+export PATH="$HOME/Android/Sdk/tools/bin:$PATH"
+export PATH="$HOME/Android/Sdk/platform-tools:$PATH"
+export PATH="$HOME/android-studio/bin:$PATH"
 
 export ERL_AFLAGS="-kernel shell_history enabled"
 
