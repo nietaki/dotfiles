@@ -552,19 +552,20 @@ cmp.setup {
     end,
   },
   sources = {
-    { name = 'luasnip' },
     { name = 'nvim_lsp' },
+    { name = 'luasnip' },
     { name = 'buffer' },
   },
 }
 
 require("flutter-tools").setup{} -- use defaults
+
 EOF
 
 
 " help
 nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+" nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
 nnoremap <silent> <Leader>gr <cmd>lua vim.lsp.buf.references()<CR>
 
 " GOTO something
@@ -586,8 +587,8 @@ nnoremap <silent> <Leader>pwr <cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>
 nnoremap <silent> <Leader>wfp <cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>
 
 " refactor stuff
-nnoremap <Leader>nr <cmd>lua vim.lsp.buf.rename()<CR>
-nnoremap ,r <cmd>lua vim.lsp.buf.rename()<CR>
+nnoremap <Leader>nrr <cmd>lua vim.lsp.buf.rename()<CR>
+nnoremap ,rr <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <Leader>na <cmd>lua vim.lsp.buf.code_action()<CR>
 nnoremap ,a <cmd>lua vim.lsp.buf.code_action()<CR>
 vnoremap <Leader>na <cmd>lua vim.lsp.buf.range_code_action()<CR>
@@ -632,6 +633,7 @@ nnoremap ,fo :FlutterOutlineToggle<CR>
 nnoremap ,fpg :FlutterPubGet<CR>
 nnoremap ,fpu :FlutterPubUpgrade<CR>
 nnoremap ,fpc :FlutterCopyProfilerUrl<CR>
+nnoremap ,fc :FlutterCopyProfilerUrl<CR>
 
 " https://vi.stackexchange.com/a/456/23407
 fun! TrimWhitespace()
@@ -658,7 +660,14 @@ set nospell
 autocmd FileType tex setlocal spell
 autocmd FileType markdown setlocal spell
 " autocmd FileType text setlocal spell
+" autocmd FileType log setlocal includeexpr=substitute(v:fname, ':\\d+$', '', '')
 set spelllang=en
+"setlocal includeexpr=substitute(v:fname, 'foo', '', '')
+" :setlocal includeexpr=substitute(v:fname,'mynamespace/','','')
+" :set includeexpr=smagic(v:fname,':[0-9]+$','','g')
 
 " https://github.com/tpope/vim-fugitive/issues/1446
 let g:fugitive_pty=0
+
+" dashes shouldn't be a part of the word
+:set iskeyword-=-
