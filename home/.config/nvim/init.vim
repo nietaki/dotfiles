@@ -171,6 +171,20 @@ Plug 'tpope/vim-rails'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/playground'
 
+" LSP Support
+Plug 'neovim/nvim-lspconfig'             " Required
+Plug 'williamboman/mason.nvim'           " Optional
+Plug 'williamboman/mason-lspconfig.nvim' " Optional
+
+" Autocompletion
+Plug 'hrsh7th/nvim-cmp'     " Required
+Plug 'hrsh7th/cmp-nvim-lsp' " Required
+Plug 'L3MON4D3/LuaSnip'     " Required
+Plug 'hrsh7th/cmp-path'     " Optional
+Plug 'hrsh7th/cmp-buffer'   " Optional
+
+Plug 'VonHeikemen/lsp-zero.nvim', {'branch': 'v2.x'}
+
 call plug#end()
 
 nnoremap <Leader>pu :PlugUpdate<CR>
@@ -474,6 +488,83 @@ let g:workspace_autosave = 0
 let g:workspace_autosave_untrailspaces = 0
 
 
+"" LSP related code
+" https://github.com/ThePrimeagen/init.lua/blob/249f3b14cc517202c80c6babd0f9ec548351ec71/after/plugin/lsp.lua
+lua <<EOF
+local lsp = require('lsp-zero')
+lsp.preset({'recommended'})
+
+lsp.ensure_installed({
+  'elixirls', 
+  'dockerls',
+})
+
+local cmp = require('cmp')
+local cmp_select = {behavior = cmp.SelectBehavior.Select}
+local cmp_mappings = lsp.defaults.cmp_mappings({
+  ["<C-Space>"] = cmp.mapping.complete(),
+  ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
+  ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
+  ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+  ['<C-e>'] = cmp.mapping.abort(),
+  ['<C-i>'] = cmp.mapping.abort(),
+  ['<CR>'] = cmp.mapping.confirm({ select = true }),
+  ['<C-l>'] = cmp.mapping.confirm({ select = true }),
+  ['<C-u>'] = cmp.mapping.scroll_docs(-4),
+  ['<C-d>'] = cmp.mapping.scroll_docs(4),
+})
+
+cmp_mappings['<Tab>'] = nil
+cmp_mappings['<S-Tab>'] = nil
+
+local sources = cmp.config.sources({
+  { name = 'nvim_lsp' },
+  { name = 'luasnip' },
+  { name = 'path' },
+}, {
+  { name = 'buffer' },
+  })
+
+lsp.setup_nvim_cmp({
+  mapping = cmp_mappings,
+  sources = sources
+})
+
+lsp.set_preferences({
+    suggest_lsp_servers = true,
+    sign_icons = {
+        error = 'E',
+        warn = 'W',
+        hint = 'H',
+        info = 'I'
+    }
+})
+
+lsp.on_attach(function(client, bufnr)
+  local opts = {buffer = bufnr, remap = false}
+
+  vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
+  vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
+  vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts)
+  vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts)
+  vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
+  vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
+  vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts)
+  vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
+  vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts)
+  vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
+end)
+
+lsp.setup()
+
+vim.diagnostic.config({
+    virtual_text = true
+})
+EOF
+
+
+" TODO move this to lua config above
+" TODO add LspInfo and LspInstall
 " help
 nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
 " nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
@@ -634,3 +725,6 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 EOF
+
+" make sure it's not saved in the workspace
+autocmd VimLeave * NERDTreeClose
