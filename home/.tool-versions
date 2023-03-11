@@ -1,7 +1,7 @@
-erlang 21.2
-elixir 1.7.4-otp-21
-rebar 3.4.1
-nodejs 14.18.0
-python 3.7.6 2.7.17
-ruby 2.7.0
-kubectl 1.17.2
+erlang latest
+elixir latest
+rebar latest
+nodejs latest
+python latest 2.7.17
+ruby latest
+kubectl latest

@@ -42,12 +42,9 @@ esac
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
 
 
-. $HOME/.asdf/asdf.sh
-
 # this fixes bash completions fucking up
 autoload bashcompinit
 bashcompinit
-. $HOME/.asdf/completions/asdf.bash
 
 export EDITOR='nvim'
 export VISUAL='nvim'
@@ -152,3 +149,7 @@ alias aws-shell='aws-vault exec -d 8h -n'
 alias aws-login='aws-vault login -d 8h'
 
 export PG_OF_PATH=/home/nietaki/repos/of
+
+# RTX setup
+eval "$(rtx activate zsh)"
+alias -g asdf="rtx"

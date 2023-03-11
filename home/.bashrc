@@ -117,9 +117,6 @@ if ! shopt -oq posix; then
 
 fi
 
-. $HOME/.asdf/asdf.sh
-. $HOME/.asdf/completions/asdf.bash
-
 alias open=xdg-open
 
 export NVM_DIR="$HOME/.nvm"
@@ -131,3 +128,4 @@ export SDKMAN_DIR="/home/nietaki/.sdkman"
 [[ -s "/home/nietaki/.sdkman/bin/sdkman-init.sh" ]] && source "/home/nietaki/.sdkman/bin/sdkman-init.sh"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+eval "$(rtx activate bash)"
