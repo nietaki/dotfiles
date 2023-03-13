@@ -43,9 +43,11 @@ endif
 
 " Map the leader key to SPACE
 let mapleader="\<SPACE>"
+let g:maplocalleader="\<SPACE>"
+
 
 " make the leader key timeout a bit longer
-set timeoutlen=4000
+set timeoutlen=2000
 
 " set foldmethod=manual
 "set foldmethod=indent
@@ -185,10 +187,14 @@ Plug 'hrsh7th/cmp-buffer'   " Optional
 
 Plug 'VonHeikemen/lsp-zero.nvim', {'branch': 'v2.x'}
 
+" which key for shortcuts help
+Plug 'liuchengxu/vim-which-key'
+
 call plug#end()
 
 nnoremap <Leader>pu :PlugUpdate<CR>
 nnoremap <Leader>pc :PlugClean<CR>
+
 
 :set runtimepath+=~/repos/utils/awesome-flutter-snippets
 
@@ -201,9 +207,12 @@ nnoremap <Leader>fed :e ~/.config/nvim/init.vim<CR>
 " edit .vimrc
 nnoremap <Leader>fev :e ~/.vimrc<CR>
 
+nnoremap <Leader>fep :tabnew ~/repos/puter/README.md<CR>
+nnoremap <Leader>feD :tabnew ~/.homesick/repos/dotfiles/README.md<CR>
+
 " source .init.vim
 nnoremap <Leader>fer :so ~/.config/nvim/init.vim<CR>
-nnoremap <Leader>feR :so ~/.config/nvim/init.vim<CR>
+
 
 """
 """ Managing windows and buffers
@@ -220,9 +229,10 @@ nnoremap <Leader>wj <C-W><C-J>
 nnoremap <Leader>wk <C-W><C-K>
 nnoremap <Leader>wh <C-W><C-H>
 nnoremap <Leader>wn <C-W><C-W>
+nnoremap <Leader>wo <C-W><C-O>
 
 " maximize the window
-nmap <Leader>wm <C-W>_ <C-W>\|
+nmap <Leader>wm <C-W>_<C-W>\|
 " distribute the windows equally
 nnoremap <Leader>w= <C-W>=
 
@@ -310,10 +320,7 @@ set path=.,,apps/chat,apps/auth,apps/shared,/usr/include,
 " nnoremap <Leader>bb :CtrlPBuffer<CR>
 nnoremap <Leader>bb :Buffers<CR>
 " recent buffer history
-" nnoremap <Leader>bh :CtrlPMRUFiles<CR>
-nnoremap <Leader>bh :Buffers<CR>
-" c stands for "current"
-nnoremap <Leader>bc :Buffers<CR>
+nnoremap <Leader>bh :CtrlPMRUFiles<CR>
 
 "search just the contents
 "  " Default options are --nogroup --column --color
@@ -334,13 +341,16 @@ nmap <Leader>sf :Ag<CR>
 " intentional space
 "nmap <Leader>/ :Ag
 nmap <Leader>/ :AgFuzzy<CR>
+nmap <Leader>s/ :AgFuzzy<CR>
+
 " resume last :Ag search
-nmap <Leader>sl :AgFuzzy<CR><C-p>
 nmap <Leader>sL :Ag<CR><C-p>
+nmap <Leader>sl :AgFuzzy<CR><C-p>
+
 nmap <Leader>b/ :BLines<CR>
 
 " count literal searches in this file
-nmap <Leader>sc :vimgrep //g%
+nmap <Leader>sc :vimgrep //g%<CR>
 
 " example:
 " :vimgrep /dostuff()/j ../**/*.c
@@ -377,10 +387,10 @@ nmap <Leader>gs :Git<CR>
 nmap <Leader>gc :Git commit<CR>
 nmap <Leader>gp :Git shove<CR>
 nmap <Leader>gb :Gblame<CR>
-nmap <Leader>gll :.Gbrowse!<CR>
-let g:flog_default_arguments = { 'max_count': 1000 }
-nmap <Leader>gl :Flog<CR>
-nmap <Leader>gL :Flogsplit<CR>
+nmap <Leader>gu :.GBrowse!<CR>
+let g:flog_default_opts = { 'max_count': 1000 }
+nmap <Leader>gl :Flogsplit<CR>
+nmap <Leader>gL :Flog<CR>
 " the trailing space is here for a reason!
 nmap <Leader>gg :Git 
 " search through commits
@@ -408,10 +418,10 @@ nnoremap <leader>yF :let @+=expand("%:p")<CR>
 nnoremap <leader>yt :let @+=expand("%:t")<CR>
 
 " directory name (/something/src)
-nnoremap <leader>yh :let @+=expand("%:p:h")<CR>
+nnoremap <leader>yd :let @+=expand("%:p:h")<CR>
 
-"insert newline where the cursor is
-nnoremap K i<CR><Esc>l
+""insert newline where the cursor is
+"nnoremap K i<CR><Esc>l
 
 """
 """ Terminal
@@ -586,7 +596,7 @@ nnoremap <silent> <Leader>el <cmd>lua vim.lsp.diagnostic.set_loclist()<CR>
 " workspace stuff
 nnoremap <silent> <Leader>pwa <cmd>lua vim.lsp.buf.add_workspace_folder()<CR>
 nnoremap <silent> <Leader>pwr <cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>
-nnoremap <silent> <Leader>wfp <cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>
+nnoremap <silent> <Leader>pwl <cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>
 
 " refactor stuff
 nnoremap <Leader>nrr <cmd>lua vim.lsp.buf.rename()<CR>
@@ -595,7 +605,8 @@ nnoremap <Leader>na <cmd>lua vim.lsp.buf.code_action()<CR>
 nnoremap ,a <cmd>lua vim.lsp.buf.code_action()<CR>
 vnoremap <Leader>na <cmd>lua vim.lsp.buf.range_code_action()<CR>
 vnoremap ,a <cmd>lua vim.lsp.buf.range_code_action()<CR>
-nnoremap <Leader>ff <cmd>lua vim.lsp.buf.formatting()<CR>
+" nnoremap <Leader>fF <cmd>lua vim.lsp.buf.formatting()<CR>
+nnoremap <Leader>ff :Neoformat<CR>
 
 " flutter / dart config
 "
@@ -728,3 +739,133 @@ EOF
 
 " make sure it's not saved in the workspace
 autocmd VimLeave * NERDTreeClose
+
+"" which key for help
+nnoremap <silent> <leader>      :<c-u>WhichKey '<Space>'<CR>
+nnoremap <silent> <localleader> :<c-u>WhichKey  '<Space>'<CR>
+
+call which_key#register('<Space>', "g:which_key_map")
+
+" Define prefix dictionary
+let g:which_key_map = {
+      \ '*': 'workspace search for word under cursor',
+      \ '/': 'workspace search',
+      \ '1': 'switc to tab 1',
+      \ '2': 'switc to tab 2',
+      \ '3': 'switc to tab 3',
+      \ '4': 'switc to tab 4',
+      \ '5': 'switc to tab 5',
+      \ '6': 'switc to tab 6',
+      \ }
+
+let g:which_key_map.b = {
+      \ 'name' : '+buffers' ,
+      \ '/' : 'fuzzy search in current buffer',
+      \ 'h' : 'MRU buffer history',
+      \ 'b' : 'currently open buffers',
+      \ 'd' : 'delete current buffer',
+      \ 'n' : 'next buffer',
+      \ 'p' : 'prev buffer',
+      \ }
+
+let g:which_key_map.c = {
+      \ 'name' : '+quickfix' ,
+      \ 'o' : 'open quickfix window',
+      \ 'O' : 'open quickfix window and search for FAILED',
+      \ 'c' : 'close quickfix window',
+      \ }
+
+let g:which_key_map.e = {
+      \ 'name' : '+errors/diagnostics' ,
+      \ }
+
+let g:which_key_map.f = {
+      \ 'name' : '+file' ,
+      \ 'f' : 'format current using NeoFormat',
+      \ 'r' : 'check for updates from disk',
+      \ 'R' : 'hard reload file',
+      \ 'h' : 'switch between header and impl file',
+      \ }
+
+let g:which_key_map.f.e = {
+      \ 'name' : '+essential-files' ,
+      \ 'd' : 'open init.vim',
+      \ 'D' : 'open dotfiles in new tab',
+      \ 'p' : 'open puter in new tab',
+      \ 'v' : 'open .vimrc',
+      \ 'r' : 'source init.vim',
+      \ }
+
+let g:which_key_map.g = {
+      \ 'b' : 'git blame',
+      \ 'c' : 'git commit',
+      \ 'd' : 'go to definition',
+      \ 'f' : 'go to file under cursor',
+      \ 'g' : 'custom git command',
+      \ 'i' : 'go to implementation',
+      \ 'u' : 'copy github url to current line',
+      \ 'l' : 'open git log',
+      \ 'L' : 'open git log in new tab',
+      \ 'name' : '+git/goto' ,
+      \ 'p' : 'git push/shove',
+      \ 's' : 'git status',
+      \ '/' : {
+      \     'name': '+git-search',
+      \     'c': 'search through all commits',
+      \     'b': 'search commits for the given file',
+      \   }
+      \ }
+
+let g:which_key_map.m = {
+      \ 'name' : '+make' ,
+      \ }
+
+let g:which_key_map.p = {
+      \ 'name' : '+project/plug' ,
+      \ 'r' : 'set project root to current file dir' ,
+      \ 'R' : 'print project root' ,
+      \ 's' : 'project save - write all open files' ,
+      \ 'u' : 'update Plugs' ,
+      \ 'w' : 'which_key_ignore' ,
+      \ }
+
+let g:which_key_map.q = {
+      \ 'name' : '+quit' ,
+      \ 'q' : 'quit neovim',
+      \ }
+
+let g:which_key_map.s = {
+      \ 'name' : '+search' ,
+      \ 'f' : 'fuzzy search, order by file path' ,
+      \ 'c' : 'count search hits in current buffer' ,
+      \ '/' : 'fuzzy search, order by match' ,
+      \ 'l' : 'resume last used search (order by match)' ,
+      \ 'L' : 'resume last used search (order by file path)' ,
+      \ }
+
+let g:which_key_map.t = {
+      \ 'name' : '+tab/toggle' ,
+      \ }
+
+let g:which_key_map.w = {
+      \ 'name' : '+window' ,
+      \ '/' : 'split vertically' ,
+      \ '-' : 'split horizontally' ,
+      \ 'l' : '->' ,
+      \ 'h' : '<-' ,
+      \ 'k' : '/\' ,
+      \ 'j' : '\/' ,
+      \ 'm' : 'maximize' ,
+      \ 'n' : 'next window' ,
+      \ 'o' : 'make this the Only window' ,
+      \ 'w' : 'swap this window with...' ,
+      \ '=' : 'distribute windows equally' ,
+      \ }
+
+let g:which_key_map.y = {
+      \ 'name' : '+copy-special' ,
+      \ 'f' : 'relative path (src/foo.txt)' ,
+      \ 'F' : 'absolute path (/tmp/src/foo.txt)' ,
+      \ 't' : 'filename (foo.txt)' ,
+      \ 'd' : 'directory name (/tmp/src)' ,
+      \ }
