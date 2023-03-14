@@ -109,6 +109,7 @@ set smartcase           " ... unless the query has capital letters.
 "abolish.vim
 
 " see :checkhealth for if this works
+" TODO fix this to rtx
 let g:python_host_prog='/home/nietaki/.asdf/shims/python2'
 let g:python3_host_prog='/home/nietaki/.asdf/shims/python3'
 
@@ -116,83 +117,83 @@ let g:python3_host_prog='/home/nietaki/.asdf/shims/python3'
 """ Plugins
 """
 
-" Specify a directory for plugins
-" - For Neovim: ~/.local/share/nvim/plugged
-" - Avoid using standard Vim directory names like 'plugin'
-call plug#begin('~/.vim/plugged')
-" plugs go here
-Plug 'scrooloose/nerdtree'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-rhubarb'
-Plug 'rbong/vim-flog'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'elixir-lang/vim-elixir'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-Plug 'jremmen/vim-ripgrep'
-Plug 'mhinz/vim-signify'
+lua <<EOF
 
-Plug 'sbdchd/neoformat'
-Plug 'wesQ3/vim-windowswap'
-Plug 'tpope/vim-commentary'
-" for the :%S and cr_
-Plug 'tpope/vim-abolish'
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
-Plug 'nvim-lua/plenary.nvim'
-Plug 'dart-lang/dart-vim-plugin'
-Plug 'akinsho/flutter-tools.nvim'
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+vim.g.mapleader = " "
 
-Plug 'townk/vim-autoclose'
+require("lazy").setup(
+{
+  {"scrooloose/nerdtree"},
+  {"vim-airline/vim-airline"},
+  {"vim-airline/vim-airline-themes"},
+  {"tpope/vim-fugitive"},
+  {"tpope/vim-rhubarb"},
+  {"rbong/vim-flog"},
+  {"ctrlpvim/ctrlp.vim"},
+  {"elixir-lang/vim-elixir"},
+  {"junegunn/fzf", build = ":call fzf#install()"},
+  {"junegunn/fzf.vim"},
+  {"jremmen/vim-ripgrep"},
+  {"mhinz/vim-signify"},
 
-" start: <C-n> start multicursor and add a virtual cursor + selection on the match
-"     next: <C-n> add a new virtual cursor + selection on the next match
-"     skip: <C-x> skip the next match
-"     prev: <C-p> remove current virtual cursor + selection and go back on previous match
-" select all: <A-n> start multicursor and directly select all matches
-Plug 'terryma/vim-multiple-cursors'
-Plug 'nelstrom/vim-visual-star-search'
+  {"sbdchd/neoformat"},
+  {"wesQ3/vim-windowswap"},
+  {"tpope/vim-commentary"},
+  {"tpope/vim-abolish"},
 
-Plug 'janko/vim-test'
-Plug 'tpope/vim-dispatch'
-Plug 'tpope/vim-eunuch'
+  {"nvim-lua/plenary.nvim"},
+  {"dart-lang/dart-vim-plugin"},
+  {"akinsho/flutter-tools.nvim"},
 
-Plug 'thaerkh/vim-workspace'
+  {"townk/vim-autoclose"},
+  {"terryma/vim-multiple-cursors"},
+  {"nelstrom/vim-visual-star-search"},
 
-" themes
-Plug 'joshdick/onedark.vim'
-Plug 'tomasr/molokai'
-Plug 'srcery-colors/srcery-vim'
-Plug 'gcmt/taboo.vim'
+  {"janko/vim-test"},
+  {"tpope/vim-dispatch"},
+  {"tpope/vim-eunuch"},
 
-" experimental
-Plug 'tpope/vim-rails'
+  {"thaerkh/vim-workspace"},
 
-" 2023 edition
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'nvim-treesitter/playground'
+  -- themes
+  {"joshdick/onedark.vim"},
+  {"tomasr/molokai"},
+  {"srcery-colors/srcery-vim", lazy = false},
+  {"gcmt/taboo.vim"},
 
-" LSP Support
-Plug 'neovim/nvim-lspconfig'             " Required
-Plug 'williamboman/mason.nvim'           " Optional
-Plug 'williamboman/mason-lspconfig.nvim' " Optional
+  -- experimental
+  {"tpope/vim-rails"},
 
-" Autocompletion
-Plug 'hrsh7th/nvim-cmp'     " Required
-Plug 'hrsh7th/cmp-nvim-lsp' " Required
-Plug 'L3MON4D3/LuaSnip'     " Required
-Plug 'hrsh7th/cmp-path'     " Optional
-Plug 'hrsh7th/cmp-buffer'   " Optional
+  {"nvim-treesitter/playground"},
 
-Plug 'VonHeikemen/lsp-zero.nvim', {'branch': 'v2.x'}
+  {"neovim/nvim-lspconfig"},
+  {"williamboman/mason.nvim"},
+  {"williamboman/mason-lspconfig.nvim"},
 
-" which key for shortcuts help
-" Plug 'liuchengxu/vim-which-key'
+  {"hrsh7th/nvim-cmp"},
+  {"hrsh7th/cmp-nvim-lsp"},
+  {"L3MON4D3/LuaSnip"},
+  {"hrsh7th/cmp-path"},
+  {"hrsh7th/cmp-buffer"},
 
-" TODO move to folke/which-key.nvim
+  {"VonHeikemen/lsp-zero.nvim", branch = "v2.x"},
+  {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
+})
 
-call plug#end()
+EOF
 
 nnoremap <Leader>pu :PlugUpdate<CR>
 nnoremap <Leader>pc :PlugClean<CR>
