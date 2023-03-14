@@ -188,7 +188,9 @@ Plug 'hrsh7th/cmp-buffer'   " Optional
 Plug 'VonHeikemen/lsp-zero.nvim', {'branch': 'v2.x'}
 
 " which key for shortcuts help
-Plug 'liuchengxu/vim-which-key'
+" Plug 'liuchengxu/vim-which-key'
+
+" TODO move to folke/which-key.nvim
 
 call plug#end()
 
@@ -207,8 +209,8 @@ nnoremap <Leader>fed :e ~/.config/nvim/init.vim<CR>
 " edit .vimrc
 nnoremap <Leader>fev :e ~/.vimrc<CR>
 
-nnoremap <Leader>fep :tabnew ~/repos/puter/README.md<CR>
-nnoremap <Leader>feD :tabnew ~/.homesick/repos/dotfiles/README.md<CR>
+nnoremap <Leader>fep :tabnew ~/repos/puter/README.md<CR>:tcd %:p:h<CR>
+nnoremap <Leader>feD :tabnew ~/.homesick/repos/dotfiles/README.md<CR>:tcd %:p:h<CR>
 
 " source .init.vim
 nnoremap <Leader>fer :so ~/.config/nvim/init.vim<CR>
@@ -513,8 +515,10 @@ local cmp = require('cmp')
 local cmp_select = {behavior = cmp.SelectBehavior.Select}
 local cmp_mappings = lsp.defaults.cmp_mappings({
   ["<C-Space>"] = cmp.mapping.complete(),
+  ['<C-k>'] = cmp.mapping.select_prev_item(cmp_select),
   ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
   ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
+  ['<C-j>'] = cmp.mapping.select_next_item(cmp_select),
   ['<C-y>'] = cmp.mapping.confirm({ select = true }),
   ['<C-e>'] = cmp.mapping.abort(),
   ['<C-i>'] = cmp.mapping.abort(),
@@ -551,18 +555,33 @@ lsp.set_preferences({
 })
 
 lsp.on_attach(function(client, bufnr)
-  local opts = {buffer = bufnr, remap = false}
+  local bufopts = {buffer = bufnr, remap = false}
 
-  vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
-  vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
-  vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts)
-  vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts)
-  vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
-  vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
-  vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts)
-  vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
-  vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts)
-  vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
+  vim.keymap.set('n', '<leader>df', vim.diagnostic.open_float, bufopts)
+  vim.keymap.set("n", "<leader>dD", function() vim.lsp.buf.declaration() end, bufopts)
+  vim.keymap.set("n", "<leader>dd", function() vim.lsp.buf.definition() end, bufopts)
+  vim.keymap.set("n", "<leader>di", function() vim.lsp.buf.implementation() end, bufopts)
+  vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, bufopts)
+  vim.keymap.set("n", "<C-k>", function() vim.lsp.buf.signature_help() end, bufopts)
+
+  vim.keymap.set('n', '<space>da', vim.lsp.buf.code_action, bufopts)
+  vim.keymap.set('v', '<space>da', vim.lsp.buf.range_code_action, bufopts)
+  vim.keymap.set('n', '<leader>drr', vim.lsp.buf.references, bufopts)
+  vim.keymap.set('n', '<space>dR', vim.lsp.buf.rename, bufopts)
+
+  vim.keymap.set('n', '<leader>dwa', vim.lsp.buf.add_workspace_folder, bufopts)
+  vim.keymap.set('n', '<leader>dwr', vim.lsp.buf.remove_workspace_folder, bufopts)
+  vim.keymap.set('n', '<leader>dwl', function()
+    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+  end, bufopts)
+  vim.keymap.set("n", "<leader>dws", function() vim.lsp.buf.workspace_symbol() end, bufopts)
+
+  vim.keymap.set("n", "<leader>dn", function() vim.diagnostic.goto_next() end, bufopts)
+  vim.keymap.set("n", "<leader>dp", function() vim.diagnostic.goto_prev() end, bufopts)
+
+  vim.keymap.set("i", "<C-k>", function() vim.lsp.buf.signature_help() end, bufopts)
+
+  vim.keymap.set('n', '<leader>ff', function() vim.lsp.buf.format { async = true } end, bufopts)
 end)
 
 lsp.setup()
@@ -572,39 +591,40 @@ vim.diagnostic.config({
 })
 EOF
 
+nnoremap <Leader>dli :LspInfo<CR>
 
-" TODO move this to lua config above
-" TODO add LspInfo and LspInstall
-" help
-nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
-" nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
-nnoremap <silent> <Leader>gr <cmd>lua vim.lsp.buf.references()<CR>
+" " TODO move this to lua config above
+" " TODO add LspInfo and LspInstall
+" " help
+" nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
+" " nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+" nnoremap <silent> <Leader>gr <cmd>lua vim.lsp.buf.references()<CR>
 
-" GOTO something
-nnoremap <silent> <Leader>gD <cmd>lua vim.lsp.buf.declaration()<CR>
-nnoremap <silent> <Leader>gd <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> <Leader>gi <cmd>lua vim.lsp.buf.implementation()<CR>
-nnoremap <silent> <Leader>D <cmd>lua vim.lsp.buf.type_definition()<CR>
-" nnoremap <silent> <Leader>so', [[<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>]], opts)
+" " GOTO something
+" nnoremap <silent> <Leader>gD <cmd>lua vim.lsp.buf.declaration()<CR>
+" nnoremap <silent> <Leader>gd <cmd>lua vim.lsp.buf.definition()<CR>
+" nnoremap <silent> <Leader>gi <cmd>lua vim.lsp.buf.implementation()<CR>
+" nnoremap <silent> <Leader>D <cmd>lua vim.lsp.buf.type_definition()<CR>
+" " nnoremap <silent> <Leader>so', [[<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>]], opts)
 
-" diagnostics
-nnoremap <silent> <Leader>ee <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
-nnoremap <silent> <Leader>ep <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
-nnoremap <silent> <Leader>en <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
-nnoremap <silent> <Leader>el <cmd>lua vim.lsp.diagnostic.set_loclist()<CR>
+" " diagnostics
+" nnoremap <silent> <Leader>ee <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
+" nnoremap <silent> <Leader>ep <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+" nnoremap <silent> <Leader>en <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+" nnoremap <silent> <Leader>el <cmd>lua vim.lsp.diagnostic.set_loclist()<CR>
 
-" workspace stuff
-nnoremap <silent> <Leader>pwa <cmd>lua vim.lsp.buf.add_workspace_folder()<CR>
-nnoremap <silent> <Leader>pwr <cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>
-nnoremap <silent> <Leader>pwl <cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>
+" " workspace stuff
+" nnoremap <silent> <Leader>pwa <cmd>lua vim.lsp.buf.add_workspace_folder()<CR>
+" nnoremap <silent> <Leader>pwr <cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>
+" nnoremap <silent> <Leader>pwl <cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>
 
-" refactor stuff
-nnoremap <Leader>nrr <cmd>lua vim.lsp.buf.rename()<CR>
-nnoremap ,rr <cmd>lua vim.lsp.buf.rename()<CR>
-nnoremap <Leader>na <cmd>lua vim.lsp.buf.code_action()<CR>
-nnoremap ,a <cmd>lua vim.lsp.buf.code_action()<CR>
-vnoremap <Leader>na <cmd>lua vim.lsp.buf.range_code_action()<CR>
-vnoremap ,a <cmd>lua vim.lsp.buf.range_code_action()<CR>
+" " refactor stuff
+" nnoremap <Leader>nrr <cmd>lua vim.lsp.buf.rename()<CR>
+" nnoremap ,rr <cmd>lua vim.lsp.buf.rename()<CR>
+" nnoremap <Leader>na <cmd>lua vim.lsp.buf.code_action()<CR>
+" nnoremap ,a <cmd>lua vim.lsp.buf.code_action()<CR>
+" vnoremap <Leader>na <cmd>lua vim.lsp.buf.range_code_action()<CR>
+" vnoremap ,a <cmd>lua vim.lsp.buf.range_code_action()<CR>
 " nnoremap <Leader>fF <cmd>lua vim.lsp.buf.formatting()<CR>
 nnoremap <Leader>ff :Neoformat<CR>
 
@@ -734,138 +754,158 @@ require'nvim-treesitter.configs'.setup {
     -- Instead of true it can also be a list of languages
     additional_vim_regex_highlighting = false,
   },
+
+  indent = {enable = true},
+}
+
+local lsp_flags = {
+  -- This is the default in Nvim 0.7+
+  debounce_text_changes = 150,
+}
+
+local lspconfig = require "lspconfig"
+
+lspconfig['elixirls'].setup{
+    on_attach = on_attach,
+    flags = lsp_flags,
+    -- prioritize outside umbrella
+    root_dir = lspconfig.util.root_pattern(".git") or lspconfig.util.root_pattern("mix.exs") or vim.loop.os_homedir(),
 }
 EOF
 
 " make sure it's not saved in the workspace
 autocmd VimLeave * NERDTreeClose
 
-"" which key for help
-nnoremap <silent> <leader>      :<c-u>WhichKey '<Space>'<CR>
-nnoremap <silent> <localleader> :<c-u>WhichKey  '<Space>'<CR>
+" "" which key for help
+" nnoremap <silent> <leader>      :<c-u>WhichKey '<Space>'<CR>
+" nnoremap <silent> <localleader> :<c-u>WhichKey  '<Space>'<CR>
 
-call which_key#register('<Space>', "g:which_key_map")
+" call which_key#register('<Space>', "g:which_key_map")
 
-" Define prefix dictionary
-let g:which_key_map = {
-      \ '*': 'workspace search for word under cursor',
-      \ '/': 'workspace search',
-      \ '1': 'switc to tab 1',
-      \ '2': 'switc to tab 2',
-      \ '3': 'switc to tab 3',
-      \ '4': 'switc to tab 4',
-      \ '5': 'switc to tab 5',
-      \ '6': 'switc to tab 6',
-      \ }
+" " Define prefix dictionary
+" let g:which_key_map = {
+"       \ '*': 'workspace search for word under cursor',
+"       \ '/': 'workspace search',
+"       \ '1': 'switc to tab 1',
+"       \ '2': 'switc to tab 2',
+"       \ '3': 'switc to tab 3',
+"       \ '4': 'switc to tab 4',
+"       \ '5': 'switc to tab 5',
+"       \ '6': 'switc to tab 6',
+"       \ }
 
-let g:which_key_map.b = {
-      \ 'name' : '+buffers' ,
-      \ '/' : 'fuzzy search in current buffer',
-      \ 'h' : 'MRU buffer history',
-      \ 'b' : 'currently open buffers',
-      \ 'd' : 'delete current buffer',
-      \ 'n' : 'next buffer',
-      \ 'p' : 'prev buffer',
-      \ }
+" let g:which_key_map.b = {
+"       \ 'name' : '+buffers' ,
+"       \ '/' : 'fuzzy search in current buffer',
+"       \ 'h' : 'MRU buffer history',
+"       \ 'b' : 'currently open buffers',
+"       \ 'd' : 'delete current buffer',
+"       \ 'n' : 'next buffer',
+"       \ 'p' : 'prev buffer',
+"       \ }
 
-let g:which_key_map.c = {
-      \ 'name' : '+quickfix' ,
-      \ 'o' : 'open quickfix window',
-      \ 'O' : 'open quickfix window and search for FAILED',
-      \ 'c' : 'close quickfix window',
-      \ }
+" let g:which_key_map.c = {
+"       \ 'name' : '+quickfix' ,
+"       \ 'o' : 'open quickfix window',
+"       \ 'O' : 'open quickfix window and search for FAILED',
+"       \ 'c' : 'close quickfix window',
+"       \ }
 
-let g:which_key_map.e = {
-      \ 'name' : '+errors/diagnostics' ,
-      \ }
+" let g:which_key_map.e = {
+"       \ 'name' : '+errors/diagnostics' ,
+"       \ }
 
-let g:which_key_map.f = {
-      \ 'name' : '+file' ,
-      \ 'f' : 'format current using NeoFormat',
-      \ 'r' : 'check for updates from disk',
-      \ 'R' : 'hard reload file',
-      \ 'h' : 'switch between header and impl file',
-      \ }
+" let g:which_key_map.f = {
+"       \ 'name' : '+file' ,
+"       \ 'f' : 'format current using NeoFormat',
+"       \ 'r' : 'check for updates from disk',
+"       \ 'R' : 'hard reload file',
+"       \ 'h' : 'switch between header and impl file',
+"       \ }
 
-let g:which_key_map.f.e = {
-      \ 'name' : '+essential-files' ,
-      \ 'd' : 'open init.vim',
-      \ 'D' : 'open dotfiles in new tab',
-      \ 'p' : 'open puter in new tab',
-      \ 'v' : 'open .vimrc',
-      \ 'r' : 'source init.vim',
-      \ }
+" let g:which_key_map.f.e = {
+"       \ 'name' : '+essential-files' ,
+"       \ 'd' : 'open init.vim',
+"       \ 'D' : 'open dotfiles in new tab',
+"       \ 'p' : 'open puter in new tab',
+"       \ 'v' : 'open .vimrc',
+"       \ 'r' : 'source init.vim',
+"       \ }
 
-let g:which_key_map.g = {
-      \ 'b' : 'git blame',
-      \ 'c' : 'git commit',
-      \ 'd' : 'go to definition',
-      \ 'f' : 'go to file under cursor',
-      \ 'g' : 'custom git command',
-      \ 'i' : 'go to implementation',
-      \ 'u' : 'copy github url to current line',
-      \ 'l' : 'open git log',
-      \ 'L' : 'open git log in new tab',
-      \ 'name' : '+git/goto' ,
-      \ 'p' : 'git push/shove',
-      \ 's' : 'git status',
-      \ '/' : {
-      \     'name': '+git-search',
-      \     'c': 'search through all commits',
-      \     'b': 'search commits for the given file',
-      \   }
-      \ }
+" let g:which_key_map.g = {
+"       \ 'b' : 'git blame',
+"       \ 'c' : 'git commit',
+"       \ 'd' : 'go to definition',
+"       \ 'f' : 'go to file under cursor',
+"       \ 'g' : 'custom git command',
+"       \ 'i' : 'go to implementation',
+"       \ 'u' : 'copy github url to current line',
+"       \ 'l' : 'open git log',
+"       \ 'L' : 'open git log in new tab',
+"       \ 'name' : '+git/goto' ,
+"       \ 'p' : 'git push/shove',
+"       \ 's' : 'git status',
+"       \ '/' : {
+"       \     'name': '+git-search',
+"       \     'c': 'search through all commits',
+"       \     'b': 'search commits for the given file',
+"       \   }
+"       \ }
 
-let g:which_key_map.m = {
-      \ 'name' : '+make' ,
-      \ }
+" let g:which_key_map.m = {
+"       \ 'name' : '+make' ,
+"       \ }
 
-let g:which_key_map.p = {
-      \ 'name' : '+project/plug' ,
-      \ 'r' : 'set project root to current file dir' ,
-      \ 'R' : 'print project root' ,
-      \ 's' : 'project save - write all open files' ,
-      \ 'u' : 'update Plugs' ,
-      \ 'w' : 'which_key_ignore' ,
-      \ }
+" let g:which_key_map.p = {
+"       \ 'name' : '+project/plug' ,
+"       \ 'r' : 'set project root to current file dir' ,
+"       \ 'R' : 'print project root' ,
+"       \ 's' : 'project save - write all open files' ,
+"       \ 'u' : 'update Plugs' ,
+"       \ 'w' : 'which_key_ignore' ,
+"       \ }
 
-let g:which_key_map.q = {
-      \ 'name' : '+quit' ,
-      \ 'q' : 'quit neovim',
-      \ }
+" let g:which_key_map.q = {
+"       \ 'name' : '+quit' ,
+"       \ 'q' : 'quit neovim',
+"       \ }
 
-let g:which_key_map.s = {
-      \ 'name' : '+search' ,
-      \ 'f' : 'fuzzy search, order by file path' ,
-      \ 'c' : 'count search hits in current buffer' ,
-      \ '/' : 'fuzzy search, order by match' ,
-      \ 'l' : 'resume last used search (order by match)' ,
-      \ 'L' : 'resume last used search (order by file path)' ,
-      \ }
+" let g:which_key_map.s = {
+"       \ 'name' : '+search' ,
+"       \ 'f' : 'fuzzy search, order by file path' ,
+"       \ 'c' : 'count search hits in current buffer' ,
+"       \ '/' : 'fuzzy search, order by match' ,
+"       \ 'l' : 'resume last used search (order by match)' ,
+"       \ 'L' : 'resume last used search (order by file path)' ,
+"       \ }
 
-let g:which_key_map.t = {
-      \ 'name' : '+tab/toggle' ,
-      \ }
+" let g:which_key_map.t = {
+"       \ 'name' : '+tab/toggle' ,
+"       \ }
 
-let g:which_key_map.w = {
-      \ 'name' : '+window' ,
-      \ '/' : 'split vertically' ,
-      \ '-' : 'split horizontally' ,
-      \ 'l' : '->' ,
-      \ 'h' : '<-' ,
-      \ 'k' : '/\' ,
-      \ 'j' : '\/' ,
-      \ 'm' : 'maximize' ,
-      \ 'n' : 'next window' ,
-      \ 'o' : 'make this the Only window' ,
-      \ 'w' : 'swap this window with...' ,
-      \ '=' : 'distribute windows equally' ,
-      \ }
+" let g:which_key_map.w = {
+"       \ 'name' : '+window' ,
+"       \ '/' : 'split vertically' ,
+"       \ '-' : 'split horizontally' ,
+"       \ 'l' : '->' ,
+"       \ 'h' : '<-' ,
+"       \ 'k' : '/\' ,
+"       \ 'j' : '\/' ,
+"       \ 'm' : 'maximize' ,
+"       \ 'n' : 'next window' ,
+"       \ 'o' : 'make this the Only window' ,
+"       \ 'w' : 'swap this window with...' ,
+"       \ '=' : 'distribute windows equally' ,
+"       \ }
 
-let g:which_key_map.y = {
-      \ 'name' : '+copy-special' ,
-      \ 'f' : 'relative path (src/foo.txt)' ,
-      \ 'F' : 'absolute path (/tmp/src/foo.txt)' ,
-      \ 't' : 'filename (foo.txt)' ,
-      \ 'd' : 'directory name (/tmp/src)' ,
-      \ }
+" let g:which_key_map.y = {
+"       \ 'name' : '+copy-special' ,
+"       \ 'f' : 'relative path (src/foo.txt)' ,
+"       \ 'F' : 'absolute path (/tmp/src/foo.txt)' ,
+"       \ 't' : 'filename (foo.txt)' ,
+"       \ 'd' : 'directory name (/tmp/src)' ,
+"       \ }
+
+" let g:which_key_map.d = {
+"       \ 'name' : '+diagnostics' ,
+"       \ }

@@ -29,3 +29,5 @@
   trustExitCode = true
 [push]
   default = simple
+[init]
+	defaultBranch = master
