@@ -47,7 +47,7 @@ let g:maplocalleader="\<SPACE>"
 
 
 " make the leader key timeout a bit longer
-set timeoutlen=2000
+set timeoutlen=1000
 
 " set foldmethod=manual
 "set foldmethod=indent
@@ -152,7 +152,7 @@ require("lazy").setup(
   {"sbdchd/neoformat"},
   {"wesQ3/vim-windowswap"},
   {"tpope/vim-commentary"},
-  {"tpope/vim-abolish"},
+--  {"tpope/vim-abolish"},
 
   {"nvim-lua/plenary.nvim"},
   {"dart-lang/dart-vim-plugin"},
@@ -165,6 +165,7 @@ require("lazy").setup(
   {"janko/vim-test"},
   {"tpope/vim-dispatch"},
   {"tpope/vim-eunuch"},
+  {"tpope/vim-surround"},
 
   {"thaerkh/vim-workspace"},
 
@@ -191,6 +192,18 @@ require("lazy").setup(
 
   {"VonHeikemen/lsp-zero.nvim", branch = "v2.x"},
   {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
+  {
+    "folke/which-key.nvim",
+    config = function()
+      --vim.o.timeout = true
+      --vim.o.timeoutlen = 300
+      require("which-key").setup({
+        -- your configuration comes here
+        -- or leave it empty to use the default settings
+        -- refer to the configuration section below
+      })
+    end,
+  },
 })
 
 EOF
@@ -777,136 +790,107 @@ EOF
 " make sure it's not saved in the workspace
 autocmd VimLeave * NERDTreeClose
 
-" "" which key for help
-" nnoremap <silent> <leader>      :<c-u>WhichKey '<Space>'<CR>
-" nnoremap <silent> <localleader> :<c-u>WhichKey  '<Space>'<CR>
-
-" call which_key#register('<Space>', "g:which_key_map")
-
-" " Define prefix dictionary
-" let g:which_key_map = {
-"       \ '*': 'workspace search for word under cursor',
-"       \ '/': 'workspace search',
-"       \ '1': 'switc to tab 1',
-"       \ '2': 'switc to tab 2',
-"       \ '3': 'switc to tab 3',
-"       \ '4': 'switc to tab 4',
-"       \ '5': 'switc to tab 5',
-"       \ '6': 'switc to tab 6',
-"       \ }
-
-" let g:which_key_map.b = {
-"       \ 'name' : '+buffers' ,
-"       \ '/' : 'fuzzy search in current buffer',
-"       \ 'h' : 'MRU buffer history',
-"       \ 'b' : 'currently open buffers',
-"       \ 'd' : 'delete current buffer',
-"       \ 'n' : 'next buffer',
-"       \ 'p' : 'prev buffer',
-"       \ }
-
-" let g:which_key_map.c = {
-"       \ 'name' : '+quickfix' ,
-"       \ 'o' : 'open quickfix window',
-"       \ 'O' : 'open quickfix window and search for FAILED',
-"       \ 'c' : 'close quickfix window',
-"       \ }
-
-" let g:which_key_map.e = {
-"       \ 'name' : '+errors/diagnostics' ,
-"       \ }
-
-" let g:which_key_map.f = {
-"       \ 'name' : '+file' ,
-"       \ 'f' : 'format current using NeoFormat',
-"       \ 'r' : 'check for updates from disk',
-"       \ 'R' : 'hard reload file',
-"       \ 'h' : 'switch between header and impl file',
-"       \ }
-
-" let g:which_key_map.f.e = {
-"       \ 'name' : '+essential-files' ,
-"       \ 'd' : 'open init.vim',
-"       \ 'D' : 'open dotfiles in new tab',
-"       \ 'p' : 'open puter in new tab',
-"       \ 'v' : 'open .vimrc',
-"       \ 'r' : 'source init.vim',
-"       \ }
-
-" let g:which_key_map.g = {
-"       \ 'b' : 'git blame',
-"       \ 'c' : 'git commit',
-"       \ 'd' : 'go to definition',
-"       \ 'f' : 'go to file under cursor',
-"       \ 'g' : 'custom git command',
-"       \ 'i' : 'go to implementation',
-"       \ 'u' : 'copy github url to current line',
-"       \ 'l' : 'open git log',
-"       \ 'L' : 'open git log in new tab',
-"       \ 'name' : '+git/goto' ,
-"       \ 'p' : 'git push/shove',
-"       \ 's' : 'git status',
-"       \ '/' : {
-"       \     'name': '+git-search',
-"       \     'c': 'search through all commits',
-"       \     'b': 'search commits for the given file',
-"       \   }
-"       \ }
-
-" let g:which_key_map.m = {
-"       \ 'name' : '+make' ,
-"       \ }
-
-" let g:which_key_map.p = {
-"       \ 'name' : '+project/plug' ,
-"       \ 'r' : 'set project root to current file dir' ,
-"       \ 'R' : 'print project root' ,
-"       \ 's' : 'project save - write all open files' ,
-"       \ 'u' : 'update Plugs' ,
-"       \ 'w' : 'which_key_ignore' ,
-"       \ }
-
-" let g:which_key_map.q = {
-"       \ 'name' : '+quit' ,
-"       \ 'q' : 'quit neovim',
-"       \ }
-
-" let g:which_key_map.s = {
-"       \ 'name' : '+search' ,
-"       \ 'f' : 'fuzzy search, order by file path' ,
-"       \ 'c' : 'count search hits in current buffer' ,
-"       \ '/' : 'fuzzy search, order by match' ,
-"       \ 'l' : 'resume last used search (order by match)' ,
-"       \ 'L' : 'resume last used search (order by file path)' ,
-"       \ }
-
-" let g:which_key_map.t = {
-"       \ 'name' : '+tab/toggle' ,
-"       \ }
-
-" let g:which_key_map.w = {
-"       \ 'name' : '+window' ,
-"       \ '/' : 'split vertically' ,
-"       \ '-' : 'split horizontally' ,
-"       \ 'l' : '->' ,
-"       \ 'h' : '<-' ,
-"       \ 'k' : '/\' ,
-"       \ 'j' : '\/' ,
-"       \ 'm' : 'maximize' ,
-"       \ 'n' : 'next window' ,
-"       \ 'o' : 'make this the Only window' ,
-"       \ 'w' : 'swap this window with...' ,
-"       \ '=' : 'distribute windows equally' ,
-"       \ }
-
-" let g:which_key_map.y = {
-"       \ 'name' : '+copy-special' ,
-"       \ 'f' : 'relative path (src/foo.txt)' ,
-"       \ 'F' : 'absolute path (/tmp/src/foo.txt)' ,
-"       \ 't' : 'filename (foo.txt)' ,
-"       \ 'd' : 'directory name (/tmp/src)' ,
-"       \ }
-
-" let g:which_key_map.d = {
-"       \ 'name' : '+diagnostics' ,
-"       \ }
+lua <<EOF
+local wk = require("which-key")
+wk.register({
+  ["*"] = {"workspaces search for word under cursor"},
+  ["/"] = {"workspaces search"},
+  ["1"] = {"switch to tab 1"},
+  ["2"] = {"switch to tab 2"},
+  ["3"] = {"switch to tab 3"},
+  ["4"] = {"switch to tab 4"},
+  ["5"] = {"switch to tab 5"},
+  ["6"] = {"switch to tab 6"},
+  b = {
+    name = "buffers",
+    ["/"] = {"fuzzy search in current buffer"},
+    h = "MRU buffer history",
+    b = "currently open buffers",
+    d = "delete current buffer",
+    n = "next buffer",
+    p = "prev buffer",
+    },
+  c = {
+    name = "quickfix",
+    o = "open quickfix window",
+    O = "open quickfix window and search for FAILED",
+    c = "close quickfix window",
+  },
+  e = {name = "errors/diagonostics"},
+  f = {
+    name = "file", 
+    f = "format current using NeoFormat",
+    r = "check for updates from disk",
+    R = "hard reload file",
+    h = "switch between header and impl file",
+    e = {
+      name = "essential-files",
+      d = "open init.vim",
+      D = "open dotfiles in new tab",
+      p = "open puter in new tab",
+      v = "open .vimrc",
+      r = "source init.vim",
+      },
+    },
+  g = {
+    name = "git/goto",
+    b = "git blame",
+    c = "git commit",
+    d = "go to definition",
+    f = "go to file under cursor",
+    g = "custom git command",
+    i = "go to implementation",
+    u = "copy github url to current line",
+    l = "open git log",
+    L = "open git log in new tab",
+    p = "git push/shove",
+    s = "git status",
+    ["/"] = {
+      name = "git search",
+      c = "search through all commits",
+      b = "search commits for the given file",
+      }
+    },
+  m = {name = "make"},
+  p = {
+    name = "project / plug",
+    r = "set project root to current file dir" ,
+    R = "print project root" ,
+    s = "project save - write all open files" ,
+    u = "update Plugs" ,
+    w = "which_key_ignore" ,
+    },
+  q = {name = "quit"},
+  s = {
+    name = "search",
+    f = "fuzzy search, order by file path" ,
+    c = "count search hits in current buffer" ,
+    ["/"] = "fuzzy search, order by match" ,
+    l = "resume last used search (order by match)" ,
+    L = "resume last used search (order by file path)" ,
+  },
+  t = {name = "tabs/toggle"},
+  w = {
+    name = "windows",
+    ["/"] = "split vertically" ,
+    ["-"] = "split horizontally" ,
+    l = "->" ,
+    h = "<-" ,
+    k = "up" ,
+    j = "down" ,
+    m = "maximize" ,
+    n = "next window" ,
+    o = "make this the Only window" ,
+    w = "swap this window with..." ,
+    ["="] = "distribute windows equally" ,
+    },
+  y = {
+    name = "copy special",
+    f = "relative path (src/foo.txt)" ,
+    F = "absolute path (/tmp/src/foo.txt)" ,
+    t = "filename (foo.txt)" ,
+    d = "directory name (/tmp/src)" ,
+    },
+  d = {name = "diagnostics - TODO"},
+}, {prefix = "<leader>"})
+EOF
