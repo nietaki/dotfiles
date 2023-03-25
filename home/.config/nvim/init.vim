@@ -169,7 +169,8 @@ require("lazy").setup(
   {"janko/vim-test"},
   {"tpope/vim-dispatch"},
   {"tpope/vim-eunuch"},
-  {"tpope/vim-surround"},
+  --{"tpope/vim-surround"},
+  { 'echasnovski/mini.surround', version = '*' },
 
   {"thaerkh/vim-workspace"},
 
@@ -542,6 +543,7 @@ let g:workspace_autosave_untrailspaces = 0
 
 "" telescope and workspace
 lua <<EOF
+require('mini.surround').setup()
 require("project_nvim").setup {
     -- Manual mode doesn't automatically change your root directory, so you have
     -- the option to manually do so using `:ProjectRoot` command.
