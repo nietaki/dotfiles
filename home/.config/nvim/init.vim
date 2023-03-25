@@ -113,6 +113,10 @@ set smartcase           " ... unless the query has capital letters.
 let g:python_host_prog='/home/nietaki/.asdf/shims/python2'
 let g:python3_host_prog='/home/nietaki/.asdf/shims/python3'
 
+set sessionoptions+=winpos,terminal,folds
+set sessionoptions-=tabpages
+
+
 """
 """ Plugins
 """
@@ -158,7 +162,7 @@ require("lazy").setup(
   {"dart-lang/dart-vim-plugin"},
   {"akinsho/flutter-tools.nvim"},
 
-  {"townk/vim-autoclose"},
+  --{"townk/vim-autoclose"},
   {"terryma/vim-multiple-cursors"},
   {"nelstrom/vim-visual-star-search"},
 
@@ -204,6 +208,12 @@ require("lazy").setup(
       })
     end,
   },
+  {
+  'nvim-telescope/telescope.nvim', tag = '0.1.1',
+    dependencies = { 'nvim-lua/plenary.nvim' }
+  },
+  {"ahmedkhalf/project.nvim"},
+  {'nvim-telescope/telescope-fzf-native.nvim', build = "make" }
 })
 
 EOF
@@ -259,6 +269,7 @@ nnoremap <Leader>w- :sp <CR>
 nnoremap <Leader>wd :hide<CR>
 " save all open buffers
 nnoremap <Leader>ps :wa<CR>
+nnoremap <Leader>ph :CloseHiddenBuffers<CR>
 
 nnoremap <Leader>tw :ToggleWorkspace<CR>
 
@@ -322,7 +333,14 @@ let $FZF_DEFAULT_COMMAND = 'ag --ignore-dir .git --hidden -g ""'
 let g:fzf_history_dir = '~/.fzf-history'
 
 " go to file in project
-nmap <C-l> :FZF<CR>
+" nmap <C-l> :FZF<CR>
+" nnoremap <C-l> <cmd>Telescope find_files find_command=rg,--ignore,--hidden,--files<cr>
+nnoremap <C-l> <cmd>lua require("telescope.builtin").find_files({hidden = true})<cr>
+
+" nnoremap <leader>hf <cmd>Telescope find_files<cr>
+" nnoremap <leader>hg <cmd>Telescope live_grep<cr>
+" nnoremap <leader>hb <cmd>Telescope buffers<cr>
+" nnoremap <leader>hh <cmd>Telescope help_tags<cr>
 
 " remember, we can always go to file under cursor with gf
 nnoremap <Leader>gf gF
@@ -334,7 +352,8 @@ nnoremap <Leader>wf <C-w>F
 set path=.,,apps/chat,apps/auth,apps/shared,/usr/include,
 
 " nnoremap <Leader>bb :CtrlPBuffer<CR>
-nnoremap <Leader>bb :Buffers<CR>
+" nnoremap <Leader>bb :Buffers<CR>
+nnoremap <leader>bb <cmd>Telescope buffers<cr>
 " recent buffer history
 nnoremap <Leader>bh :CtrlPMRUFiles<CR>
 
@@ -356,8 +375,9 @@ nnoremap <Leader>* :Ag <C-R><C-W><CR>
 nmap <Leader>sf :Ag<CR>
 " intentional space
 "nmap <Leader>/ :Ag
-nmap <Leader>/ :AgFuzzy<CR>
-nmap <Leader>s/ :AgFuzzy<CR>
+nmap <Leader>; :AgFuzzy<CR>
+" nmap <Leader>s/ :AgFuzzy<CR>
+nnoremap <leader>/ <cmd>Telescope grep_string<cr>
 
 " resume last :Ag search
 nmap <Leader>sL :Ag<CR><C-p>
@@ -367,6 +387,13 @@ nmap <Leader>b/ :BLines<CR>
 
 " count literal searches in this file
 nmap <Leader>sc :vimgrep //g%<CR>
+nnoremap <leader>sh <cmd>Telescope help_tags<cr>
+
+" REMEMBER for global search and replace
+" https://stackoverflow.com/a/38004355/246337
+" :grep <search term>
+" :cfdo %s/<search term>/<replace term>/gc
+" (If you want to save the changes in all files) :cfdo update
 
 " example:
 " :vimgrep /dostuff()/j ../**/*.c
@@ -513,6 +540,95 @@ let g:workspace_session_disable_on_args = 1
 let g:workspace_autosave = 0
 let g:workspace_autosave_untrailspaces = 0
 
+"" telescope and workspace
+lua <<EOF
+require("project_nvim").setup {
+    -- Manual mode doesn't automatically change your root directory, so you have
+    -- the option to manually do so using `:ProjectRoot` command.
+    manual_mode = false,
+
+    -- Methods of detecting the root directory. **"lsp"** uses the native neovim
+    -- lsp, while **"pattern"** uses vim-rooter like glob pattern matching. Here
+    -- order matters: if one is not detected, the other is used as fallback. You
+    -- can also delete or rearangne the detection methods.
+    detection_methods = { "lsp", "pattern" },
+
+    -- All the patterns used to detect root dir, when **"pattern"** is in
+    -- detection_methods
+    patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json" },
+
+    -- Table of lsp clients to ignore by name
+    -- eg: { "efm", ... }
+    ignore_lsp = {},
+
+    -- Don't calculate root dir on specific directories
+    -- Ex: { "~/.cargo/*", ... }
+    exclude_dirs = {},
+
+    -- Show hidden files in telescope
+    show_hidden = true,
+
+    -- When set to false, you will get a message when project.nvim changes your
+    -- directory.
+    silent_chdir = false,
+
+    -- What scope to change the directory, valid options are
+    -- * global (default)
+    -- * tab
+    -- * win
+    scope_chdir = 'tab',
+
+    -- Path where project.nvim will store the project history for use in
+    -- telescope
+    datapath = vim.fn.stdpath("data"),
+  }
+
+local actions = require "telescope.actions"
+require('telescope').setup{
+  defaults = {
+    -- Default configuration for telescope goes here:
+    -- config_key = value,
+    file_ignore_patterns = {"node_modules", ".git/", "_build", "deps/"},
+    mappings = {
+      i = {
+      ["<C-j>"] = actions.move_selection_next,
+      ["<C-k>"] = actions.move_selection_previous,
+        -- map actions.which_key to <C-h> (default: <C-/>)
+        -- actions.which_key shows the mappings for your picker,
+        -- e.g. git_{create, delete, ...}_branch for the git_branches picker
+        --["<C-h>"] = "which_key"
+      },
+      n = {
+      ["<C-j>"] = actions.move_selection_next,
+      ["<C-k>"] = actions.move_selection_previous,
+      }
+    }
+  },
+  pickers = {
+    -- Default configuration for builtin pickers goes here:
+    -- picker_name = {
+    --   picker_config_key = value,
+    --   ...
+    -- }
+    -- Now the picker_config_key will be applied every time you call this
+    -- builtin picker
+  },
+  extensions = {
+    fzf = {
+      fuzzy = true,                    -- false will only do exact matching
+      override_generic_sorter = true,  -- override the generic sorter
+      override_file_sorter = true,     -- override the file sorter
+      case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
+                                       -- the default case_mode is "smart_case"
+    }
+  }
+}
+require('telescope').load_extension('fzf')
+require('telescope').load_extension('projects')
+
+vim.keymap.set('n', '<leader>pp', function() require'telescope'.extensions.projects.projects{} end)
+EOF
+
 
 "" LSP related code
 " https://github.com/ThePrimeagen/init.lua/blob/249f3b14cc517202c80c6babd0f9ec548351ec71/after/plugin/lsp.lua
@@ -640,7 +756,7 @@ nnoremap <Leader>dli :LspInfo<CR>
 " vnoremap <Leader>na <cmd>lua vim.lsp.buf.range_code_action()<CR>
 " vnoremap ,a <cmd>lua vim.lsp.buf.range_code_action()<CR>
 " nnoremap <Leader>fF <cmd>lua vim.lsp.buf.formatting()<CR>
-nnoremap <Leader>ff :Neoformat<CR>
+nnoremap <Leader>fF :Neoformat<CR>
 
 " flutter / dart config
 "

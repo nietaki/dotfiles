@@ -1,5 +1,5 @@
-erlang latest
-elixir latest
+elixir 1.14.3-otp-25
+erlang 25
 rebar latest
 nodejs latest
 python latest 2.7.17
