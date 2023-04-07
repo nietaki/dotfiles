@@ -129,3 +129,5 @@ export SDKMAN_DIR="/home/nietaki/.sdkman"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 eval "$(rtx activate bash)"
+
+alias asdf=rtx

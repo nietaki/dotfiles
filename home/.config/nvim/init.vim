@@ -194,6 +194,7 @@ require("lazy").setup(
   {"L3MON4D3/LuaSnip"},
   {"hrsh7th/cmp-path"},
   {"hrsh7th/cmp-buffer"},
+  {'simrat39/symbols-outline.nvim'},
 
   {"VonHeikemen/lsp-zero.nvim", branch = "v2.x"},
   {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
@@ -366,7 +367,8 @@ command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, s:ag_options, {'options': '
 " command! -bang -nargs=* AgFuzzy call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
 command! -bang -nargs=* AgFuzzy call fzf#vim#ag(<q-args>, s:ag_options, {'options': '--delimiter : --nth 4..'}, <bang>0)
 
-nnoremap <Leader>* :Ag <C-R><C-W><CR>
+" nnoremap <Leader>* :Ag <C-R><C-W><CR>
+nnoremap <leader>* <cmd>Telescope grep_string<cr>
 
 " TODO and set this to <Leader>*
 "fu! FzfAgCurrWord()
@@ -378,7 +380,7 @@ nmap <Leader>sf :Ag<CR>
 "nmap <Leader>/ :Ag
 nmap <Leader>; :AgFuzzy<CR>
 " nmap <Leader>s/ :AgFuzzy<CR>
-nnoremap <leader>/ <cmd>Telescope grep_string<cr>
+nnoremap <leader>/ <cmd>Telescope grep_string search=<cr>
 
 " resume last :Ag search
 nmap <Leader>sL :Ag<CR><C-p>
@@ -694,12 +696,12 @@ lsp.on_attach(function(client, bufnr)
   vim.keymap.set("n", "<leader>dd", function() vim.lsp.buf.definition() end, bufopts)
   vim.keymap.set("n", "<leader>di", function() vim.lsp.buf.implementation() end, bufopts)
   vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, bufopts)
-  vim.keymap.set("n", "<C-k>", function() vim.lsp.buf.signature_help() end, bufopts)
 
-  vim.keymap.set('n', '<space>da', vim.lsp.buf.code_action, bufopts)
-  vim.keymap.set('v', '<space>da', vim.lsp.buf.range_code_action, bufopts)
+  vim.keymap.set('n', '<leader>da', vim.lsp.buf.code_action, bufopts)
+  vim.keymap.set('v', '<leader>da', vim.lsp.buf.range_code_action, bufopts)
   vim.keymap.set('n', '<leader>drr', vim.lsp.buf.references, bufopts)
-  vim.keymap.set('n', '<space>dR', vim.lsp.buf.rename, bufopts)
+  vim.keymap.set('n', '<leader>dR', vim.lsp.buf.rename, bufopts)
+  vim.keymap.set('n', '<leader>do', '<Cmd>SymbolsOutline<CR>', bufopts)
 
   vim.keymap.set('n', '<leader>dwa', vim.lsp.buf.add_workspace_folder, bufopts)
   vim.keymap.set('n', '<leader>dwr', vim.lsp.buf.remove_workspace_folder, bufopts)
@@ -721,6 +723,8 @@ lsp.setup()
 vim.diagnostic.config({
     virtual_text = true
 })
+
+require("symbols-outline").setup()
 EOF
 
 nnoremap <Leader>dli :LspInfo<CR>
@@ -907,6 +911,7 @@ EOF
 
 " make sure it's not saved in the workspace
 autocmd VimLeave * NERDTreeClose
+autocmd VimLeave * SymbolsOutlineClose
 
 lua <<EOF
 local wk = require("which-key")
