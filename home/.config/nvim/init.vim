@@ -377,9 +377,9 @@ nnoremap <leader>* <cmd>Telescope grep_string<cr>
 
 nmap <Leader>sf :Ag<CR>
 " intentional space
-"nmap <Leader>/ :Ag
 nmap <Leader>; :AgFuzzy<CR>
 " nmap <Leader>s/ :AgFuzzy<CR>
+" nmap <Leader>/ :Ag<CR>
 nnoremap <leader>/ <cmd>Telescope grep_string search=<cr>
 
 " resume last :Ag search
@@ -656,7 +656,8 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
   ['<C-y>'] = cmp.mapping.confirm({ select = true }),
   ['<C-e>'] = cmp.mapping.abort(),
   ['<C-i>'] = cmp.mapping.abort(),
-  ['<CR>'] = cmp.mapping.confirm({ select = true }),
+  ['<C-h>'] = cmp.mapping.abort(),
+  ['<CR>'] = cmp.mapping.confirm({ select = false }),
   ['<C-l>'] = cmp.mapping.confirm({ select = true }),
   ['<C-u>'] = cmp.mapping.scroll_docs(-4),
   ['<C-d>'] = cmp.mapping.scroll_docs(4),
@@ -701,7 +702,8 @@ lsp.on_attach(function(client, bufnr)
   vim.keymap.set('v', '<leader>da', vim.lsp.buf.range_code_action, bufopts)
   vim.keymap.set('n', '<leader>drr', vim.lsp.buf.references, bufopts)
   vim.keymap.set('n', '<leader>dR', vim.lsp.buf.rename, bufopts)
-  vim.keymap.set('n', '<leader>do', '<Cmd>SymbolsOutline<CR>', bufopts)
+  -- implemented with a normal nnoremap
+  -- vim.keymap.set('n', '<leader>do', '<Cmd>SymbolsOutline<CR>', bufopts)
 
   vim.keymap.set('n', '<leader>dwa', vim.lsp.buf.add_workspace_folder, bufopts)
   vim.keymap.set('n', '<leader>dwr', vim.lsp.buf.remove_workspace_folder, bufopts)
@@ -726,6 +728,8 @@ vim.diagnostic.config({
 
 require("symbols-outline").setup()
 EOF
+
+nnoremap <Leader>do :SymbolsOutline<CR>
 
 nnoremap <Leader>dli :LspInfo<CR>
 
@@ -905,7 +909,7 @@ lspconfig['elixirls'].setup{
     on_attach = on_attach,
     flags = lsp_flags,
     -- prioritize outside umbrella
-    root_dir = lspconfig.util.root_pattern(".git") or lspconfig.util.root_pattern("mix.exs") or vim.loop.os_homedir(),
+    root_dir = lspconfig.util.root_pattern(".git", "mix.exs") or vim.loop.os_homedir(),
 }
 EOF
 
