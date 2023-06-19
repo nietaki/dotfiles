@@ -1,7 +1,4 @@
-elixir 1.14.3-otp-25
-erlang 25
-rebar latest
-nodejs latest
-python latest 2.7.17
-ruby latest
-kubectl latest
+nodejs 16.20.0
+erlang 25.3
+elixir 1.14.4-otp-25
+yarn 1.22.10

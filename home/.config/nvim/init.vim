@@ -215,7 +215,8 @@ require("lazy").setup(
     dependencies = { 'nvim-lua/plenary.nvim' }
   },
   {"ahmedkhalf/project.nvim"},
-  {'nvim-telescope/telescope-fzf-native.nvim', build = "make" }
+  {'nvim-telescope/telescope-fzf-native.nvim', build = "make" },
+  { "lukas-reineke/indent-blankline.nvim" },
 })
 
 EOF
@@ -432,7 +433,7 @@ nmap <C-k> <plug>(signify-prev-hunk)
 nmap <Leader>gs :Git<CR>
 nmap <Leader>gc :Git commit<CR>
 nmap <Leader>gp :Git shove<CR>
-nmap <Leader>gb :Gblame<CR>
+nmap <Leader>gb :Git blame<CR>
 nmap <Leader>gu :.GBrowse!<CR>
 let g:flog_default_opts = { 'max_count': 1000 }
 nmap <Leader>gl :Flogsplit<CR>
@@ -840,7 +841,6 @@ require'nvim-treesitter.configs'.setup {
     "c", 
     "lua", 
     "vim", 
-    "help", 
     "query", 
     "markdown",
     "markdown_inline",
