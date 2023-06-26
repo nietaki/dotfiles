@@ -186,17 +186,30 @@ require("lazy").setup(
   {"nvim-treesitter/playground"},
 
   {"neovim/nvim-lspconfig"},
-  {"williamboman/mason.nvim"},
-  {"williamboman/mason-lspconfig.nvim"},
-
-  {"hrsh7th/nvim-cmp"},
-  {"hrsh7th/cmp-nvim-lsp"},
-  {"L3MON4D3/LuaSnip"},
   {"hrsh7th/cmp-path"},
   {"hrsh7th/cmp-buffer"},
   {'simrat39/symbols-outline.nvim'},
 
-  {"VonHeikemen/lsp-zero.nvim", branch = "v2.x"},
+  {
+    'VonHeikemen/lsp-zero.nvim',
+    branch = 'v2.x',
+    dependencies = {
+      -- LSP Support
+      {'neovim/nvim-lspconfig'},             -- Required
+      {                                      -- Optional
+        'williamboman/mason.nvim',
+        build = function()
+          pcall(vim.cmd, 'MasonUpdate')
+        end,
+      },
+      {'williamboman/mason-lspconfig.nvim'}, -- Optional
+
+      -- Autocompletion
+      {'hrsh7th/nvim-cmp'},     -- Required
+      {'hrsh7th/cmp-nvim-lsp'}, -- Required
+      {'L3MON4D3/LuaSnip'},     -- Required
+    }
+  },
   {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
   {
     "folke/which-key.nvim",
@@ -380,8 +393,8 @@ nmap <Leader>sf :Ag<CR>
 " intentional space
 nmap <Leader>; :AgFuzzy<CR>
 " nmap <Leader>s/ :AgFuzzy<CR>
-" nmap <Leader>/ :Ag<CR>
-nnoremap <leader>/ <cmd>Telescope grep_string search=<cr>
+nmap <Leader>/ :Ag<CR>
+" nnoremap <leader>/ <cmd>Telescope grep_string search=<cr>
 
 " resume last :Ag search
 nmap <Leader>sL :Ag<CR><C-p>
@@ -451,6 +464,7 @@ nmap <Leader>g/b :BCommits<CR>
 
 nmap <C-_> gcc
 vmap <C-_> gc
+vmap <C-/> gc
 
 set clipboard=unnamedplus
 
@@ -560,7 +574,7 @@ require("project_nvim").setup {
 
     -- All the patterns used to detect root dir, when **"pattern"** is in
     -- detection_methods
-    patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json" },
+    patterns = { ".git", "mix.exs", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json" },
 
     -- Table of lsp clients to ignore by name
     -- eg: { "efm", ... }
@@ -638,13 +652,29 @@ EOF
 "" LSP related code
 " https://github.com/ThePrimeagen/init.lua/blob/249f3b14cc517202c80c6babd0f9ec548351ec71/after/plugin/lsp.lua
 lua <<EOF
-local lsp = require('lsp-zero')
-lsp.preset({'recommended'})
+-- local lsp = require('lsp-zero')
+-- lsp.preset({'recommended'})
+-- 
+-- lsp.ensure_installed({
+--   'elixirls', 
+--   'dockerls',
+-- })
 
-lsp.ensure_installed({
-  'elixirls', 
-  'dockerls',
-})
+local lsp = require('lsp-zero').preset({})
+
+-- lsp.on_attach(function(client, bufnr)
+--   lsp.default_keymaps({buffer = bufnr})
+-- end)
+
+
+-- When you don't have mason.nvim installed
+-- You'll need to list the servers installed in your system
+lsp.setup_servers({'elixirls', 'dockerls'})
+
+-- (Optional) Configure lua language server for neovim
+require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
+
+-- lsp.setup()
 
 local cmp = require('cmp')
 local cmp_select = {behavior = cmp.SelectBehavior.Select}
@@ -700,12 +730,13 @@ lsp.on_attach(function(client, bufnr)
   vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, bufopts)
 
   vim.keymap.set('n', '<leader>da', vim.lsp.buf.code_action, bufopts)
-  vim.keymap.set('v', '<leader>da', vim.lsp.buf.range_code_action, bufopts)
+-- This breaks lsp
+--   vim.keymap.set('v', '<leader>da', vim.lsp.buf.range_code_action, bufopts)
   vim.keymap.set('n', '<leader>drr', vim.lsp.buf.references, bufopts)
   vim.keymap.set('n', '<leader>dR', vim.lsp.buf.rename, bufopts)
   -- implemented with a normal nnoremap
-  -- vim.keymap.set('n', '<leader>do', '<Cmd>SymbolsOutline<CR>', bufopts)
-
+  vim.keymap.set('n', '<leader>do', '<Cmd>SymbolsOutline<CR>', bufopts)
+ 
   vim.keymap.set('n', '<leader>dwa', vim.lsp.buf.add_workspace_folder, bufopts)
   vim.keymap.set('n', '<leader>dwr', vim.lsp.buf.remove_workspace_folder, bufopts)
   vim.keymap.set('n', '<leader>dwl', function()
