@@ -156,7 +156,7 @@ require("lazy").setup(
   {"sbdchd/neoformat"},
   {"wesQ3/vim-windowswap"},
   {"tpope/vim-commentary"},
---  {"tpope/vim-abolish"},
+  {"tpope/vim-abolish"},
 
   {"nvim-lua/plenary.nvim"},
   {"dart-lang/dart-vim-plugin"},
@@ -207,7 +207,7 @@ require("lazy").setup(
       -- Autocompletion
       {'hrsh7th/nvim-cmp'},     -- Required
       {'hrsh7th/cmp-nvim-lsp'}, -- Required
-      {'L3MON4D3/LuaSnip'},     -- Required
+      {'L3MON4D3/LuaSnip', build = "make install_jsregexp" },     -- Required
     }
   },
   {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
@@ -224,12 +224,22 @@ require("lazy").setup(
     end,
   },
   {
-  'nvim-telescope/telescope.nvim', tag = '0.1.1',
+  'nvim-telescope/telescope.nvim', tag = '0.1.4',
     dependencies = { 'nvim-lua/plenary.nvim' }
   },
   {"ahmedkhalf/project.nvim"},
   {'nvim-telescope/telescope-fzf-native.nvim', build = "make" },
   { "lukas-reineke/indent-blankline.nvim" },
+  {
+    "S1M0N38/love2d.nvim",
+    cmd = "LoveRun",
+    opts = { },
+    keys = {
+      { "<leader>v", desc = "LÖVE" },
+      { "<leader>vv", "<cmd>LoveRun<cr>", desc = "Run LÖVE" },
+      { "<leader>vs", "<cmd>LoveStop<cr>", desc = "Stop LÖVE" },
+    },
+  }
 })
 
 EOF
@@ -260,6 +270,9 @@ nnoremap <Leader>fer :so ~/.config/nvim/init.vim<CR>
 """ Managing windows and buffers
 """
 
+let g:windowswap_map_keys = 0 "prevent default bindings
+nnoremap <silent> <leader>ws :call WindowSwap#EasyWindowSwap()<CR>
+
 " switching between the last two buffers in the window
 nnoremap <Leader><tab> :b#<CR>
 nnoremap <Leader>bp :bp<CR>
@@ -272,6 +285,14 @@ nnoremap <Leader>wk <C-W><C-K>
 nnoremap <Leader>wh <C-W><C-H>
 nnoremap <Leader>wn <C-W><C-W>
 nnoremap <Leader>wo <C-W><C-O>
+
+" last-used window
+nnoremap <Leader>ww <C-W><C-P>
+nnoremap <Leader>wp <C-W><C-P>
+" bottom-right window
+nnoremap <Leader>wL <C-W><C-B>
+" top-left window
+nnoremap <Leader>wH <C-W><C-T>
 
 " maximize the window
 nmap <Leader>wm <C-W>_<C-W>\|
@@ -375,7 +396,7 @@ nnoremap <Leader>bh :CtrlPMRUFiles<CR>
 
 "search just the contents
 "  " Default options are --nogroup --column --color
-let s:ag_options = ' --nogroup --column --color --hidden --ignore .git/ --ignore deps/ --ignore _build/ -W 300'
+let s:ag_options = ' --nogroup --column --color --hidden --ignore .git/ --ignore deps/ --ignore _build/ --ignore erl_crash.dump -W 300'
 " command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--no-sort --delimiter : --nth 4..'}, <bang>0)
 command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, s:ag_options, {'options': '--no-sort --delimiter : --nth 4..'}, <bang>0)
 " command! -bang -nargs=* AgFuzzy call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
@@ -393,7 +414,7 @@ nmap <Leader>sf :Ag<CR>
 " intentional space
 nmap <Leader>; :AgFuzzy<CR>
 " nmap <Leader>s/ :AgFuzzy<CR>
-nmap <Leader>/ :Ag<CR>
+nmap <Leader>/ :AgFuzzy<CR>
 " nnoremap <leader>/ <cmd>Telescope grep_string search=<cr>
 
 " resume last :Ag search
@@ -462,6 +483,7 @@ nmap <Leader>g/b :BCommits<CR>
 """ Editing
 """
 
+nmap <C-/> gcc
 nmap <C-_> gcc
 vmap <C-_> gc
 vmap <C-/> gc
@@ -471,6 +493,9 @@ set clipboard=unnamedplus
 " yank
 " relative path (src/foo.txt)
 nnoremap <leader>yf :let @+=expand("%")<CR><C-g>
+
+" relative path and line no (src/foo.txt:42)
+nnoremap <leader>yl :let @+=(expand("%") . ":" . line("."))<CR><C-g>
 
 " absolute path (/something/src/foo.txt)
 nnoremap <leader>yF :let @+=expand("%:p")<CR>
@@ -493,10 +518,13 @@ nnoremap <leader>yd :let @+=expand("%:p:h")<CR>
 " easy exiting terminal mode
 tnoremap <C-w> <C-\><C-n>
 tnoremap <C-s> <C-\><C-n>
+tnoremap <C-h> <C-\><C-n>
 
 " tnoremap <Esc><Esc> <C-\><C-n>
 " openint terminal in Terminal-mode (ready to go)
 autocmd TermOpen * startinsert
+autocmd FileType glsl setlocal commentstring=//\ %s
+autocmd FileType terraform setlocal commentstring=//\ %s
 
 """
 """ Look & feel
@@ -540,6 +568,7 @@ nnoremap <Leader>cd :cclose<CR>
 
 :command! -nargs=* Makes :Make! <args>
 nnoremap <Leader>m<Leader> :Make 
+nnoremap <Leader>mf :Dispatch! mix format<CR>
 nnoremap <Leader>mtc :Make! compile<CR>
 nnoremap <Leader>mtt :Make! test<CR>
 nnoremap <Leader>mtn :Make! test_native<CR>
@@ -550,6 +579,13 @@ nnoremap <Leader>mk :AbortDispatch<CR>
 
 " it's this time again
 nmap ,cl :silent !pdflatex %<CR>
+
+let g:markdown_recommended_style = 0
+nmap <Leader>mll :Dispatch! pkill -9 -f livebook; livebook server -p 9876 %:p<CR>
+nmap <Leader>mlk :Dispatch! pkill -9 -f livebook<CR>
+
+" this doesn't work for whatever reason?
+"map <silent> <C-i> i_<Esc>r
 
 " vim workspace
 
@@ -570,11 +606,14 @@ require("project_nvim").setup {
     -- lsp, while **"pattern"** uses vim-rooter like glob pattern matching. Here
     -- order matters: if one is not detected, the other is used as fallback. You
     -- can also delete or rearangne the detection methods.
-    detection_methods = { "lsp", "pattern" },
+    --detection_methods = { "lsp", "pattern" },
+    detection_methods = { "pattern", "lsp" },
 
     -- All the patterns used to detect root dir, when **"pattern"** is in
     -- detection_methods
-    patterns = { ".git", "mix.exs", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json" },
+    --patterns = { ".git", "mix.exs", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json" },
+    -- patterns = { ".git", "mix.exs"},
+    patterns = { "mix.exs", ".git"},
 
     -- Table of lsp clients to ignore by name
     -- eg: { "efm", ... }
@@ -607,7 +646,7 @@ require('telescope').setup{
   defaults = {
     -- Default configuration for telescope goes here:
     -- config_key = value,
-    file_ignore_patterns = {"node_modules", ".git/", "_build", "deps/"},
+    file_ignore_patterns = {"node_modules", ".git/", "_build", "deps/", "erl_crash.dump"},
     mappings = {
       i = {
       ["<C-j>"] = actions.move_selection_next,
@@ -686,7 +725,6 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
   ['<C-j>'] = cmp.mapping.select_next_item(cmp_select),
   ['<C-y>'] = cmp.mapping.confirm({ select = true }),
   ['<C-e>'] = cmp.mapping.abort(),
-  ['<C-i>'] = cmp.mapping.abort(),
   ['<C-h>'] = cmp.mapping.abort(),
   ['<CR>'] = cmp.mapping.confirm({ select = false }),
   ['<C-l>'] = cmp.mapping.confirm({ select = true }),
@@ -834,7 +872,7 @@ fun! TrimWhitespace()
     call winrestview(l:save)
 endfun
 
-autocmd BufWritePre *.ex,*.exs,*.rb,*.cpp,*.h,*.hpp :call TrimWhitespace()
+autocmd BufWritePre *.ex,*.exs,*.rb,*.cpp,*.h,*.hpp,*.lua :call TrimWhitespace()
 autocmd BufWritePre *.dart lua vim.lsp.buf.formatting_sync(nil, 100)
 
 " jumps between c++ header and definition files
@@ -858,6 +896,9 @@ set spelllang=en
 " :setlocal includeexpr=substitute(v:fname,'mynamespace/','','')
 " :set includeexpr=smagic(v:fname,':[0-9]+$','','g')
 
+autocmd BufNewFile,BufRead,BufReadPost *.livemd set filetype=markdown
+autocmd BufNewFile,BufRead,BufReadPost *.md set filetype=markdown syntax=markdown
+
 " https://github.com/tpope/vim-fugitive/issues/1446
 let g:fugitive_pty=0
 
@@ -879,7 +920,7 @@ require'nvim-treesitter.configs'.setup {
     "bash",
     "cpp",
     "dart",
-    "dockerfile",
+    --"dockerfile",
     "erlang",
     "elixir",
     "gleam",
@@ -940,7 +981,7 @@ lspconfig['elixirls'].setup{
     on_attach = on_attach,
     flags = lsp_flags,
     -- prioritize outside umbrella
-    root_dir = lspconfig.util.root_pattern(".git", "mix.exs") or vim.loop.os_homedir(),
+    root_dir = lspconfig.util.root_pattern("mix.exs", ".git") or vim.loop.os_homedir(),
 }
 EOF
 
@@ -1012,6 +1053,7 @@ wk.register({
   m = {name = "make"},
   p = {
     name = "project / plug",
+    p = "telescope show projects",
     r = "set project root to current file dir" ,
     R = "print project root" ,
     s = "project save - write all open files" ,

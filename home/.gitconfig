@@ -15,12 +15,15 @@
   ca = commit -a
   push-simple = push -u origin HEAD
   shove = push -u origin HEAD
+  force-fb = push -f origin HEAD:feature-branch
   delete-merged-branches = ! git branch --merged master | grep -v \"\\* master\" | xargs -n 1 git branch -d
   ego = summary --line
   visual = log --oneline --decorate --graph --all
-  recent = branch --sort=-committerdate 
   recents = for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
+  recent = ! git reflog | grep checkout | cut -d ' ' -f 8 | awk '!x[$0]++' | head -n 15 | nl
+  co-recent = "! git reflog | grep checkout | cut -d ' ' -f 8 | awk '!x[$0]++' | head -n 15 | sed -n -e \"$1p\" | xargs git checkout #" 
   empty = commit --allow-empty -m \"empty commit\"
+  reconsider = reset --soft HEAD~1
 [difftool "sourcetree"]
   cmd = opendiff \"$LOCAL\" \"$REMOTE\"
   path = 

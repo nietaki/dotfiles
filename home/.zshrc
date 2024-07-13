@@ -105,6 +105,11 @@ function gitroot () {
   cd $(git rev-parse --show-toplevel)
 }
 
+function run-livebook() {
+  pkill -9 -f livebook; 
+  livebook server "$1" --port 8769 >/dev/null 2>/dev/null &
+}
+
 export PATH="$HOME/Android/Sdk/tools:$PATH"
 export PATH="$HOME/Android/Sdk/tools/bin:$PATH"
 export PATH="$HOME/Android/Sdk/platform-tools:$PATH"
@@ -150,6 +155,13 @@ alias aws-login='aws-vault login -d 8h'
 
 export PG_OF_PATH=/home/nietaki/repos/of
 
-# RTX setup
-eval "$(rtx activate zsh)"
-alias -g asdf="rtx"
+# RTX/mise setup
+eval "$(mise activate zsh)"
+alias -g rtx="mise"
+alias -g asdf="mise"
+
+export PATH="/opt/homebrew/opt/avr-gcc@8/bin:$PATH"
+export PATH="/opt/homebrew/opt/arm-none-eabi-binutils/bin:$PATH"
+export PATH="/opt/homebrew/opt/arm-none-eabi-gcc@8/bin:$PATH"
+
+export GL_ENABLE_DEBUG_ATTACH=YES
