@@ -165,3 +165,21 @@ export PATH="/opt/homebrew/opt/arm-none-eabi-binutils/bin:$PATH"
 export PATH="/opt/homebrew/opt/arm-none-eabi-gcc@8/bin:$PATH"
 
 export GL_ENABLE_DEBUG_ATTACH=YES
+
+function run_until_fail {
+  while true; do
+      output=$("$@" 2>&1)
+      exit_code=$?
+      echo "$output"
+      if [ $exit_code -ne 0 ]; then
+          tput bel
+          timestamp=$(date +'%m-%d_%H-%M')
+          echo "$output" > "./failed_${exit_code}_${timestamp}.txt"
+          break
+      else
+          echo "$output" > ./succeeded.txt
+      fi
+  done
+}
+
+alias tf=terraform

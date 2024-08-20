@@ -524,6 +524,8 @@ tnoremap <C-h> <C-\><C-n>
 " openint terminal in Terminal-mode (ready to go)
 autocmd TermOpen * startinsert
 autocmd FileType glsl setlocal commentstring=//\ %s
+autocmd FileType glsl setlocal tabstop=4
+autocmd FileType glsl setlocal shiftwidth=4
 autocmd FileType terraform setlocal commentstring=//\ %s
 
 """
@@ -710,8 +712,37 @@ local lsp = require('lsp-zero').preset({})
 -- You'll need to list the servers installed in your system
 lsp.setup_servers({'elixirls', 'dockerls'})
 
+require("mason-lspconfig").setup {
+  ensure_installed = {"glsl_analyzer" },
+}
+
+-- :lua print(vim.inspect(require('lsp-zero').preset({}).nvim_lua_ls()))
+--{
+--  settings = {
+--    Lua = {
+--      diagnostics = {
+--        globals = { "vim" }
+--      },
+--      runtime = {
+--        path = { "./?.lua", "/opt/homebrew/share/luajit-2.1/?.lua", "/usr/local/share/lua/5.1/?.lua", "/usr/local/share/lua/5.1/?/init.lua", "/opt/homebrew/share/lua/5.1/?.lua", "/opt/homebrew/share/lua/5.1/?/init.lua", "/Users/nietaki/.local/share/nvim/lazy-rocks/telescope.nvim/sha
+--re/lua/5.1/?.lua", "/Users/nietaki/.local/share/nvim/lazy-rocks/telescope.nvim/share/lua/5.1/?/init.lua", "", "lua/?.lua", "lua/?/init.lua" },
+--        version = "LuaJIT"
+--      },
+--      telemetry = {
+--        enable = false
+--      },
+--      workspace = {
+--        checkThirdParty = false,
+--        library = { "/opt/homebrew/Cellar/neovim/0.9.5/share/nvim/runtime/lua", "/Users/nietaki/.config/nvim/lua" }
+--      }
+--    }
+--  }
+--}
+
 -- (Optional) Configure lua language server for neovim
-require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
+nvim_lua_ls_opts = {
+}
+require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls({}))
 
 -- lsp.setup()
 
@@ -835,7 +866,7 @@ nnoremap <Leader>dli :LspInfo<CR>
 " nnoremap ,a <cmd>lua vim.lsp.buf.code_action()<CR>
 " vnoremap <Leader>na <cmd>lua vim.lsp.buf.range_code_action()<CR>
 " vnoremap ,a <cmd>lua vim.lsp.buf.range_code_action()<CR>
-" nnoremap <Leader>fF <cmd>lua vim.lsp.buf.formatting()<CR>
+nnoremap <Leader>ff <cmd>lua vim.lsp.buf.formatting()<CR>
 nnoremap <Leader>fF :Neoformat<CR>
 
 " flutter / dart config
