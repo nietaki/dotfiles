@@ -239,7 +239,8 @@ require("lazy").setup(
       { "<leader>vv", "<cmd>LoveRun<cr>", desc = "Run LÖVE" },
       { "<leader>vs", "<cmd>LoveStop<cr>", desc = "Stop LÖVE" },
     },
-  }
+  },
+  {'github/copilot.vim'}
 })
 
 EOF
@@ -555,6 +556,16 @@ nnoremap ,tl :TestLast<CR>
 nnoremap ,tf :TestFile<CR>
 nnoremap ,ts :TestSuite<CR>
 nnoremap ,ta :TestSuite<CR>
+
+nnoremap ,cs :Copilot status<CR>
+nnoremap ,ce :Copilot enable<CR>
+nnoremap ,cd :Copilot disable<CR>
+nnoremap ,co :Copilot panel<CR>
+
+imap <C-j> <Plug>(copilot-next)
+imap <C-l> <Plug>(copilot-accept-word)
+imap <C-h> <Plug>(copilot-dismiss)
+imap <C-;> <Plug>(copilot-suggest)
 
 " test results can be open in the quickfix window
 " nnoremap <Leader>co :copen<CR>
