@@ -131,3 +131,4 @@ export SDKMAN_DIR="/home/nietaki/.sdkman"
 eval "$(rtx activate bash)"
 
 alias asdf=rtx
+eval "$(mise activate bash)"

@@ -21,9 +21,9 @@ antigen apply
 # Uncomment the following line to disable auto-setting terminal title.
 DISABLE_AUTO_TITLE="true"
 case $TERM in
-    xterm*)
+    xterm*|alacritty)
         precmd () {
-            print -Pn "\e]0;$(shrink_path -t -l)\a"
+            print -Pn "\e]0;$TERM: $(shrink_path -t -l)\a"
         }
         ;;
 esac
