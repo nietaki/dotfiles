@@ -183,3 +183,5 @@ function run_until_fail {
 }
 
 alias tf=terraform
+
+export PATH="$HOME/.local/share/flatpak/exports/bin:$PATH"
