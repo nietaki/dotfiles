@@ -171,6 +171,7 @@ require("lazy").setup(
   {"tpope/vim-eunuch"},
   --{"tpope/vim-surround"},
   { 'echasnovski/mini.surround', version = '*' },
+  { 'echasnovski/mini.clue', version = '*' },
 
   {"thaerkh/vim-workspace"},
 
@@ -223,6 +224,10 @@ require("lazy").setup(
 --      })
 --    end,
 --  },
+
+  {
+      {"Cassin01/wf.nvim", version = "*", config = function() require("wf").setup() end}
+  },
   {
   'nvim-telescope/telescope.nvim', tag = '0.1.4',
     dependencies = { 'nvim-lua/plenary.nvim' }
@@ -609,6 +614,18 @@ let g:workspace_autosave_untrailspaces = 0
 
 "" telescope and workspace
 lua <<EOF
+require('mini.clue').setup({
+
+    triggers = {
+      -- Leader triggers
+      { mode = 'n', keys = '<Leader>' },
+      { mode = 'x', keys = '<Leader>' },
+
+      -- Leader triggers
+      { mode = 'n', keys = ',' },
+      { mode = 'x', keys = ',' },
+    }
+})
 require('mini.surround').setup()
 require("project_nvim").setup {
     -- Manual mode doesn't automatically change your root directory, so you have
@@ -885,27 +902,27 @@ nnoremap <Leader>fF :Neoformat<CR>
 let g:dart_format_on_save = 0
 let g:dart_style_guide = 2
 
-nnoremap <Leader>nfd :FlutterDevices<CR>
-nnoremap <Leader>nfs :FlutterRun<CR>
-nnoremap <Leader>nfR :FlutterRestart<CR>
-nnoremap <Leader>nfr :FlutterReload<CR>
-nnoremap <Leader>nfq :FlutterQuit<CR>
-nnoremap <Leader>nfo :FlutterOutlineToggle<CR>
-nnoremap <Leader>nfpg :FlutterPubGet<CR>
-nnoremap <Leader>nfpu :FlutterPubUpgrade<CR>
-nnoremap <Leader>nfpc :FlutterCopyProfilerUrl<CR>
+"nnoremap <Leader>nfd :FlutterDevices<CR>
+"nnoremap <Leader>nfs :FlutterRun<CR>
+"nnoremap <Leader>nfR :FlutterRestart<CR>
+"nnoremap <Leader>nfr :FlutterReload<CR>
+"nnoremap <Leader>nfq :FlutterQuit<CR>
+"nnoremap <Leader>nfo :FlutterOutlineToggle<CR>
+"nnoremap <Leader>nfpg :FlutterPubGet<CR>
+"nnoremap <Leader>nfpu :FlutterPubUpgrade<CR>
+"nnoremap <Leader>nfpc :FlutterCopyProfilerUrl<CR>
 
-"same but , becomes <Leader> n
-nnoremap ,fd :FlutterDevices<CR>
-nnoremap ,fs :FlutterRun<CR>
-nnoremap ,fR :FlutterRestart<CR>
-nnoremap ,fr :FlutterReload<CR>
-nnoremap ,fq :FlutterQuit<CR>
-nnoremap ,fo :FlutterOutlineToggle<CR>
-nnoremap ,fpg :FlutterPubGet<CR>
-nnoremap ,fpu :FlutterPubUpgrade<CR>
-nnoremap ,fpc :FlutterCopyProfilerUrl<CR>
-nnoremap ,fc :FlutterCopyProfilerUrl<CR>
+""same but , becomes <Leader> n
+"nnoremap ,fd :FlutterDevices<CR>
+"nnoremap ,fs :FlutterRun<CR>
+"nnoremap ,fR :FlutterRestart<CR>
+"nnoremap ,fr :FlutterReload<CR>
+"nnoremap ,fq :FlutterQuit<CR>
+"nnoremap ,fo :FlutterOutlineToggle<CR>
+"nnoremap ,fpg :FlutterPubGet<CR>
+"nnoremap ,fpu :FlutterPubUpgrade<CR>
+"nnoremap ,fpc :FlutterCopyProfilerUrl<CR>
+"nnoremap ,fc :FlutterCopyProfilerUrl<CR>
 
 " https://vi.stackexchange.com/a/456/23407
 fun! TrimWhitespace()
@@ -940,6 +957,7 @@ set spelllang=en
 
 autocmd BufNewFile,BufRead,BufReadPost *.livemd set filetype=markdown
 autocmd BufNewFile,BufRead,BufReadPost *.md set filetype=markdown syntax=markdown
+autocmd BufNewFile,BufRead,BufReadPost *.ino set filetype=cpp syntax=cpp
 
 " https://github.com/tpope/vim-fugitive/issues/1446
 let g:fugitive_pty=0
