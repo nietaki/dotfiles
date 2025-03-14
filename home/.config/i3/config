@@ -279,9 +279,9 @@ for_window [class="Slack"] move --no-auto-back-and-forth container to workspace 
 for_window [class="ZapZap"] move --no-auto-back-and-forth container to workspace $ws4
 for_window [class="Discord"] move --no-auto-back-and-forth container to workspace $ws4
 
-exec --no-startup-id i3-msg workspace 4; exec com.rtosa.zapzap
+exec --no-startup-id i3-msg workspace 4; exec com.rtosta.zapzap
 exec --no-startup-id i3-msg workspace 4; exec com.discordapp.Discord
-exec --no-startup-id i3-msg workspace 4; exec slack
+# exec --no-startup-id i3-msg workspace 4; exec slack
 
 exec --no-startup-id i3-msg workspace 5; exec com.spotify.Client
 
