@@ -185,3 +185,6 @@ function run_until_fail {
 alias tf=terraform
 
 export PATH="$HOME/.local/share/flatpak/exports/bin:$PATH"
+
+export FLYCTL_INSTALL="/home/nietaki/.fly"
+export PATH="$FLYCTL_INSTALL/bin:$PATH"

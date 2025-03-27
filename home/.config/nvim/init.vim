@@ -66,6 +66,8 @@ let g:cpp_experimental_template_highlight = 1
 " autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 autocmd FileType * setlocal formatoptions-=r formatoptions-=o
 
+autocmd FileType go setlocal shiftwidth=2 softtabstop=2 expandtab!
+
 set showmatch           " Show matching brackets.
 set number              " Show the line numbers on the left side.
 set formatoptions+=o    " Continue comment marker in new lines.
@@ -90,9 +92,9 @@ set nostartofline       " Do not jump to first character with page commands.
 
 " Tell Vim which characters to show for expanded TABs,
 " trailing whitespace, and end-of-lines. VERY useful!
-if &listchars ==# 'eol:$'
-  set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
-endif
+" if &listchars ==# 'eol:$'
+set listchars=tab:·\ ,trail:-,extends:>,precedes:<,nbsp:+
+" endif
 set list                " Show problematic characters.
 set fileformats=unix
 
@@ -245,7 +247,8 @@ require("lazy").setup(
       { "<leader>vs", "<cmd>LoveStop<cr>", desc = "Stop LÖVE" },
     },
   },
-  {'github/copilot.vim'}
+  {'github/copilot.vim'},
+  {'fatih/vim-go'}
 })
 
 EOF
@@ -1154,3 +1157,5 @@ autocmd VimLeave * SymbolsOutlineClose
 "  d = {name = "diagnostics - TODO"},
 "}, {prefix = "<leader>"})
 "EOF
+"
+ let g:go_def_mapping_enabled = 0

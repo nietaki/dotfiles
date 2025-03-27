@@ -27,6 +27,13 @@ order += "load"
 order += "memory"
 order += "tztime local"
 order += "read_file brightness"
+order += "volume master"
+
+volume master {
+  format = "♪: %volume"
+  format_muted = "♪: muted (%volume)"
+  device = "pulse"
+}
 
 read_file brightness {
         format = "☀ %content"
@@ -34,7 +41,7 @@ read_file brightness {
 }
 
 wireless _first_ {
-        format_up = "W: (%quality at %essid) %ip"
+        format_up = "W:%quality at %essid, %ip"
         format_down = "W: down"
 }
 
