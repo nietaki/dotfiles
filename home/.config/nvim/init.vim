@@ -741,11 +741,13 @@ local lsp = require('lsp-zero').preset({})
 
 -- When you don't have mason.nvim installed
 -- You'll need to list the servers installed in your system
-lsp.setup_servers({'elixirls', 'dockerls'})
+-- lsp.setup_servers({'elixirls', 'dockerls'})
 
 require("mason-lspconfig").setup {
-  ensure_installed = {"glsl_analyzer" },
+  ensure_installed = {"glsl_analyzer", "lexical", "gopls" },
+  automatic_enable = true
 }
+
 
 -- :lua print(vim.inspect(require('lsp-zero').preset({}).nvim_lua_ls()))
 --{
@@ -774,6 +776,9 @@ require("mason-lspconfig").setup {
 nvim_lua_ls_opts = {
 }
 require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls({}))
+
+vim.lsp.enable('lexical')
+vim.lsp.enable('biome')
 
 -- lsp.setup()
 
@@ -1040,12 +1045,12 @@ local lsp_flags = {
 
 local lspconfig = require "lspconfig"
 
-lspconfig['elixirls'].setup{
-    on_attach = on_attach,
-    flags = lsp_flags,
-    -- prioritize outside umbrella
-    root_dir = lspconfig.util.root_pattern("mix.exs", ".git") or vim.loop.os_homedir(),
-}
+-- lspconfig['elixirls'].setup{
+--     on_attach = on_attach,
+--     flags = lsp_flags,
+--     -- prioritize outside umbrella
+--     root_dir = lspconfig.util.root_pattern("mix.exs", ".git") or vim.loop.os_homedir(),
+-- }
 EOF
 
 " make sure it's not saved in the workspace
@@ -1159,3 +1164,6 @@ autocmd VimLeave * SymbolsOutlineClose
 "EOF
 "
  let g:go_def_mapping_enabled = 0
+
+nnoremap <silent> ]l :call search('^'. matchstr(getline('.'), '\(^\s*\)') .'\%>' . line('.') . 'l\S', 'e')<CR>
+nnoremap <silent> [l :call search('^'. matchstr(getline('.'), '\(^\s*\)') .'\%<' . line('.') . 'l\S', 'be')<CR>
