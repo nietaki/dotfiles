@@ -67,6 +67,7 @@ let g:cpp_experimental_template_highlight = 1
 autocmd FileType * setlocal formatoptions-=r formatoptions-=o
 
 autocmd FileType go setlocal shiftwidth=2 softtabstop=2 expandtab!
+autocmd FileType html setlocal shiftwidth=2 softtabstop=2 expandtab!
 
 set showmatch           " Show matching brackets.
 set number              " Show the line numbers on the left side.
@@ -248,7 +249,16 @@ require("lazy").setup(
     },
   },
   {'github/copilot.vim'},
-  {'fatih/vim-go'}
+  {'fatih/vim-go'},
+--  {
+--    "greggh/claude-code.nvim",
+--    dependencies = {
+--      "nvim-lua/plenary.nvim", -- Required for git operations
+--    },
+--    config = function()
+--      require("claude-code").setup()
+--    end
+--  }
 })
 
 EOF
@@ -307,10 +317,14 @@ nnoremap <Leader>wH <C-W><C-T>
 nmap <Leader>wm <C-W>_<C-W>\|
 " distribute the windows equally
 nnoremap <Leader>w= <C-W>=
+nnoremap <Leader>w< :vertical resize -10<CR>
+nnoremap <Leader>w> :vertical resize +10<CR>
 
 " splitting
 nnoremap <Leader>w/ :vsp<CR>
 nnoremap <Leader>w- :sp <CR>
+" split window and open alternate file in the split
+nmap <Leader>w6 <C-W><C-^>
 " TODO maybe :quit would be better if :hidden is set?
 nnoremap <Leader>wd :hide<CR>
 " save all open buffers
@@ -536,6 +550,9 @@ autocmd FileType glsl setlocal commentstring=//\ %s
 autocmd FileType glsl setlocal tabstop=4
 autocmd FileType glsl setlocal shiftwidth=4
 autocmd FileType terraform setlocal commentstring=//\ %s
+
+autocmd FileType c setlocal tabstop=2
+autocmd FileType c setlocal shiftwidth=2
 
 """
 """ Look & feel
