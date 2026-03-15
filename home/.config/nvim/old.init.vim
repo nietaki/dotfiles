@@ -1,3 +1,6 @@
+
+""" 1.COMPATIBILITY
+
 """
 """ Vim defaults integration
 """
@@ -38,6 +41,9 @@ endif
 """
 """ General settings
 """
+
+
+""" 2. PRE-plugin-config
 
 " Map the leader key to SPACE
 let mapleader="\<SPACE>"
@@ -119,9 +125,9 @@ set sessionoptions-=tabpages
 
 
 """
-""" Plugins
+""" 3. Plugins
 """
-let g:vimsyn_embed = 'l'
+
 
 lua <<EOF
 
@@ -284,6 +290,8 @@ require("lazy").setup(
 
 EOF
 
+""""" 4 . POST-plugin keymaps
+
 nnoremap <Leader>pu :PlugUpdate<CR>
 nnoremap <Leader>pc :PlugClean<CR>
 
@@ -401,7 +409,7 @@ nnoremap <Leader>bd :bp\|bd #<CR>
 nnoremap <Leader>qq :qa<CR>
 
 """
-""" Searching and stuff
+""" 5. Searching and stuff
 """
 
 " Search and Replace
@@ -498,7 +506,7 @@ endif
 " :cfdo %s/old/new/g
 
 """
-""" Git stuff
+""" 6. Git  stuff
 """
 
 " navigating between git changes
@@ -647,6 +655,7 @@ nmap <Leader>mlk :Dispatch! pkill -9 -f livebook<CR>
 "map <silent> <C-i> i_<Esc>r
 
 " vim workspace
+"""""" 7 workspace stuff
 
 " let g:workspace_session_directory = $HOME . '/.vim/sessions/'
 let g:workspace_session_disable_on_args = 1
@@ -757,6 +766,8 @@ require('telescope').load_extension('projects')
 
 vim.keymap.set('n', '<leader>pp', function() require'telescope'.extensions.projects.projects{} end)
 EOF
+
+""" 8. lsp config
 
 
 "" LSP related code
@@ -971,6 +982,8 @@ let g:dart_style_guide = 2
 "nnoremap ,fpc :FlutterCopyProfilerUrl<CR>
 "nnoremap ,fc :FlutterCopyProfilerUrl<CR>
 
+""" 9. filetype specific stuff
+
 " https://vi.stackexchange.com/a/456/23407
 fun! TrimWhitespace()
     let l:save = winsaveview()
@@ -1011,6 +1024,8 @@ let g:fugitive_pty=0
 
 " dashes shouldn't be a part of the word
 :set iskeyword-=-
+
+""" 10. treesitter and syntax highlighting 
 
 "" treesitter
 lua <<EOF
@@ -1091,6 +1106,8 @@ require'nvim-treesitter.configs'.setup {
 --     root_dir = lspconfig.util.root_pattern("mix.exs", ".git") or vim.loop.os_homedir(),
 -- }
 EOF
+
+""" 11. leftovers
 
 " make sure it's not saved in the workspace
 autocmd VimLeave * NERDTreeClose
