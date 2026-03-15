@@ -655,7 +655,7 @@ nmap <Leader>mlk :Dispatch! pkill -9 -f livebook<CR>
 "map <silent> <C-i> i_<Esc>r
 
 " vim workspace
-"""""" 7 workspace stuff
+"""""" 7. workspace stuff
 
 " let g:workspace_session_directory = $HOME . '/.vim/sessions/'
 let g:workspace_session_disable_on_args = 1
@@ -767,7 +767,7 @@ require('telescope').load_extension('projects')
 vim.keymap.set('n', '<leader>pp', function() require'telescope'.extensions.projects.projects{} end)
 EOF
 
-""" 8. lsp config
+""" 8. lsp setup
 
 
 "" LSP related code
