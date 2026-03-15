@@ -27,6 +27,11 @@ require('treesitter_setup')
 -- 11
 vim.cmd 'runtime! vimscript/leftovers.vim'
 
+local ok, _ = pcall(require, 'experimental')
+if not ok then
+  print('Experimental module failed to load')
+end
+
 
 
 vim.cmd 'runtime! old.init.vim'
