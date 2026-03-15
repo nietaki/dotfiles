@@ -1,8 +1,6 @@
 """
 """ Vim defaults integration
 """
-set runtimepath^=~/.vim runtimepath+=~/.vim/after
-let &packpath = &runtimepath
 
 source ~/.vimrc
 
@@ -123,6 +121,7 @@ set sessionoptions-=tabpages
 """
 """ Plugins
 """
+let g:vimsyn_embed = 'l'
 
 lua <<EOF
 
@@ -146,7 +145,7 @@ vim.opt.rtp:prepend(lazypath)
 -- Make sure to setup `mapleader` and `maplocalleader` before
 -- loading lazy.nvim so that mappings are correct.
 -- This is also a good place to setup other settings (vim.opt)
-vim.g.mapleader = " "
+-- vim.g.mapleader = " "
 
 require("lazy").setup(
 {

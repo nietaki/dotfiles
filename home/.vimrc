@@ -1,8 +1,8 @@
 set nocompatible
 
 set showmatch
-set autoindent
-set smartindent
+" set autoindent
+" set smartindent
 
 set hlsearch
 :set ts=2
@@ -12,10 +12,7 @@ set hlsearch
 
 :filetype plugin indent on
 
-"set ofu=syntaxcomplete#Complete
-":set completeopt=longest,menuone
-  
-" " zamienianie tabow na spacje
+" turn tabs into spaces
 :set expandtab
 :set langmenu=en_US.UTF-8
 
