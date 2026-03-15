@@ -14,7 +14,7 @@ vim.cmd 'runtime! vimscript/post_plugin_keymaps.vim'
 vim.cmd 'runtime! vimscript/search_config.vim'
 
 -- 6
-vim.cmd 'runtime! vimscript/git_stuf.vim'
+vim.cmd 'runtime! vimscript/git_stuff.vim'
 
 require('workspace_stuff')
 require('lsp_setup')
@@ -34,5 +34,5 @@ end
 
 
 
-vim.cmd 'runtime! old.init.vim'
+-- vim.cmd 'runtime! old.init.vim'
 
