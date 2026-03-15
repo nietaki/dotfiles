@@ -22,26 +22,26 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup(
 {
+  -- still stupid, but still better than nerdfonts
   ui = {
-    -- still stupid, but still better than nerdfonts
     icons = {
-      cmd = '⌘',
-      config = '🛠',
-      debug = "[dbg]",
-      event = '📅',
+      cmd = '[CMD]',
+      config = '[CONFIG]',
+      debug = "[DEBUG]",
+      event = '[EVENT]',
       ft = '📂',
-      import = "[imp]",
-      init = '⚙',
-      keys = '🗝',
+      import = "[IMPORT]",
+      init = '[INIT]',
+      keys = '[KEYS]',
       lazy = '💤 ',
       loaded = "●",
       not_loaded = "○",
       plugin = '🔌',
-      require = '🌙',
-      runtime = '💻',
-      source = '📄',
-      start = '🚀',
-      task = '📌',
+      require = '[REQUIRE]',
+      runtime = '[RUNTIME]',
+      source = '[SOURCE]',
+      start = '[START]',
+      task = '[TASK]',
       list = {
         "●",
         "➜",
