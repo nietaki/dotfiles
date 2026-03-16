@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: debug in elixir
-# key: debug
-# --
-require Mainframe.Debug
-import Mainframe.Debug

@@ -87,11 +87,18 @@ return {
       -- See the fuzzy documentation for more information
       fuzzy = { implementation = "prefer_rust_with_warning" },
       enabled = function ()
+        local filetype = vim.api.nvim_buf_get_option(0, 'filetype')
+        if vim.tbl_contains({'gitcommit'}, filetype) then
+          return false
+        end
         local path = vim.api.nvim_buf_get_name(0)
-        if vim.tbl_contains({'bash', 'zsh', 'sh'}) then
-          if string.match(path, '%.ansible') then
+        if vim.tbl_contains({'bash', 'zsh', 'sh'}, filetype) then
+          if string.match(path, '%.env') then
             return false
           end
+        end
+        if string.match(path, '%.ansible') then
+          return false
         end
         return true
       end,
