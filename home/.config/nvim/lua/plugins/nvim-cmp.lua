@@ -78,6 +78,9 @@ return {
   {
     'zbirenbaum/copilot-cmp',
     -- TODO lspkind https://github.com/zbirenbaum/copilot-cmp?tab=readme-ov-file#highlighting--icon
+    enabled = function()
+      return vim.g.chosenCmp == 'cmp'
+    end,
     opts = {
       event = {
         'InsertEnter',

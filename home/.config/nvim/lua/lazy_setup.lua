@@ -51,6 +51,11 @@ require("lazy").setup(
   --     },
   --   },
   -- },
+  change_detection = {
+    -- automatically check for config file changes and reload the ui
+    enabled = true,
+    notify = false, -- get a notification when changes are found
+  },
   rocks = {
     enabled = true,
     -- for now, because :checkhealth lazy says my luarocks install is broken, and I can't be bothered

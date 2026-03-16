@@ -27,10 +27,6 @@ return {
         end,
         yaml = function()
           local path = vim.api.nvim_buf_get_name(0)
-          if string.match(path, '%.env') then
-            return false
-          end
-
           if string.match(path, '%.ansible') then
             return false
           end

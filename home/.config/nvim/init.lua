@@ -3,7 +3,7 @@ vim.cmd 'runtime! vimscript/compat.vim'
 vim.cmd 'runtime! vimscript/pre_plugin_config.vim'
 
 -- easier switching between cmp options
-vim.g.chosenCmp = 'cmp'
+vim.g.chosenCmp = 'blink'
 
 require('lazy_setup')
 
