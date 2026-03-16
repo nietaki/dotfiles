@@ -75,7 +75,6 @@ require("lazy").setup(
     {"jremmen/vim-ripgrep"},
     {"mhinz/vim-signify"},
 
-    {"sbdchd/neoformat"},
     {"wesQ3/vim-windowswap"},
     {"tpope/vim-commentary"},
     {"tpope/vim-abolish"},

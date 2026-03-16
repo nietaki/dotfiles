@@ -36,7 +36,6 @@ nnoremap ,a <cmd>lua vim.lsp.buf.code_action()<CR>
 vnoremap <Leader>na <cmd>lua vim.lsp.buf.range_code_action()<CR>
 vnoremap ,a <cmd>lua vim.lsp.buf.range_code_action()<CR>
 nnoremap <Leader>ff <cmd>lua vim.lsp.buf.formatting()<CR>
-nnoremap <Leader>fF :Neoformat<CR>
 
 " flutter / dart config
 "

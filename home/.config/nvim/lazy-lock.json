@@ -14,7 +14,6 @@
   "mini.clue": { "branch": "main", "commit": "d96fef9db8fcb38c058f2edb2eeb69cb8b2d462a" },
   "mini.surround": { "branch": "main", "commit": "88c52297ed3e69ecf9f8652837888ecc727a28ee" },
   "molokai": { "branch": "master", "commit": "c67bdfcdb31415aa0ade7f8c003261700a885476" },
-  "neoformat": { "branch": "master", "commit": "9d95e5ca3ab263363758d5b1d7a174a30556ab2d" },
   "nerdtree": { "branch": "master", "commit": "690d061b591525890f1471c6675bcb5bdc8cdff9" },
   "nvim-cmp": { "branch": "main", "commit": "8c82d0bd31299dbff7f8e780f5e06d2283de9678" },
   "nvim-lspconfig": { "branch": "master", "commit": "dd261ad5266ab5bbec249d21efeceda98ff3e1a6" },

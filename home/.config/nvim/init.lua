@@ -39,8 +39,8 @@ end
 - [x] set up barebones nvim-cmp
 - [x] plug in one lsp server into nvim-cmp
 - [x] vim to lua cheat sheet
-- [ ] damn nerdfonts
-- [ ] blink instead of cmp? pros and cons please
+- [x] damn nerdfonts
+- [x] blink instead of cmp? pros and cons please
 - [ ] lazy coder for lua lsp
 - [ ] shortcuts for editing config in new place
 - [ ] lsp polish, shortcuts
