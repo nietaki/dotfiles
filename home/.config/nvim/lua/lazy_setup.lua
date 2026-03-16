@@ -23,6 +23,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup(
 {
   -- still stupid, but still better than nerdfonts
+
   ui = {
     icons = {
       cmd = '[CMD]',
@@ -112,5 +113,6 @@ require("lazy").setup(
     { "lukas-reineke/indent-blankline.nvim" },
     {'github/copilot.vim'},
     {'fatih/vim-go'},
+    { import = "plugins" },
   }
 })
