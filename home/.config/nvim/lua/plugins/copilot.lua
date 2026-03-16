@@ -5,6 +5,8 @@ local has_words_before = function()
 end
 
 
+-- TODO move to ye olde tpope plugin
+
 return {
   {
     'zbirenbaum/copilot.lua',
@@ -40,6 +42,7 @@ return {
     }
   },
   {
+    -- TODO move this to the cmp file for an easier switch to blink
     'zbirenbaum/copilot-cmp',
     -- TODO lspkind https://github.com/zbirenbaum/copilot-cmp?tab=readme-ov-file#highlighting--icon
     opts = {

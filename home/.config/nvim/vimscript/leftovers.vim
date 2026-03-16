@@ -3,39 +3,39 @@ nnoremap <Leader>do :SymbolsOutline<CR>
 
 nnoremap <Leader>dli :LspInfo<CR>
 
-" " TODO move this to lua config above
-" " TODO add LspInfo and LspInstall
-" " help
-" nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
-" " nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
-" nnoremap <silent> <Leader>gr <cmd>lua vim.lsp.buf.references()<CR>
+" TODO move this to lua config above
+" TODO add LspInfo and LspInstall
+" help
+nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
+" nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> <Leader>gr <cmd>lua vim.lsp.buf.references()<CR>
 
-" " GOTO something
-" nnoremap <silent> <Leader>gD <cmd>lua vim.lsp.buf.declaration()<CR>
-" nnoremap <silent> <Leader>gd <cmd>lua vim.lsp.buf.definition()<CR>
-" nnoremap <silent> <Leader>gi <cmd>lua vim.lsp.buf.implementation()<CR>
-" nnoremap <silent> <Leader>D <cmd>lua vim.lsp.buf.type_definition()<CR>
-" " nnoremap <silent> <Leader>so', [[<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>]], opts)
+" GOTO something
+nnoremap <silent> <Leader>gD <cmd>lua vim.lsp.buf.declaration()<CR>
+nnoremap <silent> <Leader>gd <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> <Leader>gi <cmd>lua vim.lsp.buf.implementation()<CR>
+nnoremap <silent> <Leader>D <cmd>lua vim.lsp.buf.type_definition()<CR>
+" nnoremap <silent> <Leader>so', [[<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>]], opts)
 
-" " diagnostics
-" nnoremap <silent> <Leader>ee <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
-" nnoremap <silent> <Leader>ep <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
-" nnoremap <silent> <Leader>en <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
-" nnoremap <silent> <Leader>el <cmd>lua vim.lsp.diagnostic.set_loclist()<CR>
+" diagnostics
+nnoremap <silent> <Leader>ee <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
+nnoremap <silent> <Leader>ep <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+nnoremap <silent> <Leader>en <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+nnoremap <silent> <Leader>el <cmd>lua vim.lsp.diagnostic.set_loclist()<CR>
 
-" " workspace stuff
-" nnoremap <silent> <Leader>pwa <cmd>lua vim.lsp.buf.add_workspace_folder()<CR>
-" nnoremap <silent> <Leader>pwr <cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>
-" nnoremap <silent> <Leader>pwl <cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>
+" workspace stuff
+nnoremap <silent> <Leader>pwa <cmd>lua vim.lsp.buf.add_workspace_folder()<CR>
+nnoremap <silent> <Leader>pwr <cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>
+nnoremap <silent> <Leader>pwl <cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>
 
-" " refactor stuff
-" nnoremap <Leader>nrr <cmd>lua vim.lsp.buf.rename()<CR>
-" nnoremap ,rr <cmd>lua vim.lsp.buf.rename()<CR>
-" nnoremap <Leader>na <cmd>lua vim.lsp.buf.code_action()<CR>
-" nnoremap ,a <cmd>lua vim.lsp.buf.code_action()<CR>
-" vnoremap <Leader>na <cmd>lua vim.lsp.buf.range_code_action()<CR>
-" vnoremap ,a <cmd>lua vim.lsp.buf.range_code_action()<CR>
-" nnoremap <Leader>ff <cmd>lua vim.lsp.buf.formatting()<CR>
+" refactor stuff
+nnoremap <Leader>nrr <cmd>lua vim.lsp.buf.rename()<CR>
+nnoremap ,rr <cmd>lua vim.lsp.buf.rename()<CR>
+nnoremap <Leader>na <cmd>lua vim.lsp.buf.code_action()<CR>
+nnoremap ,a <cmd>lua vim.lsp.buf.code_action()<CR>
+vnoremap <Leader>na <cmd>lua vim.lsp.buf.range_code_action()<CR>
+vnoremap ,a <cmd>lua vim.lsp.buf.range_code_action()<CR>
+nnoremap <Leader>ff <cmd>lua vim.lsp.buf.formatting()<CR>
 nnoremap <Leader>fF :Neoformat<CR>
 
 " flutter / dart config

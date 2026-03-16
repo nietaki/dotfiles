@@ -107,10 +107,11 @@ nnoremap ,ce :Copilot enable<CR>
 nnoremap ,cd :Copilot disable<CR>
 nnoremap ,co :Copilot panel<CR>
 
-imap <C-j> <Plug>(copilot-next)
-imap <C-l> <Plug>(copilot-accept-word)
-imap <C-h> <Plug>(copilot-dismiss)
-imap <C-;> <Plug>(copilot-suggest)
+" imap <C-j> <Plug>(copilot-next)
+" imap <C-l> <Plug>(copilot-accept-word)
+" imap <C-h> <Plug>(copilot-dismiss)
+" imap <C-;> <Plug>(copilot-suggest)
+
 
 " test results can be open in the quickfix window
 " nnoremap <Leader>co :copen<CR>

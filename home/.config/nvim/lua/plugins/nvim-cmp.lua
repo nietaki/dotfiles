@@ -1,3 +1,7 @@
+-- TODO switch to blink (or not, because it needs nerd fonts)
+-- but it does ghost text better than
+-- ...it has much better documentation than cmp though
+
 
 local snippet = {
   expand = function(args)
@@ -12,6 +16,7 @@ local snippet = {
 local primarySources = {
   { name = 'luasnip' },
   { name = 'copilot' },
+  { name = 'nvim_lsp' },
 }
 local backupSources = {
   { name = 'buffer' },
@@ -25,7 +30,7 @@ local configFun = function(_lazyPlugin, baseOpts)
 
   -- for more: :help cmp
 
-  opts = {
+  local opts = {
     snippet = snippet,
     window = {
       completion = cmp.config.window.bordered(),
@@ -56,6 +61,9 @@ return {
     dependencies = {
       {'zbirenbaum/copilot-cmp'},
       {"hrsh7th/cmp-path"},
+      {'hrsh7th/cmp-nvim-lsp'},
+      -- TODO https://github.com/hrsh7th/cmp-nvim-lsp-document-symbol
+      -- TODO https://github.com/hrsh7th/cmp-nvim-lsp-signature-help
       {"hrsh7th/cmp-buffer"},
       {
         'L3MON4D3/LuaSnip',

@@ -112,7 +112,7 @@ require("lazy").setup(
     {'nvim-telescope/telescope-fzf-native.nvim', build = "make" },
     { "lukas-reineke/indent-blankline.nvim" },
     -- {'github/copilot.vim'},
-    {'fatih/vim-go'},
+    -- {'fatih/vim-go'},
     { import = "plugins" },
   }
 })
