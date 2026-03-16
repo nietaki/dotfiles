@@ -8,17 +8,39 @@ end
 return {
   {
     'zbirenbaum/copilot.lua',
-    tag = 'v2.*',
     cmd = 'Copilot',
     event = 'InsertEnter',
+    main = 'copilot',
     opts = {
       suggestion = { enabled = false },
       panel = { enabled = false },
+      filetypes = {
+        markdown = true,
+        txt = false,
+        sh = function()
+          if string.match(vim.api.nvim_buf_get_name(0), '%.env') then
+            return false
+          end
+          return true
+        end,
+        yaml = function()
+          local path = vim.api.nvim_buf_get_name(0)
+          if string.match(path, '%.env') then
+            return false
+          end
+
+          if string.match(path, '%.ansible') then
+            return false
+          end
+          return true
+        end,
+      }
+      -- suggestion = { enabled = true },
+      -- panel = { enabled = true },
     }
   },
   {
     'zbirenbaum/copilot-cmp',
-    tag = 'v2.*',
     -- TODO lspkind https://github.com/zbirenbaum/copilot-cmp?tab=readme-ov-file#highlighting--icon
     opts = {
       event = {
