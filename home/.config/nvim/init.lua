@@ -20,6 +20,7 @@ vim.cmd 'runtime! vimscript/filetype_specific.vim'
 
 require('treesitter_setup')
 
+
 vim.cmd 'runtime! vimscript/leftovers.vim'
 
 local ok, _ = pcall(require, 'experimental')
@@ -29,6 +30,8 @@ end
 -- # backup plan :D
 -- vim.cmd 'runtime! old.init.vim'
 
+-- last in case it needs all the mappings to be there
+require('mini_setup')
 
 --[[
 

@@ -69,14 +69,20 @@ return {
       -- Default list of enabled providers defined so that you can extend it
       -- elsewhere in your config, without redefining it, due to `opts_extend`
       sources = {
-        default = { 'copilot', 'lsp', 'path', 'snippets' },
+        default = { 'lazydev', 'copilot', 'lsp', 'path', 'snippets' },
         providers = {
           copilot = {
             name = 'copilot',
             module = 'blink-copilot',
             score_offset = 100,
             async = true
-          }
+          },
+          lazydev = {
+            name = "LazyDev",
+            module = "lazydev.integrations.blink",
+            -- make lazydev completions top priority (see `:h blink.cmp`)
+            score_offset = 100,
+          },
         }
       },
 
@@ -87,7 +93,8 @@ return {
       -- See the fuzzy documentation for more information
       fuzzy = { implementation = "prefer_rust_with_warning" },
       enabled = function ()
-        local filetype = vim.api.nvim_buf_get_option(0, 'filetype')
+        -- local filetype = vim.api.nvim_buf_get_option(0, 'filetype')
+        local filetype = vim.api.nvim_get_option_value('filetype', {buf = 0})
         if vim.tbl_contains({'gitcommit'}, filetype) then
           return false
         end

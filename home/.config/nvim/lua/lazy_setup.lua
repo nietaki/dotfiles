@@ -89,10 +89,6 @@ require("lazy").setup(
     {"tpope/vim-dispatch"},
     {"tpope/vim-eunuch"},
 
-    --{"tpope/vim-surround"},
-    { 'echasnovski/mini.surround', version = '*' },
-    { 'echasnovski/mini.clue', version = '*' },
-
     {"thaerkh/vim-workspace"},
 
     -- themes

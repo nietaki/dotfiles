@@ -3,7 +3,8 @@
 vim.diagnostic.config({
   virtual_text = true,
   signs = true,
-  float = true
+  float = true,
+  underline = true
 })
 
 require('symbols-outline').setup()

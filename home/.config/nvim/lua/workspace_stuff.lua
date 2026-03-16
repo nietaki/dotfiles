@@ -8,19 +8,19 @@ vim.api.nvim_set_var('workspace_session_disable_on_args', '1')
 vim.api.nvim_set_var('workspace_autosave', 0)
 vim.api.nvim_set_var('workspace_autosave_untrailspaces', '0')
 
-require('mini.clue').setup({
+-- require('mini.clue').setup({
 
-    triggers = {
-      -- Leader triggers
-      { mode = 'n', keys = '<Leader>' },
-      { mode = 'x', keys = '<Leader>' },
+--     triggers = {
+--       -- Leader triggers
+--       { mode = 'n', keys = '<Leader>' },
+--       { mode = 'x', keys = '<Leader>' },
 
-      -- Leader triggers
-      { mode = 'n', keys = ',' },
-      { mode = 'x', keys = ',' },
-    }
-})
-require('mini.surround').setup()
+--       -- Leader triggers
+--       { mode = 'n', keys = ',' },
+--       { mode = 'x', keys = ',' },
+--     }
+-- })
+-- require('mini.surround').setup()
 require("project_nvim").setup {
     -- Manual mode doesn't automatically change your root directory, so you have
     -- the option to manually do so using `:ProjectRoot` command.
