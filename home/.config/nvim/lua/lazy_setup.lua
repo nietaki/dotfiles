@@ -22,35 +22,35 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup(
 {
-  -- still stupid, but still better than nerdfonts
 
-  ui = {
-    icons = {
-      cmd = '[CMD]',
-      config = '[CONFIG]',
-      debug = "[DEBUG]",
-      event = '[EVENT]',
-      ft = '📂',
-      import = "[IMPORT]",
-      init = '[INIT]',
-      keys = '[KEYS]',
-      lazy = '💤 ',
-      loaded = "●",
-      not_loaded = "○",
-      plugin = '🔌',
-      require = '[REQUIRE]',
-      runtime = '[RUNTIME]',
-      source = '[SOURCE]',
-      start = '[START]',
-      task = '[TASK]',
-      list = {
-        "●",
-        "➜",
-        "★",
-        "‒",
-      },
-    },
-  },
+  -- I gave up and started using nerdfonts
+  -- ui = {
+  --   icons = {
+  --     cmd = '[CMD]',
+  --     config = '[CONFIG]',
+  --     debug = "[DEBUG]",
+  --     event = '[EVENT]',
+  --     ft = '📂',
+  --     import = "[IMPORT]",
+  --     init = '[INIT]',
+  --     keys = '[KEYS]',
+  --     lazy = '💤 ',
+  --     loaded = "●",
+  --     not_loaded = "○",
+  --     plugin = '🔌',
+  --     require = '[REQUIRE]',
+  --     runtime = '[RUNTIME]',
+  --     source = '[SOURCE]',
+  --     start = '[START]',
+  --     task = '[TASK]',
+  --     list = {
+  --       "●",
+  --       "➜",
+  --       "★",
+  --       "‒",
+  --     },
+  --   },
+  -- },
   rocks = {
     enabled = true,
     -- for now, because :checkhealth lazy says my luarocks install is broken, and I can't be bothered

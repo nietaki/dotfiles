@@ -28,16 +28,20 @@ require('mason-lspconfig').setup({
   automatic_enable = true
 })
 
--- TODO lazydev
 
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
--- iterate over relevant servers and set up capabilities for each
+-- check which cmp we're using
+if package.loaded['cmp_nvim_lsp'] then
+  local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-for _, server in ipairs(relevant_servers) do
-  vim.lsp.config(
-    server,
-    {capabilities = capabilities}
-  )
-  vim.lsp.enable(server)
+  -- iterate over relevant servers and set up capabilities for each
+
+  for _, server in ipairs(relevant_servers) do
+    vim.lsp.config(
+      server,
+      {capabilities = capabilities}
+    )
+    vim.lsp.enable(server)
+  end
 end
+

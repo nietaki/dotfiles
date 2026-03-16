@@ -41,19 +41,4 @@ return {
       -- panel = { enabled = true },
     }
   },
-  {
-    -- TODO move this to the cmp file for an easier switch to blink
-    'zbirenbaum/copilot-cmp',
-    -- TODO lspkind https://github.com/zbirenbaum/copilot-cmp?tab=readme-ov-file#highlighting--icon
-    opts = {
-      event = {
-        'InsertEnter',
-        'LspAttach',
-      },
-      fix_pairs = true
-    },
-    dependencies = {
-      'zbirenbaum/copilot.lua'
-    }
-  },
 }

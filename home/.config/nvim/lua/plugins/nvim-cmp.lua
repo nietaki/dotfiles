@@ -58,6 +58,9 @@ return {
     event = "InsertEnter",
     opts = {},
     config = configFun,
+    enabled = function()
+      return vim.g.chosenCmp == 'cmp'
+    end,
     dependencies = {
       {'zbirenbaum/copilot-cmp'},
       {"hrsh7th/cmp-path"},
@@ -70,6 +73,20 @@ return {
         build = "make install_jsregexp" ,
         version = 'v2.*'
       },
+    }
+  },
+  {
+    'zbirenbaum/copilot-cmp',
+    -- TODO lspkind https://github.com/zbirenbaum/copilot-cmp?tab=readme-ov-file#highlighting--icon
+    opts = {
+      event = {
+        'InsertEnter',
+        'LspAttach',
+      },
+      fix_pairs = true
+    },
+    dependencies = {
+      'zbirenbaum/copilot.lua'
     }
   },
 }
