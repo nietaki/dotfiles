@@ -18,12 +18,11 @@ vim.cmd 'runtime! vimscript/git_stuff.vim'
 require('workspace_stuff')
 require('lsp_setup')
 
-vim.cmd 'runtime! vimscript/filetype_specific.vim'
-
 require('treesitter_setup')
 
+require('autocommands').setup()
 
-vim.cmd 'runtime! vimscript/leftovers.vim'
+require('keymaps').setup()
 
 local ok, _ = pcall(require, 'experimental')
 if not ok then
