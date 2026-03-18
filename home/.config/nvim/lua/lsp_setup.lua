@@ -111,7 +111,7 @@ ntk.map('n', ',gt', vim.lsp.buf.type_definition, 'go to type definition')
 ntk.map('n', ',lr', vim.lsp.buf.references, 'list references')
 ntk.map('n', ',lt', vim.lsp.buf.typehierarchy, 'show type hierarchy')
 ntk.map('n', ',ls', telescope_document_symbols, 'FZF document symbols')
-ntk.map('n', ',lo', ':SymbolsOutline<CR>', 'symbol outline')
+ntk.map('n', ',lo', ':SymbolsOutline<CR>')
 
 local tb = require('telescope.builtin')
 -- tb.keymaps
@@ -119,8 +119,8 @@ local tb = require('telescope.builtin')
 -- fuzzy/Telescope things
 ntk.map('n', '<Leader>ff', tb.builtin, 'all Telescope pickers')
 ntk.map('n', '<Leader>fk', tb.keymaps, 'Telescope keymaps')
-ntk.map('n', '<Leader>fc', tb.grep_string, 'find under cursor in project')
-ntk.map('n', '<Leader>fb', tb.current_buffer_fuzzy_find, 'fuzzy find in current buffer')
+-- ntk.map('n', '<Leader>fc', tb.grep_string, 'find under cursor in project')
+-- ntk.map('n', '<Leader>fb', tb.current_buffer_fuzzy_find, 'fuzzy find in current buffer')
 -- TODO others
 -- live grep
 -- grep string under cursor

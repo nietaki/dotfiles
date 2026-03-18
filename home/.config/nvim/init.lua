@@ -29,6 +29,7 @@ local ok, _ = pcall(require, 'experimental')
 if not ok then
   print('Experimental module failed to load')
 end
+
 -- # backup plan :D
 -- vim.cmd 'runtime! old.init.vim'
 

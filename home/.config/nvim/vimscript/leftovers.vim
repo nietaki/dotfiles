@@ -1,76 +1,14 @@
 
-nnoremap <Leader>do :SymbolsOutline<CR>
-
-nnoremap <Leader>dli :LspInfo<CR>
-
-" " TODO move this to lua config above
-" " TODO add LspInfo and LspInstall
-" " help
-" nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
-" " nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
-" nnoremap <silent> <Leader>gr <cmd>lua vim.lsp.buf.references()<CR>
-
-" " GOTO something
-" nnoremap <silent> <Leader>gD <cmd>lua vim.lsp.buf.declaration()<CR>
-" nnoremap <silent> <Leader>gd <cmd>lua vim.lsp.buf.definition()<CR>
-" nnoremap <silent> <Leader>gi <cmd>lua vim.lsp.buf.implementation()<CR>
-" nnoremap <silent> <Leader>D <cmd>lua vim.lsp.buf.type_definition()<CR>
-" " nnoremap <silent> <Leader>so', [[<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>]], opts)
-
-" " diagnostics
-" nnoremap <silent> <Leader>ee <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
-" nnoremap <silent> <Leader>ep <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
-" nnoremap <silent> <Leader>en <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
-" nnoremap <silent> <Leader>el <cmd>lua vim.lsp.diagnostic.set_loclist()<CR>
 
 " " workspace stuff
 " nnoremap <silent> <Leader>pwa <cmd>lua vim.lsp.buf.add_workspace_folder()<CR>
 " nnoremap <silent> <Leader>pwr <cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>
 " nnoremap <silent> <Leader>pwl <cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>
 
-" " refactor stuff
-" nnoremap <Leader>nrr <cmd>lua vim.lsp.buf.rename()<CR>
-" nnoremap ,rr <cmd>lua vim.lsp.buf.rename()<CR>
-" nnoremap <Leader>na <cmd>lua vim.lsp.buf.code_action()<CR>
-" nnoremap ,a <cmd>lua vim.lsp.buf.code_action()<CR>
-" vnoremap <Leader>na <cmd>lua vim.lsp.buf.range_code_action()<CR>
-" vnoremap ,a <cmd>lua vim.lsp.buf.range_code_action()<CR>
-" nnoremap <Leader>ff <cmd>lua vim.lsp.buf.formatting()<CR>
-nnoremap <Leader>fF :Neoformat<CR>
-
-" flutter / dart config
-"
-let g:dart_format_on_save = 0
-let g:dart_style_guide = 2
-
-"nnoremap <Leader>nfd :FlutterDevices<CR>
-"nnoremap <Leader>nfs :FlutterRun<CR>
-"nnoremap <Leader>nfR :FlutterRestart<CR>
-"nnoremap <Leader>nfr :FlutterReload<CR>
-"nnoremap <Leader>nfq :FlutterQuit<CR>
-"nnoremap <Leader>nfo :FlutterOutlineToggle<CR>
-"nnoremap <Leader>nfpg :FlutterPubGet<CR>
-"nnoremap <Leader>nfpu :FlutterPubUpgrade<CR>
-"nnoremap <Leader>nfpc :FlutterCopyProfilerUrl<CR>
-
-""same but , becomes <Leader> n
-"nnoremap ,fd :FlutterDevices<CR>
-"nnoremap ,fs :FlutterRun<CR>
-"nnoremap ,fR :FlutterRestart<CR>
-"nnoremap ,fr :FlutterReload<CR>
-"nnoremap ,fq :FlutterQuit<CR>
-"nnoremap ,fo :FlutterOutlineToggle<CR>
-"nnoremap ,fpg :FlutterPubGet<CR>
-"nnoremap ,fpu :FlutterPubUpgrade<CR>
-"nnoremap ,fpc :FlutterCopyProfilerUrl<CR>
-"nnoremap ,fc :FlutterCopyProfilerUrl<CR>
-
-
-" CIACH
-
-" make sure it's not saved in the workspace
 autocmd VimLeave * NERDTreeClose
 autocmd VimLeave * SymbolsOutlineClose
+
+" TODO port those to mini.clue
 
 "lua <<EOF
 "local wk = require("which-key")
@@ -179,6 +117,3 @@ autocmd VimLeave * SymbolsOutlineClose
 "EOF
 "
  let g:go_def_mapping_enabled = 0
-
-nnoremap <silent> ]l :call search('^'. matchstr(getline('.'), '\(^\s*\)') .'\%>' . line('.') . 'l\S', 'e')<CR>
-nnoremap <silent> [l :call search('^'. matchstr(getline('.'), '\(^\s*\)') .'\%<' . line('.') . 'l\S', 'be')<CR>

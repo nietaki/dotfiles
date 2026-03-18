@@ -99,12 +99,12 @@ nnoremap <Leader>tN :tabprevious<CR>
 nnoremap <Leader>tn :tabnext<CR>
 nnoremap <Leader>td :tabclose<CR>
 nnoremap <Leader>tc :tabclose<CR>
-nnoremap <Leader>1 :1tabnext<CR>
-nnoremap <Leader>2 :2tabnext<CR>
-nnoremap <Leader>3 :3tabnext<CR>
-nnoremap <Leader>4 :4tabnext<CR>
-nnoremap <Leader>5 :5tabnext<CR>
-nnoremap <Leader>6 :6tabnext<CR>
+nnoremap <Leader>t1 :1tabnext<CR>
+nnoremap <Leader>t2 :2tabnext<CR>
+nnoremap <Leader>t3 :3tabnext<CR>
+nnoremap <Leader>t4 :4tabnext<CR>
+nnoremap <Leader>t5 :5tabnext<CR>
+nnoremap <Leader>t6 :6tabnext<CR>
 
 "TODO setting root dir for tabs
 
