@@ -4,13 +4,6 @@ au.register_on_close = function()
   vim.api.nvim_create_autocmd('VimLeave', {
     pattern = '*',
     callback = function()
-      vim.cmd 'NERDTreeClose'
-    end,
-  })
-
-  vim.api.nvim_create_autocmd('VimLeave', {
-    pattern = '*',
-    callback = function()
       vim.cmd 'silent! SymbolsOutlineClose'
     end,
   })

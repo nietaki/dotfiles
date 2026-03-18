@@ -7,9 +7,9 @@ vim.g.chosenCmp = 'blink'
 
 require('lazy_setup')
 
-local ntk = require('ntk_utils')
+require('ntk_utils')
 
-vim.cmd 'runtime! vimscript/post_plugin_keymaps.vim'
+require('nerd_tree').setup()
 
 vim.cmd 'runtime! vimscript/search_config.vim'
 

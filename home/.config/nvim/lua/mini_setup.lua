@@ -33,12 +33,13 @@ miniclue.setup(
     },
     clues = {
       -- Enhance this by adding descriptions for <Leader> mapping groups
-      { mode = 'n', keys = '<Leader>f', desc = '+ Fuzzy / file' },
+      { mode = 'n', keys = '<Leader>l', desc = '+ Look for / Fuzzy' },
+      { mode = 'n', keys = '<Leader>f', desc = '+ file' },
       { mode = 'n', keys = '<Leader>fe', desc = '+ edit key config files' },
       { mode = 'n', keys = '<Leader>g', desc = '+ Git' },
       { mode = 'n', keys = '<Leader>p', desc = '+ Project' },
       { mode = 'n', keys = '<Leader>q', desc = '+ Quit?' },
-      { mode = 'n', keys = '<Leader>t', desc = '+ Tab' },
+      { mode = 'n', keys = '<Leader>t', desc = '+ Tab / Toggle' },
       { mode = 'n', keys = '<Leader>w', desc = '+ Window' },
       { mode = 'n', keys = '<Leader>y', desc = '+ Yank (copy sth)' },
       { mode = 'n', keys = ',', desc = '+ LSP (and similar)' },

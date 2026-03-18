@@ -3,14 +3,47 @@ local km = {}
 local ntk = require('ntk_utils')
 
 local function key_files_keymaps()
+  ntk.map('n', '<Leader>fr', ':checktime<CR>')
+  ntk.map('n', '<Leader>fR', ':e!<CR>', 'reload current file from disk')
   ntk.map('n', '<Leader>fed', ':e ~/.config/nvim/init.lua<CR>')
   ntk.map('n', '<Leader>feD', ':tabnew ~/.homesick/repos/dotfiles/README.md<CR>:tcd %:p:h<CR>', 'open dotfiles in new tab')
   ntk.map('n', '<Leader>feP', ':tabnew ~/puter/README.md<CR>:tcd %:p:h<CR>', 'open puter in new tab')
   ntk.map('n', '<Leader>fev', ':e ~/.vimrc<CR>')
   ntk.map('n', '<Leader>fez', ':e ~/.zshrc<CR>')
-  -- todo an implementation that actually works, this will only work on experimental stuff
+  -- todo an implementatfon that actually works, this will only work on experimental stuff
   ntk.map('n', '<Leader>fer', ':so ~/.config/nvim/init.lua<CR>', 'reload vim config')
 end
+
+local function project()
+  ntk.map('n', '<Leader>ps', ':wa<CR>', 'Save all')
+  -- TODO change the keymap to something more intuitive
+  ntk.map('n', '<Leader>ph', ':CloseHiddenBuffers<CR>', 'close hidden buffers')
+  ntk.map('n', '<Leader>pr', ':pwd<CR>', 'show project root')
+  ntk.map('n', '<Leader>pR', ':tcd %:p:h<CR>', 'SET project root')
+end
+
+local function toggle_tab()
+  -- toggle
+  ntk.map('n', '<Leader>tw', ':ToggleWorkspace<CR>')
+
+  --tab
+  ntk.map('n', '<Leader>tt', ':tabnew<CR>')
+  ntk.map('n', '<Leader>te', ':tabedit')
+  ntk.map('n', '<Leader>tl', ':tabnext<CR>')
+  ntk.map('n', '<Leader>th', ':tabprevious<CR>')
+  ntk.map('n', '<Leader>tp', ':tabprevious<CR>')
+  ntk.map('n', '<Leader>tN', ':tabprevious<CR>')
+  ntk.map('n', '<Leader>tn', ':tabnext<CR>')
+  ntk.map('n', '<Leader>td', ':tabclose<CR>')
+  ntk.map('n', '<Leader>tc', ':tabclose<CR>')
+  ntk.map('n', '<Leader>t1', ':1tabnext<CR>')
+  ntk.map('n', '<Leader>t2', ':2tabnext<CR>')
+  ntk.map('n', '<Leader>t3', ':3tabnext<CR>')
+  ntk.map('n', '<Leader>t4', ':4tabnext<CR>')
+  ntk.map('n', '<Leader>t5', ':5tabnext<CR>')
+  ntk.map('n', '<Leader>t6', ':6tabnext<CR>')
+end
+
 
 local function buffers_and_windows()
   vim.g.windowswap_map_keys = 0 -- prevent default bindings
@@ -53,6 +86,8 @@ function km.setup()
   ntk.map('n', 'S', '"_diwP', 'replace word with yanked text')
   key_files_keymaps()
   buffers_and_windows()
+  project()
+  toggle_tab()
   others()
 end
 
