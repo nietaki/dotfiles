@@ -33,7 +33,7 @@ return {
       -- C-k: Toggle signature help (if signature.enabled = true)
       --
       -- See :h blink-cmp-config-keymap for defining your own keymap
-      keymap = { preset = 'enter'},
+      keymap = { preset = 'super-tab' },
 
       appearance = {
         -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
@@ -63,7 +63,7 @@ return {
 
       -- -- snippets = { preset = 'default' | 'luasnip' | 'mini_snippets' | 'vsnip' },
       snippets = {
-        preset = 'default' ,
+        preset = 'default',
       },
 
       -- Default list of enabled providers defined so that you can extend it
@@ -92,14 +92,14 @@ return {
       --
       -- See the fuzzy documentation for more information
       fuzzy = { implementation = "prefer_rust_with_warning" },
-      enabled = function ()
+      enabled = function()
         -- local filetype = vim.api.nvim_buf_get_option(0, 'filetype')
-        local filetype = vim.api.nvim_get_option_value('filetype', {buf = 0})
-        if vim.tbl_contains({'gitcommit'}, filetype) then
+        local filetype = vim.api.nvim_get_option_value('filetype', { buf = 0 })
+        if vim.tbl_contains({ 'gitcommit' }, filetype) then
           return false
         end
         local path = vim.api.nvim_buf_get_name(0)
-        if vim.tbl_contains({'bash', 'zsh', 'sh'}, filetype) then
+        if vim.tbl_contains({ 'bash', 'zsh', 'sh' }, filetype) then
           if string.match(path, '%.env') then
             return false
           end
