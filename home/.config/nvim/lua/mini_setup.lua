@@ -34,6 +34,7 @@ miniclue.setup(
     clues = {
       -- Enhance this by adding descriptions for <Leader> mapping groups
       { mode = 'n', keys = '<Leader>f', desc = '+ Fuzzy / file' },
+      { mode = 'n', keys = '<Leader>fe', desc = '+ edit key config files' },
       { mode = 'n', keys = '<Leader>g', desc = '+ Git' },
       { mode = 'n', keys = '<Leader>p', desc = '+ Project' },
       { mode = 'n', keys = '<Leader>q', desc = '+ Quit?' },

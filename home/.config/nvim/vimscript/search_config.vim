@@ -19,8 +19,6 @@ nnoremap <C-l> <cmd>lua require("telescope.builtin").find_files({hidden = true})
 
 " remember, we can always go to file under cursor with gf
 nnoremap <Leader>gf gF
-" open file:line under cursor in new window
-nnoremap <Leader>wf <C-w>F
 
 " map <Leader>wf :vertical wincmd f<CR>
 " ,, is the working directory
@@ -29,8 +27,6 @@ set path=.,,apps/chat,apps/auth,apps/shared,/usr/include,
 " nnoremap <Leader>bb :CtrlPBuffer<CR>
 " nnoremap <Leader>bb :Buffers<CR>
 nnoremap <leader>bb <cmd>Telescope buffers<cr>
-" recent buffer history
-nnoremap <Leader>bh :CtrlPMRUFiles<CR>
 
 "search just the contents
 "  " Default options are --nogroup --column --color
