@@ -612,7 +612,7 @@ nnoremap ,ts :TestSuite<CR>
 nnoremap ,ta :TestSuite<CR>
 
 nnoremap ,cs :Copilot status<CR>
-nnoremap ,ce :Copilot enable<CR>
+nnoremap ce :Copilot enable<CR>
 nnoremap ,cd :Copilot disable<CR>
 nnoremap ,co :Copilot panel<CR>
 

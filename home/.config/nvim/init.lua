@@ -46,15 +46,15 @@ require('mini_setup')
 - [x] vim to lua cheat sheet
 - [x] damn nerdfonts
 - [x] blink instead of cmp? pros and cons please
-- [ ] lazy coder for lua lsp
+- [x] lazy coder for lua lsp
 - [ ] shortcuts for editing config in new place
-- [ ] lsp polish, shortcuts
+- [x] lsp polish, shortcuts
 - [ ] codecompanion
-- [ ] which key?
-- [ ] tpope copilot?
+- [x] which key?
 
 
 ## long tail
+- [ ] go through all keymaps and either give them a description or delete them (<Leader>fk)
 - choose a vim fragment
 - translate to lua
 - ???

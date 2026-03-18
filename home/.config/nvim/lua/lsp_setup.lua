@@ -89,21 +89,38 @@ local telescope_document_symbols = function()
   require('telescope.builtin').lsp_document_symbols()
 end
 
-ntk.map('n', '<Leader>li', ':LspInfo<CR>', ':LspInfo')
+ntk.map('n', ',i', ':LspInfo<CR>', ':LspInfo')
 
 -- LSP code actions
-ntk.map('n', '<Leader>laf', vim.lsp.buf.format, 'format file with LSP')
-ntk.map({'n', 'v'}, '<Leader>laa', vim.lsp.buf.code_action, 'code action')
-ntk.map('n', '<Leader>lar', vim.lsp.buf.rename, 'rename thing under cursor')
+ntk.map('n', ',af', vim.lsp.buf.format, 'format file with LSP')
+ntk.map({'n', 'v'}, ',aa', vim.lsp.buf.code_action, 'code action')
+ntk.map('n', ',ar', vim.lsp.buf.rename, 'rename thing under cursor')
+
+-- LSP diagnostics
+ntk.map('n', ',dn', vim.diagnostic.goto_next, 'go to next diagnostic')
+ntk.map('n', ',dp', vim.diagnostic.goto_prev, 'go to prev diagnostic')
+ntk.map('n', ',dd', vim.diagnostic.open_float, 'open diagnostic floating window')
 
 -- LSP go to...
-ntk.map('n', '<Leader>lgD', vim.lsp.buf.declaration, 'go to Declaration')
-ntk.map('n', '<Leader>lgd', vim.lsp.buf.definition, 'go to definition')
-ntk.map('n', '<Leader>lgi', vim.lsp.buf.implementation, 'go to implementation')
-ntk.map('n', '<Leader>lgt', vim.lsp.buf.type_definition, 'go to type definition')
+ntk.map('n', ',gD', vim.lsp.buf.declaration, 'go to Declaration')
+ntk.map('n', ',gd', vim.lsp.buf.definition, 'go to definition')
+ntk.map('n', ',gi', vim.lsp.buf.implementation, 'go to implementation')
+ntk.map('n', ',gt', vim.lsp.buf.type_definition, 'go to type definition')
 
 -- LSP list..
-ntk.map('n', '<Leader>llr', vim.lsp.buf.references, 'list references')
-ntk.map('n', '<Leader>llt', vim.lsp.buf.typehierarchy, 'show type hierarchy')
-ntk.map('n', '<Leader>lls', telescope_document_symbols, 'FZF document symbols')
-ntk.map('n', '<Leader>llo', ':SymbolsOutline<CR>', 'symbol outline')
+ntk.map('n', ',lr', vim.lsp.buf.references, 'list references')
+ntk.map('n', ',lt', vim.lsp.buf.typehierarchy, 'show type hierarchy')
+ntk.map('n', ',ls', telescope_document_symbols, 'FZF document symbols')
+ntk.map('n', ',lo', ':SymbolsOutline<CR>', 'symbol outline')
+
+local tb = require('telescope.builtin')
+-- tb.keymaps
+
+-- fuzzy/Telescope things
+ntk.map('n', '<Leader>ff', tb.builtin, 'all Telescope pickers')
+ntk.map('n', '<Leader>fk', tb.keymaps, 'Telescope keymaps')
+ntk.map('n', '<Leader>fc', tb.grep_string, 'find under cursor in project')
+ntk.map('n', '<Leader>fb', tb.current_buffer_fuzzy_find, 'fuzzy find in current buffer')
+-- TODO others
+-- live grep
+-- grep string under cursor
