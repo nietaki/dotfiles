@@ -61,6 +61,10 @@ require("lazy").setup(
     -- for now, because :checkhealth lazy says my luarocks install is broken, and I can't be bothered
     hererocks = false
   },
+  install = {
+    missing = true, -- try to install missing plugins on startup. This doesn't increase startup time.
+    colorscheme = {'srcery'}
+  },
   spec = {
     {"scrooloose/nerdtree"},
     {"vim-airline/vim-airline"},

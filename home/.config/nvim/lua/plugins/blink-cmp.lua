@@ -69,8 +69,11 @@ return {
 
       -- Default list of enabled providers defined so that you can extend it
       -- elsewhere in your config, without redefining it, due to `opts_extend`
+      cmdline = {
+        sources = { 'cmdline' }
+      },
       sources = {
-        default = { 'lazydev', 'copilot', 'lsp', 'path', 'snippets' },
+        default = { 'lazydev', 'codecompanion', 'copilot', 'lsp', 'path', 'snippets' },
         providers = {
           copilot = {
             name = 'copilot',

@@ -15,7 +15,7 @@ let g:flog_default_opts = { 'max_count': 1000 }
 nmap <Leader>gl :Flogsplit<CR>
 nmap <Leader>gL :Flog<CR>
 " the trailing space is here for a reason!
-nmap <Leader>gg :Git 
+nmap <Leader>gg :Git
 " search through commits
 nmap <Leader>g/c :Commits<CR>
 " search through commits for the current file
@@ -126,7 +126,7 @@ nnoremap <Leader>cO :Copen<CR>/.*\[FAILED\]<CR>
 nnoremap <Leader>cd :cclose<CR>
 
 :command! -nargs=* Makes :Make! <args>
-nnoremap <Leader>m<Leader> :Make 
+nnoremap <Leader>m<Leader> :Make
 nnoremap <Leader>mf :Dispatch! mix format<CR>
 nnoremap <Leader>mtc :Make! compile<CR>
 nnoremap <Leader>mtt :Make! test<CR>

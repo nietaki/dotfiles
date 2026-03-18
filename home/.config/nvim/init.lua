@@ -47,7 +47,7 @@ require('mini_setup')
 - [x] damn nerdfonts
 - [x] blink instead of cmp? pros and cons please
 - [x] lazy coder for lua lsp
-- [ ] shortcuts for editing config in new place
+- [x] shortcuts for editing config in new place
 - [x] lsp polish, shortcuts
 - [ ] codecompanion
 - [x] which key?
