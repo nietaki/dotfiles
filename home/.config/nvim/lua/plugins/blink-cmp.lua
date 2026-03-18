@@ -46,7 +46,8 @@ return {
         menu = {
           -- showing it too quickly interferes with the ghost text a bit
           -- remember, you can use <C-Space>
-          auto_show_delay_ms = 5000,
+          auto_show = false,
+          auto_show_delay_ms = 1000,
         },
         documentation = {
           auto_show = true,
@@ -56,7 +57,7 @@ return {
           enabled = true,
           show_with_selection = true,
           show_without_selection = true,
-          show_with_menu = true,
+          show_with_menu = false,
           show_without_menu = true,
         }
       },

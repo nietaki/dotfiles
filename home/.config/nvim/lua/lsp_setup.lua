@@ -49,13 +49,13 @@ end
 if vim.g.chosenCmp == 'blink' then
   -- https://cmp.saghen.dev/configuration/appearance.html#highlight-groups
   -- make the ghost text more visible - just make it look like a comment
-  vim.api.nvim_set_hl(
-    0,
-    'BlinkCmpGhostText',
-    { link = 'Comment' }
-  )
+  -- vim.api.nvim_set_hl(
+  --   0,
+  --   'BlinkCmpGhostText',
+  --   { link = 'Comment' }
+  -- )
 
-  -- vim.api.nvim_set_hl(0, 'BlinkCmpGhostText', { fg = '#cdd6f4', bg = '#1e1e2e' })
+  vim.api.nvim_set_hl(0, 'BlinkCmpGhostText', { fg = '#cdd6f4', bg = '#1e1e2e' })
 end
 
 

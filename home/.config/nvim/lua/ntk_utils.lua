@@ -17,8 +17,7 @@ end
 
 local map = function(modes, lhs, rhs, description, opts)
   modes = to_table(modes)
-  -- TODO silent = true
-  local default_opts = {desc = description, noremap = true, silent = false}
+  local default_opts = {desc = description, noremap = true, silent = true}
   opts = opts or {}
   opts = table_merge(default_opts, opts)
 
