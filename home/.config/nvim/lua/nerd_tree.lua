@@ -1,4 +1,4 @@
-local nt = {}
+local nerd_tree = {}
 
 local ntk = require('ntk_utils')
 
@@ -10,7 +10,7 @@ local open_current_file = function()
   end
 end
 
-nt.setup = function()
+nerd_tree.setup = function()
   vim.api.nvim_create_autocmd('VimLeave', {
     pattern = '*',
     callback = function()
@@ -25,4 +25,4 @@ nt.setup = function()
   ntk.map('n', [[<C-'>]], open_current_file, 'open current file in nerd tree')
 end
 
-return nt
+return nerd_tree

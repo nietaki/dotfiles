@@ -117,8 +117,8 @@ local tb = require('telescope.builtin')
 -- tb.keymaps
 
 -- fuzzy/Telescope things
-ntk.map('n', '<Leader>ll', tb.builtin, 'all Telescope pickers')
-ntk.map('n', '<Leader>lk', tb.keymaps, 'Telescope keymaps')
+ntk.map('n', '<Leader>ss', tb.builtin, 'all Telescope pickers')
+ntk.map('n', '<Leader>sk', tb.keymaps, 'Telescope keymaps')
 -- ntk.map('n', '<Leader>fc', tb.grep_string, 'find under cursor in project')
 -- ntk.map('n', '<Leader>fb', tb.current_buffer_fuzzy_find, 'fuzzy find in current buffer')
 -- TODO others
