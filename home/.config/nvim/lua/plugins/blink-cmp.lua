@@ -73,7 +73,7 @@ return {
         sources = { 'cmdline' }
       },
       sources = {
-        default = { 'lazydev', 'codecompanion', 'copilot', 'lsp', 'path', 'snippets' },
+        default = { 'lazydev', 'copilot', 'lsp', 'path', 'snippets' },
         providers = {
           copilot = {
             name = 'copilot',

@@ -4,6 +4,7 @@ return {
     "nvim-lua/plenary.nvim",
     "nvim-treesitter/nvim-treesitter",
   },
+  enabled = false,
   opts = {
     -- NOTE: The log_level is in `opts.opts`
     opts = {
