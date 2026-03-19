@@ -1,0 +1,75 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "ollama/devstral-small-2-24b-92k",
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama internal",
+      "options": {
+        "baseURL": "http://192.168.1.182:11434/v1"
+      },
+      "models": {
+        "devstral-small-2-24b-92k": {
+          "name": "devstral-small-2-24b-92k",
+          "limit": {
+            "context": 92000,
+            "output": 32000
+          }
+        },
+        "glm-4.7-flash-q4_K_M-24b-84k": {
+          "name": "glm-4.7-flash-q4_K_M-24b-84k",
+          // "options": {
+          //   "thinking": {
+          //     // TODO check if this works at all
+          //     "type": "enabled",
+          //   },
+          // },
+          "limit": {
+            "context": 84000,
+            "output": 32000
+          }
+        },
+        "qwen3-coder-30b-84k": {
+          "name": "qwen3-coder-30b-84k",
+          "limit": {
+            "context": 84000,
+            "output": 32000
+          }
+        },
+        "qwen3-30b-a3b-94k": {
+          "name": "qwen3-30b-a3b-94k",
+          "limit": {
+            "context": 94000,
+            "output": 32000
+          }
+        },
+      }
+    }
+  },
+  "permission": {
+    "edit": "ask",
+    "bash": "ask",
+    "webfetch": "allow",
+    "grep": "allow",
+    "glob": "allow",
+    "list": "allow",
+    // This tool is only available when OPENCODE_EXPERIMENTAL_LSP_TOOL=true (or OPENCODE_EXPERIMENTAL=true).
+    "lsp": "allow",
+    "skill": "ask",
+    "todowrite": "allow",
+    "todoread": "allow",
+    // This tool is only available when using the OpenCode provider or when the OPENCODE_ENABLE_EXA environment variable is set to any truthy value (e.g., true or 1).
+    "websearch": "allow",
+    "question": "allow",
+  },
+  "server": {
+    "port": 4096,
+    "hostname": "0.0.0.0",
+    "mdns": true,
+    "mdnsDomain": "opencode.local",
+    // (other) allowed opencode origins
+    "cors": [
+      // "http://localhost:5173"
+    ]
+  }
+}

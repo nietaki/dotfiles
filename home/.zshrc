@@ -106,7 +106,7 @@ function gitroot () {
 }
 
 function run-livebook() {
-  pkill -9 -f livebook; 
+  pkill -9 -f livebook;
   livebook server "$1" --port 8769 >/dev/null 2>/dev/null &
 }
 
@@ -206,3 +206,5 @@ complete -o nospace -C /opt/homebrew/bin/terraform terraform
 export STM32_PRG_PATH=/Applications/STMicroelectronics/STM32Cube/STM32CubeProgrammer/STM32CubeProgrammer.app/Contents/MacOs/bin
 
 export STM32CubeMX_PATH=/Applications/STMicroelectronics/STM32CubeMX.app/Contents/Resources
+
+alias hs=homeshick

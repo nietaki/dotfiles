@@ -12,8 +12,8 @@ config.bold_brightens_ansi_colors = true
 
 config.initial_cols = 180
 config.initial_rows = 60
-config.freetype_load_target = 'Light'
-config.freetype_render_target = 'HorizontalLcd'
+config.freetype_load_target = 'Normal'
+config.freetype_render_target = 'Normal'
 config.line_height = 1.2
 
 return config
