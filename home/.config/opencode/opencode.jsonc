@@ -71,5 +71,12 @@
     "cors": [
       // "http://localhost:5173"
     ]
+  },
+  "mcp": {
+    "dash": {
+      "type": "local",
+      "command": ["uvx", "--from", "git+https://github.com/Kapeli/dash-mcp-server.git", "dash-mcp-server"],
+      "enabled": true
+    }
   }
 }
