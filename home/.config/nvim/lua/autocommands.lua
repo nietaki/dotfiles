@@ -17,26 +17,34 @@ end
 
 au.register_filetype_specific = function()
   vim.api.nvim_create_autocmd('BufWritePre', {
-    callback = au.trim_whitespace,
+    callback = function(opts)
+      local bufno = opts.buf
+      au.trim_whitespace()
+      local capable_clients =
+          vim.lsp.get_clients({ bufnr = bufno, method = vim.lsp.protocol.Methods.textDocument_formatting })
+      if #capable_clients > 0 then
+        vim.lsp.buf.format({ bufnr = bufno })
+      end
+    end
   })
 
   vim.api.nvim_create_autocmd(
-    {'BufNewFile', 'BufRead', 'BufReadPost'}, {
-    pattern = {'*.livemd', '*.md'},
-    callback = function()
-      vim.opt.filetype = 'markdown'
-      vim.opt.syntax = 'markdown'
-    end,
-  })
+    { 'BufNewFile', 'BufRead', 'BufReadPost' }, {
+      pattern = { '*.livemd', '*.md' },
+      callback = function()
+        vim.opt.filetype = 'markdown'
+        vim.opt.syntax = 'markdown'
+      end,
+    })
 
   vim.api.nvim_create_autocmd(
-    {'BufNewFile', 'BufRead', 'BufReadPost'}, {
-    pattern = {'*.ino'},
-    callback = function()
-      vim.opt.filetype = 'cpp'
-      vim.opt.syntax = 'cpp'
-    end,
-  })
+    { 'BufNewFile', 'BufRead', 'BufReadPost' }, {
+      pattern = { '*.ino' },
+      callback = function()
+        vim.opt.filetype = 'cpp'
+        vim.opt.syntax = 'cpp'
+      end,
+    })
 end
 
 au.setup_spellchecks = function()
@@ -44,7 +52,7 @@ au.setup_spellchecks = function()
   vim.opt.spelllang = 'en'
 
   vim.api.nvim_create_autocmd('FileType', {
-    pattern = {'tex', 'markdown'},
+    pattern = { 'tex', 'markdown' },
     callback = function()
       vim.opt_local.spell = true
     end,

@@ -14,6 +14,6 @@ config.initial_cols = 180
 config.initial_rows = 60
 config.freetype_load_target = 'Normal'
 config.freetype_render_target = 'Normal'
-config.line_height = 1.2
+config.line_height = 1.0
 
 return config
