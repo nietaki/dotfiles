@@ -6,7 +6,8 @@ local function key_files_keymaps()
   ntk.map('n', '<Leader>fr', ':checktime<CR>')
   ntk.map('n', '<Leader>fR', ':e!<CR>', 'reload current file from disk')
   ntk.map('n', '<Leader>fed', ':e ~/.config/nvim/init.lua<CR>')
-  ntk.map('n', '<Leader>feD', ':tabnew ~/.homesick/repos/dotfiles/README.md<CR>:tcd %:p:h<CR>', 'open dotfiles in new tab')
+  ntk.map('n', '<Leader>feD', ':tabnew ~/.homesick/repos/dotfiles/README.md<CR>:tcd %:p:h<CR>',
+    'open dotfiles in new tab')
   ntk.map('n', '<Leader>feP', ':tabnew ~/puter/README.md<CR>:tcd %:p:h<CR>', 'open puter in new tab')
   ntk.map('n', '<Leader>fev', ':e ~/.vimrc<CR>')
   ntk.map('n', '<Leader>fez', ':e ~/.zshrc<CR>')
@@ -20,6 +21,11 @@ local function project()
   ntk.map('n', '<Leader>ph', ':CloseHiddenBuffers<CR>', 'close hidden buffers')
   ntk.map('n', '<Leader>pr', ':pwd<CR>', 'show project root')
   ntk.map('n', '<Leader>pR', ':tcd %:p:h<CR>', 'SET project root')
+end
+
+local function open_code()
+  ntk.map('n', '<Leader>om', require('opencode.api').configure_provider, 'switch Model')
+  ntk.map('n', '<Leader>oa', require('opencode.api').select_agent, 'Agent (plan/build/other)')
 end
 
 local function toggle_tab()
@@ -88,6 +94,7 @@ function km.setup()
   buffers_and_windows()
   project()
   toggle_tab()
+  open_code()
   others()
 end
 

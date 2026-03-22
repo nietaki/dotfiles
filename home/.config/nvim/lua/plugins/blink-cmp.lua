@@ -18,7 +18,7 @@ local opts = {
     ['C-e'] = { 'hide', 'cancel', 'fallback' },
     ['<Tab>'] = {
       function(cmp)
-        if cmp.is_menu_visible() then
+        if cmp.is_menu_visible() or cmp.is_ghost_text_visible() then
           return cmp.select_and_accept({ force = true })
         end
       end,

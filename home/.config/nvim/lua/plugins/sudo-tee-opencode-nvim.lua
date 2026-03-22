@@ -14,6 +14,18 @@ local opts = {
     auto_kill = false,              -- Kill spawned servers when last nvim instance exits (default: true) Only applies to servers spawned by the plugin with spawn_command/kill_command
     path_map = nil,                 -- Map host paths to server paths: string ('/app') or function(path) -> string
   },
+  keymap = {
+    input_window = {
+      -- don't close the window on escape
+      ['<esc>'] = false,
+      -- Shift+enter to insert a newline, enter to submit
+      ['<S-cr>'] = { function()
+        --just emit a newline character using the vim api
+        vim.api.nvim_put({ '' }, 'c', true, true)
+      end },
+      ['<cr>'] = { 'submit_input_prompt', mode = { 'n', 'i' } },
+    },
+  },
 }
 
 
