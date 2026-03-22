@@ -14,7 +14,7 @@ local opts = {
   keymap = {
     preset = 'default',
     ['<CR>'] = { 'select_and_accept', 'fallback' },
-    ['<Esc>'] = { 'cancel', 'fallback' },
+    -- ['<Esc>'] = { 'cancel', 'fallback' },
     ['C-e'] = { 'hide', 'cancel', 'fallback' },
     ['<Tab>'] = {
       function(cmp)
