@@ -16,7 +16,14 @@ local opts = {
     ['<CR>'] = { 'select_and_accept', 'fallback' },
     ['<Esc>'] = { 'cancel', 'fallback' },
     ['C-e'] = { 'hide', 'cancel', 'fallback' },
-    ['<Tab>'] = { 'show_and_insert_or_accept_single', 'fallback' },
+    ['<Tab>'] = {
+      function(cmp)
+        if cmp.is_menu_visible() then
+          return cmp.select_and_accept({ force = true })
+        end
+      end,
+
+      'fallback' },
   },
 
   appearance = {
@@ -31,7 +38,7 @@ local opts = {
       -- showing it too quickly interferes with the ghost text a bit
       -- remember, you can use <C-Space>
       auto_show = true,
-      auto_show_delay_ms = 400,
+      auto_show_delay_ms = 600,
       direction_priority = function()
         local ctx = require('blink.cmp').get_context()
         local item = require('blink.cmp').get_selected_item()
@@ -90,6 +97,16 @@ local opts = {
         -- make lazydev completions top priority (see `:h blink.cmp`)
         score_offset = 100,
       },
+
+      snippets = {
+        opts = {
+          filter_snippets = function(ft, file)
+            if vim.tbl_contains({ 'opencode', 'gitcommit' }, ft) then
+              return false
+            end
+          end
+        }
+      }
     }
   },
   -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
@@ -99,6 +116,9 @@ local opts = {
   -- See the fuzzy documentation for more information
   fuzzy = { implementation = "prefer_rust_with_warning" },
   enabled = function()
+    if vim.snippet.active() then
+      return false
+    end
     -- local filetype = vim.api.nvim_buf_get_option(0, 'filetype')
     local filetype = vim.api.nvim_get_option_value('filetype', { buf = 0 })
     if vim.tbl_contains({ 'gitcommit' }, filetype) then

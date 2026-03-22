@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "ollama/devstral-small-2-24b-92k",
+  "model": "ollama/glm-4.7-flash-q4_K_M-24b-84k",
   "provider": {
     "ollama": {
       "npm": "@ai-sdk/openai-compatible",
@@ -75,7 +75,12 @@
   "mcp": {
     "dash": {
       "type": "local",
-      "command": ["uvx", "--from", "git+https://github.com/Kapeli/dash-mcp-server.git", "dash-mcp-server"],
+      "command": [
+        "uvx",
+        "--from",
+        "git+https://github.com/Kapeli/dash-mcp-server.git",
+        "dash-mcp-server"
+      ],
       "enabled": true
     }
   }

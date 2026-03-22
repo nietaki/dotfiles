@@ -14,7 +14,7 @@ local snippet = {
 
 
 local primarySources = {
-  { name = 'luasnip' },
+  -- { name = 'luasnip' },
   { name = 'copilot' },
   { name = 'nvim_lsp' },
 }
@@ -62,17 +62,17 @@ return {
       return vim.g.chosenCmp == 'cmp'
     end,
     dependencies = {
-      {'zbirenbaum/copilot-cmp'},
-      {"hrsh7th/cmp-path"},
-      {'hrsh7th/cmp-nvim-lsp'},
+      { 'zbirenbaum/copilot-cmp' },
+      { "hrsh7th/cmp-path" },
+      { 'hrsh7th/cmp-nvim-lsp' },
       -- TODO https://github.com/hrsh7th/cmp-nvim-lsp-document-symbol
       -- TODO https://github.com/hrsh7th/cmp-nvim-lsp-signature-help
-      {"hrsh7th/cmp-buffer"},
-      {
-        'L3MON4D3/LuaSnip',
-        build = "make install_jsregexp" ,
-        version = 'v2.*'
-      },
+      { "hrsh7th/cmp-buffer" },
+      -- {
+      --   'L3MON4D3/LuaSnip',
+      --   build = "make install_jsregexp" ,
+      --   version = 'v2.*'
+      -- },
     }
   },
   {
