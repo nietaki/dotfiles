@@ -11,7 +11,7 @@ local opts = {
     port = 4096,                    -- Port number (e.g., 8080), 'auto' for random port
     timeout = 5,                    -- Health check timeout in seconds when connecting
     spawn_command = nil,            -- Optional function to start the server: function(port, url) ... end
-    auto_kill = false,               -- Kill spawned servers when last nvim instance exits (default: true) Only applies to servers spawned by the plugin with spawn_command/kill_command
+    auto_kill = false,              -- Kill spawned servers when last nvim instance exits (default: true) Only applies to servers spawned by the plugin with spawn_command/kill_command
     path_map = nil,                 -- Map host paths to server paths: string ('/app') or function(path) -> string
   },
 }
@@ -28,9 +28,9 @@ return {
       "MeanderingProgrammer/render-markdown.nvim",
       opts = {
         anti_conceal = { enabled = false },
-        file_types = { 'markdown', 'opencode_output' },
+        file_types = { 'opencode_output' },
       },
-      ft = { 'markdown', 'Avante', 'copilot-chat', 'opencode_output' },
+      ft = { 'copilot-chat', 'opencode_output' },
     },
     'saghen/blink.cmp',
 

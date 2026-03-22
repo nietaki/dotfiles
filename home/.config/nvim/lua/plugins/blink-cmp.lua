@@ -77,10 +77,12 @@ local opts = {
   -- Default list of enabled providers defined so that you can extend it
   -- elsewhere in your config, without redefining it, due to `opts_extend`
   cmdline = {
-    sources = { 'cmdline' }
+    sources = { 'cmdline', 'path' },
+    keymap = { preset = 'inherit' },
+    completion = { menu = { auto_show = true } },
   },
   sources = {
-    default = { 'lazydev', 'copilot', 'lsp', 'path', 'snippets' },
+    default = { 'lazydev', 'copilot', 'lsp', 'snippets', 'emoji', 'path' },
     per_filetype = {
       copilot = { 'lsp', 'path' }
     },
@@ -96,6 +98,26 @@ local opts = {
         module = "lazydev.integrations.blink",
         -- make lazydev completions top priority (see `:h blink.cmp`)
         score_offset = 100,
+      },
+      emoji = {
+        module = "blink-emoji",
+        name = "Emoji",
+        score_offset = 15, -- Tune by preference
+        opts = {
+          insert = true,   -- Insert emoji (default) or complete its name
+          ---@type string|table|fun():table
+          trigger = function()
+            return { ":" }
+          end,
+        },
+        should_show_items = function()
+          return vim.tbl_contains(
+          -- Enable emoji completion only for git commits and markdown.
+          -- By default, enabled for all file-types.
+            { "gitcommit", "markdown" },
+            vim.o.filetype
+          )
+        end,
       },
 
       snippets = {
@@ -145,7 +167,8 @@ return {
     -- optional: provides snippets for the snippet source
     dependencies = {
       'rafamadriz/friendly-snippets',
-      'fang2hou/blink-copilot'
+      'fang2hou/blink-copilot',
+      'moyiz/blink-emoji.nvim',
     },
 
     enabled = function()
