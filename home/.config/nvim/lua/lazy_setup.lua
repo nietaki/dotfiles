@@ -6,7 +6,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   if vim.v.shell_error ~= 0 then
     vim.api.nvim_echo({
       { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-      { out, "WarningMsg" },
+      { out,                            "WarningMsg" },
       { "\nPress any key to exit..." },
     }, true, {})
     vim.fn.getchar()
@@ -21,102 +21,104 @@ vim.opt.rtp:prepend(lazypath)
 -- vim.g.mapleader = " "
 
 require("lazy").setup(
-{
+  {
 
-  -- I gave up and started using nerdfonts
-  -- ui = {
-  --   icons = {
-  --     cmd = '[CMD]',
-  --     config = '[CONFIG]',
-  --     debug = "[DEBUG]",
-  --     event = '[EVENT]',
-  --     ft = '📂',
-  --     import = "[IMPORT]",
-  --     init = '[INIT]',
-  --     keys = '[KEYS]',
-  --     lazy = '💤 ',
-  --     loaded = "●",
-  --     not_loaded = "○",
-  --     plugin = '🔌',
-  --     require = '[REQUIRE]',
-  --     runtime = '[RUNTIME]',
-  --     source = '[SOURCE]',
-  --     start = '[START]',
-  --     task = '[TASK]',
-  --     list = {
-  --       "●",
-  --       "➜",
-  --       "★",
-  --       "‒",
-  --     },
-  --   },
-  -- },
-  change_detection = {
-    -- automatically check for config file changes and reload the ui
-    enabled = true,
-    notify = false, -- get a notification when changes are found
-  },
-  rocks = {
-    enabled = true,
-    -- for now, because :checkhealth lazy says my luarocks install is broken, and I can't be bothered
-    hererocks = false
-  },
-  install = {
-    missing = true, -- try to install missing plugins on startup. This doesn't increase startup time.
-    colorscheme = {'srcery'}
-  },
-  spec = {
-    {"scrooloose/nerdtree"},
-    {"vim-airline/vim-airline"},
-    {"vim-airline/vim-airline-themes"},
-    {"tpope/vim-fugitive"},
-    {"tpope/vim-rhubarb"},
-    {"rbong/vim-flog"},
-    {"ctrlpvim/ctrlp.vim"},
-    {"elixir-lang/vim-elixir"},
-    {"junegunn/fzf", build = ":call fzf#install()"},
-    {"junegunn/fzf.vim"},
-    {"jremmen/vim-ripgrep"},
-    {"mhinz/vim-signify"},
-
-    {"wesQ3/vim-windowswap"},
-    {"tpope/vim-commentary"},
-    {"tpope/vim-abolish"},
-
-    {"nvim-lua/plenary.nvim"},
-
-    --{"townk/vim-autoclose"},
-    -- {"terryma/vim-multiple-cursors"},
-    {"nelstrom/vim-visual-star-search"},
-
-    {"janko/vim-test"},
-    {"tpope/vim-dispatch"},
-    {"tpope/vim-eunuch"},
-
-    {"thaerkh/vim-workspace"},
-
-    -- themes
-    {"joshdick/onedark.vim"},
-    {"tomasr/molokai"},
-    {"srcery-colors/srcery-vim", lazy = false},
-    -- TODO taboo is unmaintained, figure out why I added it and replace with something else
-    {"gcmt/taboo.vim"},
-
-    {"nvim-treesitter/playground"},
-
-    {'simrat39/symbols-outline.nvim'},
-    {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
-    -- which-key, needs configuration
-    -- {"Cassin01/wf.nvim", version = "*", config = function() require("wf").setup() end},
-    {
-    'nvim-telescope/telescope.nvim', tag = '0.1.4',
-      dependencies = { 'nvim-lua/plenary.nvim' }
+    -- I gave up and started using nerdfonts
+    -- ui = {
+    --   icons = {
+    --     cmd = '[CMD]',
+    --     config = '[CONFIG]',
+    --     debug = "[DEBUG]",
+    --     event = '[EVENT]',
+    --     ft = '📂',
+    --     import = "[IMPORT]",
+    --     init = '[INIT]',
+    --     keys = '[KEYS]',
+    --     lazy = '💤 ',
+    --     loaded = "●",
+    --     not_loaded = "○",
+    --     plugin = '🔌',
+    --     require = '[REQUIRE]',
+    --     runtime = '[RUNTIME]',
+    --     source = '[SOURCE]',
+    --     start = '[START]',
+    --     task = '[TASK]',
+    --     list = {
+    --       "●",
+    --       "➜",
+    --       "★",
+    --       "‒",
+    --     },
+    --   },
+    -- },
+    change_detection = {
+      -- automatically check for config file changes and reload the ui
+      enabled = true,
+      notify = false, -- get a notification when changes are found
     },
-    {"ahmedkhalf/project.nvim"},
-    {'nvim-telescope/telescope-fzf-native.nvim', build = "make" },
-    { "lukas-reineke/indent-blankline.nvim" },
-    -- {'github/copilot.vim'},
-    -- {'fatih/vim-go'},
-    { import = "plugins" },
-  }
-})
+    rocks = {
+      enabled = true,
+      -- for now, because :checkhealth lazy says my luarocks install is broken, and I can't be bothered
+      hererocks = false
+    },
+    install = {
+      missing = true, -- try to install missing plugins on startup. This doesn't increase startup time.
+      colorscheme = { 'srcery' }
+    },
+    spec = {
+      { "scrooloose/nerdtree" },
+      { "vim-airline/vim-airline" },
+      { "vim-airline/vim-airline-themes" },
+      { "tpope/vim-fugitive" },
+      { "tpope/vim-rhubarb" },
+      { "rbong/vim-flog" },
+      { "ctrlpvim/ctrlp.vim" },
+      { "elixir-lang/vim-elixir" },
+      { "junegunn/fzf",                    build = ":call fzf#install()" },
+      { "junegunn/fzf.vim" },
+      { "jremmen/vim-ripgrep" },
+      { "mhinz/vim-signify" },
+
+      { "wesQ3/vim-windowswap" },
+      { "tpope/vim-commentary" },
+      { "tpope/vim-abolish" },
+
+      { "nvim-lua/plenary.nvim" },
+
+      --{"townk/vim-autoclose"},
+      -- {"terryma/vim-multiple-cursors"},
+      { "nelstrom/vim-visual-star-search" },
+
+      { "janko/vim-test" },
+      { "tpope/vim-dispatch" },
+      { "tpope/vim-eunuch" },
+
+      { "thaerkh/vim-workspace" },
+
+      -- themes
+      { "joshdick/onedark.vim" },
+      { "tomasr/molokai" },
+      { "srcery-colors/srcery-vim",        lazy = false },
+      -- TODO taboo is unmaintained, figure out why I added it and replace with something else
+      { "gcmt/taboo.vim" },
+
+      { "nvim-treesitter/playground" },
+
+      { 'simrat39/symbols-outline.nvim' },
+      { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
+      -- which-key, needs configuration
+      -- {"Cassin01/wf.nvim", version = "*", config = function() require("wf").setup() end},
+      {
+        'nvim-telescope/telescope.nvim',
+        tag = '0.1.4',
+        dependencies = { 'nvim-lua/plenary.nvim' }
+      },
+      { "ahmedkhalf/project.nvim" },
+      { 'nvim-telescope/telescope-fzf-native.nvim', build = "make" },
+      { "lukas-reineke/indent-blankline.nvim" },
+      -- {'github/copilot.vim'},
+      -- {'fatih/vim-go'},
+      -- { 'folke/snacks.nvim' },
+      { import = "plugins" },
+    }
+  })
