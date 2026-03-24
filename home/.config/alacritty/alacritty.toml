@@ -1,5 +1,4 @@
 # https://github.com/srcery-colors/srcery-terminal/
-
 [colors.primary]
 background = "#1c1b19"
 foreground = "#fce8c3"
@@ -30,5 +29,12 @@ white = "#fce8c3"
 
 [font]
 # normal = { family = "Hack", style = "Regular" }
-normal = { family = "Source Code Pro", style = "Regular" }
-size = 12
+normal = { family = "SauceCodePro NFM", style = "Regular" }
+size = 15
+
+[window.padding]
+x = 4
+y = 1
+
+[window]
+option_as_alt = "OnlyLeft"

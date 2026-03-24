@@ -64,6 +64,7 @@ config.keys = {
   { key = 'v',          mods = 'SUPER',       action = act.PasteFrom 'Clipboard' },
   { key = 'x',          mods = 'SUPER',       action = act.ActivateCopyMode },
   { key = 'z',          mods = 'SUPER',       action = act.TogglePaneZoomState },
+  { key = 'o',          mods = 'SUPER',       action = act.TogglePaneZoomState },
   { key = ',',          mods = 'SUPER',       action = act.ActivateTabRelative(-1) },
   { key = ',',          mods = 'SHIFT|SUPER', action = act.MoveTabRelative(-1) },
   { key = '.',          mods = 'SUPER',       action = act.ActivateTabRelative(1) },

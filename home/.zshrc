@@ -136,6 +136,7 @@ source $HOME/.homesick/repos/homeshick/homeshick.sh
 
 # Rust stuff
 
+. "$HOME/.cargo/env"
 export PATH="$HOME/.cargo/bin:$PATH"
 
 export PATH="$HOME/.local/bin:$PATH"
