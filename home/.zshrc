@@ -209,3 +209,16 @@ export STM32_PRG_PATH=/Applications/STMicroelectronics/STM32Cube/STM32CubeProgra
 export STM32CubeMX_PATH=/Applications/STMicroelectronics/STM32CubeMX.app/Contents/Resources
 
 alias hs=homeshick
+
+# # eval "$(zellij setup --generate-completion zsh)"
+# # check if the terminal is alacritty
+# if [[ "$TERM" == "alacritty" ]]; then
+#   eval "$(zellij setup --generate-auto-start zsh)"
+# fi
+
+if [[ -z "$ZELLIJ" ]]; then
+  if [[ "$TERM" == "alacritty" ]]; then
+    zellij -l welcome
+    exit
+  fi
+fi

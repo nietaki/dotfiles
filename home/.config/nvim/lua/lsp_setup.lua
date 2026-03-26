@@ -11,7 +11,6 @@ require('symbols-outline').setup()
 -- lines 911 to 984 went to leftovers.vim
 
 local relevant_servers = {
-
   'glsl_analyzer',
   'lexical',
   'gopls',
@@ -93,7 +92,7 @@ ntk.map('n', ',i', ':LspInfo<CR>', ':LspInfo')
 
 -- LSP code actions
 ntk.map('n', ',af', vim.lsp.buf.format, 'format file with LSP')
-ntk.map({'n', 'v'}, ',aa', vim.lsp.buf.code_action, 'code action')
+ntk.map({ 'n', 'v' }, ',aa', vim.lsp.buf.code_action, 'code action')
 ntk.map('n', ',ar', vim.lsp.buf.rename, 'rename thing under cursor')
 
 -- LSP diagnostics

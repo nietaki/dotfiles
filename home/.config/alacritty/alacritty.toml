@@ -38,3 +38,6 @@ y = 1
 
 [window]
 option_as_alt = "OnlyLeft"
+
+# [terminal.shell]
+# program = "zellij"

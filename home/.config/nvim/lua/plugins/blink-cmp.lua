@@ -77,6 +77,7 @@ local opts = {
   -- Default list of enabled providers defined so that you can extend it
   -- elsewhere in your config, without redefining it, due to `opts_extend`
   cmdline = {
+    enabled = false,
     sources = { 'cmdline', 'path' },
     keymap = { preset = 'inherit' },
     completion = { menu = { auto_show = true } },
