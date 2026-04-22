@@ -4,6 +4,7 @@ local ntk = require('ntk_utils')
 
 local function key_files_keymaps()
   ntk.map('n', '<Leader>fr', ':checktime<CR>')
+  ntk.map('n', '<Leader>fh', ':e %:p:s,.hpp$,.X123X,:s,.cpp$,.hpp,:s,.X123X$,.cpp,<CR>')
   ntk.map('n', '<Leader>fR', ':e!<CR>', 'reload current file from disk')
   ntk.map('n', '<Leader>fed', ':e ~/.config/nvim/init.lua<CR>')
   ntk.map('n', '<Leader>feD', ':tabnew ~/.homesick/repos/dotfiles/README.md<CR>:tcd %:p:h<CR>',

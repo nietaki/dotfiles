@@ -222,3 +222,6 @@ if [[ -z "$ZELLIJ" ]]; then
     exit
   fi
 fi
+
+# picotool
+export PATH="/$HOME/bin/picotool:$PATH"

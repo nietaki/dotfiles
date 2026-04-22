@@ -85,7 +85,8 @@ local opts = {
   sources = {
     default = { 'lazydev', 'copilot', 'lsp', 'snippets', 'emoji', 'path' },
     per_filetype = {
-      copilot = { 'lsp', 'path' }
+      copilot = { 'lsp', 'path' },
+      markdown = { 'snippets', 'emoji', 'path' },
     },
     providers = {
       copilot = {
