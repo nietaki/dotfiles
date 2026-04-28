@@ -35,6 +35,7 @@ miniclue.setup(
       -- Enhance this by adding descriptions for <Leader> mapping groups
       { mode = 'n', keys = '<Leader>b',  desc = '+ buffer' },
       { mode = 'n', keys = '<Leader>c',  desc = '+ quickfix (TODO delete)' },
+      { mode = 'n', keys = '<Leader>d',  desc = '+ strudel / art' },
       { mode = 'n', keys = '<Leader>f',  desc = '+ file' },
       { mode = 'n', keys = '<Leader>fe', desc = '+ edit key config files' },
       { mode = 'n', keys = '<Leader>g',  desc = '+ Git' },

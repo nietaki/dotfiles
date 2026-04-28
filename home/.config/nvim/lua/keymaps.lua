@@ -85,6 +85,17 @@ local function buffers_and_windows()
   ntk.map('n', '<Leader>wf', '<C-w>F', 'open file:line under curson in new window')
 end
 
+local function strudel_keymaps()
+  local strudel = require("strudel")
+  vim.keymap.set("n", "<leader>dl", strudel.launch, { desc = "Launch Strudel" })
+  vim.keymap.set("n", "<leader>dq", strudel.quit, { desc = "Quit Strudel" })
+  vim.keymap.set("n", "<leader>dt", strudel.toggle, { desc = "Strudel Toggle Play/Stop" })
+  vim.keymap.set("n", "<leader>du", strudel.update, { desc = "Strudel Update" })
+  vim.keymap.set("n", "<leader>ds", strudel.stop, { desc = "Strudel Stop Playback" })
+  vim.keymap.set("n", "<leader>db", strudel.set_buffer, { desc = "Strudel set current buffer" })
+  vim.keymap.set("n", "<leader>dx", strudel.execute, { desc = "Strudel set current buffer and update" })
+end
+
 local others = function()
   ntk.map('n', '<Leader>qq', ':qa<CR>', 'Quit!')
 end
@@ -96,6 +107,7 @@ function km.setup()
   project()
   toggle_tab()
   open_code()
+  strudel_keymaps()
   others()
 end
 

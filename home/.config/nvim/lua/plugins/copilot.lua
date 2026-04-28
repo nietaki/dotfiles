@@ -10,7 +10,6 @@ return {
     cmd = 'Copilot',
     event = 'InsertEnter',
     main = 'copilot',
-    enabled = false,
     opts = {
       suggestion = { enabled = false },
       panel = { enabled = false },
@@ -39,6 +38,7 @@ return {
     "github/copilot.vim",
     cmd = "Copilot",
     event = "BufWinEnter",
+    enabled = false,
     init = function()
       vim.g.copilot_no_maps = true
     end,
