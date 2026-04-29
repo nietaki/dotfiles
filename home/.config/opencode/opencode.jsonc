@@ -28,6 +28,9 @@
     "websearch": "allow",
     "codesearch": "allow",
     "question": "allow",
+    "dash": "allow",
+    "github-readonly": "allow",
+    "github-notifications": "allow",
   },
   "agent": {
     "plan": {
@@ -119,6 +122,77 @@
         "git+https://github.com/Kapeli/dash-mcp-server.git",
         "dash-mcp-server"
       ],
+      "enabled": true
+    },
+    // repos/github-mcp-server/github-mcp-server --help
+    // A GitHub MCP server that handles various tools and resources.
+    //
+    // Usage:
+    //   server [command]
+    //
+    // Available Commands:
+    //   completion    Generate the autocompletion script for the specified shell
+    //   generate-docs Generate documentation for tools and toolsets
+    //   help          Help about any command
+    //   http          Start HTTP server
+    //   list-scopes   List required OAuth scopes for enabled tools
+    //   stdio         Start stdio server
+    //
+    // Flags:
+    //       --content-window-size int          Specify the content window size (default 5000)
+    //       --dynamic-toolsets                 Enable dynamic toolsets
+    //       --enable-command-logging           When enabled, the server will log all command requests and responses to the log file
+    //       --exclude-tools strings            Comma-separated list of tool names to disable regardless of other settings
+    //       --export-translations              Save translations to a JSON file
+    //       --features strings                 Comma-separated list of feature flags to enable
+    //       --gh-host string                   Specify the GitHub hostname (for GitHub Enterprise etc.)
+    //   -h, --help                             help for server
+    //       --insiders                         Enable insiders features
+    //       --lockdown-mode                    Enable lockdown mode
+    //       --log-file string                  Path to log file
+    //       --read-only                        Restrict the server to read-only operations
+    //       --repo-access-cache-ttl duration   Override the repo access cache TTL (e.g. 1m, 0s to disable) (default 5m0s)
+    //       --tools strings                    Comma-separated list of specific tools to enable
+    //       --toolsets strings                 Comma-separated list of tool groups to enable (no spaces).
+    //                                          Available: actions, code_security, copilot, dependabot, discussions, gists, git,
+    //                                                      issues, labels, notifications, orgs, projects, pull_requests, repos,
+    //                                                      secret_protection, security_advisories, stargazers, users
+    //                                          Special toolset keywords:
+    //                                            - all: Enables all available toolsets
+    //                                            - default: Enables the default toolset configuration of:
+    //                                                      context, copilot, issues, pull_requests, repos, users
+    //                                          Examples:
+    //                                            - --toolsets=actions,gists,notifications
+    //                                            - Default + additional: --toolsets=default,actions,gists
+    //                                            - All tools: --toolsets=all
+    //   -v, --version                          version for server
+    "github-readonly": {
+      "type": "local",
+      "command": [
+        "{env:HOME}/repos/github-mcp-server/github-mcp-server",
+        "--read-only",
+        "--toolsets",
+        // "code_security,dependabot,discussions,issues,labels,orgs,projects,pull_requests,repos,security_advisories,stargazers,users",
+        "default,discussions,stargazers,labels",
+        "stdio",
+      ],
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_MCP_READ_ONLY_TOKEN}"
+      },
+      "enabled": true
+    },
+    "github-notifications": {
+      "type": "local",
+      "command": [
+        "{env:HOME}/repos/github-mcp-server/github-mcp-server",
+        "--toolsets",
+        // "code_security,dependabot,discussions,issues,labels,orgs,projects,pull_requests,repos,security_advisories,stargazers,users",
+        "context,notifications",
+        "stdio",
+      ],
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_MCP_NOTIFICATIONS_TOKEN}"
+      },
       "enabled": true
     }
   }
