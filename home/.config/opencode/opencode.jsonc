@@ -1,6 +1,57 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "ollama/glm-4.7-flash-q4_K_M-24b-84k",
+  // "model": "ollama/glm-4.7-flash-q4_K_M-24b-84k",
+  // "model": "openrouter/anthropic/claude-sonnet-4.6",
+  "model": "opencode-go/glm-5.1",
+  // universal defaults
+  "permission": {
+    "read": "allow",
+    "edit": "ask",
+    "bash": {
+      "git commit": "deny",
+      "git push": "deny",
+      "git reset": "deny",
+      "git diff": "allow",
+      "grep *": "allow",
+      "*": "ask"
+    },
+    "webfetch": "allow",
+    "grep": "allow",
+    "glob": "allow",
+    "list": "allow",
+    // This tool is only available when OPENCODE_EXPERIMENTAL_LSP_TOOL=true (or OPENCODE_EXPERIMENTAL=true).
+    "lsp": "allow",
+    "skill": "ask",
+    "todowrite": "allow",
+    "todoread": "allow",
+    // This tool is only available when using the OpenCode provider or when the OPENCODE_ENABLE_EXA environment variable is set to any truthy value (e.g., true or 1).
+    "websearch": "allow",
+    "codesearch": "allow",
+    "question": "allow",
+  },
+  "agent": {
+    "plan": {
+      // opencode go model
+      "model": "opencode-go/glm-5.1",
+      // https://opencode.ai/docs/agents/#permissions
+      "permission": {
+        "edit": "deny",
+        "task": {
+          // Control which subagents an agent can invoke via the Task tool with permission.task. Uses glob patterns for flexible matching.
+          "*": "ask",
+          // "orchestrator-*": "allow",
+          // "code-reviewer": "ask"
+        },
+        "external_directory": "deny",
+        "lsp": "allow",
+        "skill": "allow", // TODO fix this
+        "doom_loop": "ask",
+      }
+    },
+    "build": {
+      "model": "openrouter/anthropic/claude-sonnet-4.6",
+    },
+  },
   "provider": {
     "ollama": {
       "npm": "@ai-sdk/openai-compatible",
@@ -45,22 +96,6 @@
         },
       }
     }
-  },
-  "permission": {
-    "edit": "ask",
-    "bash": "ask",
-    "webfetch": "allow",
-    "grep": "allow",
-    "glob": "allow",
-    "list": "allow",
-    // This tool is only available when OPENCODE_EXPERIMENTAL_LSP_TOOL=true (or OPENCODE_EXPERIMENTAL=true).
-    "lsp": "allow",
-    "skill": "ask",
-    "todowrite": "allow",
-    "todoread": "allow",
-    // This tool is only available when using the OpenCode provider or when the OPENCODE_ENABLE_EXA environment variable is set to any truthy value (e.g., true or 1).
-    "websearch": "allow",
-    "question": "allow",
   },
   "server": {
     "port": 4096,
