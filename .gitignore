@@ -1,1 +1,32 @@
 *.swp
+
+# Private env files
+.env
+.env.*
+**/.envrc-priv
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.crt
+*.cer
+**/.ssh/id_*
+**/.ssh/known_hosts
+
+# AWS credentials
+**/.aws/credentials*
+
+# Generic secret/credential patterns
+*credentials*
+*secret*
+*token*
+*password*
+*apikey*
+*api_key*
+
+# Backup files
+*.bak
+
