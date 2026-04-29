@@ -225,3 +225,7 @@ fi
 
 # picotool
 export PATH="/$HOME/bin/picotool:$PATH"
+
+# OpenCode
+alias opencode_server='cd ~/repos && opencode serve'
+alias opencode_client='opencode attach http://localhost:4096 --dir .'

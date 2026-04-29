@@ -50,6 +50,9 @@
     },
     "build": {
       "model": "openrouter/anthropic/claude-sonnet-4.6",
+      "permission": {
+        "edit": "allow"
+      }
     },
   },
   "provider": {
