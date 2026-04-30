@@ -53,10 +53,28 @@
     },
     "build": {
       "model": "openrouter/anthropic/claude-sonnet-4.6",
-      "permission": {
-        "edit": "allow"
-      }
     },
+    "quickfix": {
+      "model": "opencode-go/glm-5.1",
+      "description": "Small, focused changes, without iterative feedback. Filling in the gaps in a section of code.",
+      "prompt": "{file:./prompts/quickfix.txt}",
+      "mode": "subagent",
+      "steps": 5,
+      "hidden": true,
+      "permission": {
+        "edit": "allow",
+        "bash": "deny",
+        "webfetch": "deny",
+        "skill": "deny",
+        "todowrite": "deny",
+        "todoread": "deny",
+        "websearch": "deny",
+        "codesearch": "deny",
+        "question": "deny",
+        "dash": "deny",
+        "github-*": "deny",
+      }
+    }
   },
   "provider": {
     "ollama": {
@@ -193,6 +211,11 @@
       "environment": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_MCP_NOTIFICATIONS_TOKEN}"
       },
+      "enabled": true
+    },
+    "github-grep": {
+      "type": "remote",
+      "url": "https://mcp.grep.app",
       "enabled": true
     }
   }
