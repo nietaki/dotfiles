@@ -1,6 +1,7 @@
 ---
 description: make a small fix to an obvious issue
 agent: quickfix
+subtask: true
 ---
 
 There is a relatively obvious issue in the file @$1 around line `$2`.

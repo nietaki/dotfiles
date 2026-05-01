@@ -59,7 +59,7 @@
       "description": "Small, focused changes, without iterative feedback. Filling in the gaps in a section of code.",
       "prompt": "{file:./prompts/quickfix.txt}",
       "mode": "subagent",
-      "steps": 5,
+      //"steps": 5,
       "hidden": true,
       "permission": {
         "edit": "allow",
