@@ -90,7 +90,7 @@ require("lazy").setup(
       { "nelstrom/vim-visual-star-search" },
 
       { "janko/vim-test" },
-      { "tpope/vim-dispatch" },
+      -- { "tpope/vim-dispatch" },
       { "tpope/vim-eunuch" },
 
       { "thaerkh/vim-workspace" },
@@ -118,7 +118,16 @@ require("lazy").setup(
       { "lukas-reineke/indent-blankline.nvim" },
       -- {'github/copilot.vim'},
       -- {'fatih/vim-go'},
-      -- { 'folke/snacks.nvim' },
+      {
+        'folke/snacks.nvim',
+        lazy = false,
+        priority = 1000,
+        opts = {
+          picker = {
+            ui_select = true,
+          },
+        },
+      },
       { import = "plugins" },
     }
   })

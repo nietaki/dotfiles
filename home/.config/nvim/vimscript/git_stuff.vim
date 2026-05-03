@@ -117,31 +117,31 @@ nnoremap ,co :Copilot panel<CR>
 " nnoremap <Leader>co :copen<CR>
 
 " nnoremap <Leader>co :copen 30<CR>
-let g:dispatch_quickfix_height=30
-nnoremap <Leader>co :Copen<CR>
-nnoremap <Leader>cO :Copen<CR>/.*\[FAILED\]<CR>
+" let g:dispatch_quickfix_height=30
+nnoremap <Leader>co :copen 24<CR>
+nnoremap <Leader>cO :copen<CR>/.*\[FAILED\]<CR>
 " nnoremap <Leader>cf /.*\[FAILED\]<CR>
 " nnoremap <Leader>cO :copen 10<CR>
 " nnoremap <Leader>cc :copen<CR>
 nnoremap <Leader>cd :cclose<CR>
 
-:command! -nargs=* Makes :Make! <args>
-nnoremap <Leader>m<Leader> :Make
-nnoremap <Leader>mf :Dispatch! mix format<CR>
-nnoremap <Leader>mtc :Make! compile<CR>
-nnoremap <Leader>mtt :Make! test<CR>
-nnoremap <Leader>mtn :Make! test_native<CR>
-nnoremap <Leader>mte :Make! test_embedded<CR>
-nnoremap <Leader>mtf :Make! test_filesystem<CR>
-nnoremap <Leader>mm :Make!<CR>
-nnoremap <Leader>mk :AbortDispatch<CR>
+" :command! -nargs=* Makes :Make! <args>
+" nnoremap <Leader>m<Leader> :Make
+" nnoremap <Leader>mf :Dispatch! mix format<CR>
+" nnoremap <Leader>mtc :Make! compile<CR>
+" nnoremap <Leader>mtt :Make! test<CR>
+" nnoremap <Leader>mtn :Make! test_native<CR>
+" nnoremap <Leader>mte :Make! test_embedded<CR>
+" nnoremap <Leader>mtf :Make! test_filesystem<CR>
+" nnoremap <Leader>mm :Make!<CR>
+" nnoremap <Leader>mk :AbortDispatch<CR>
 
 " it's this time again
 nmap ,cl :silent !pdflatex %<CR>
 
 let g:markdown_recommended_style = 0
-nmap <Leader>mll :Dispatch! pkill -9 -f livebook; livebook server -p 9876 %:p<CR>
-nmap <Leader>mlk :Dispatch! pkill -9 -f livebook<CR>
+" nmap <Leader>mll :Dispatch! pkill -9 -f livebook; livebook server -p 9876 %:p<CR>
+" nmap <Leader>mlk :Dispatch! pkill -9 -f livebook<CR>
 
 " this doesn't work for whatever reason?
 "map <silent> <C-i> i_<Esc>r

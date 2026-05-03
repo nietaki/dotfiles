@@ -22,6 +22,8 @@ require('treesitter_setup')
 
 require('autocommands').setup()
 
+require('overseer_tasks')
+
 require('keymaps').setup()
 
 local ok, _ = pcall(require, 'experimental')

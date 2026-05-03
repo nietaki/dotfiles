@@ -3,6 +3,10 @@
 It's meant to be used with [homeshick](https://github.com/andsens/homeshick).
 I'm automating it with [puter](https://github.com/nietaki/puter)
 
+## TODO
+- [ ] test strategy working with overseer (see vimscript/git_stuff.vim for how it used to work)
+- [ ] try to optimize the opencode invocations
+
 ## what this thing does
 - configure shell settings and environment with bash/zsh
 - setup vim/neovim editor with plugins and linters

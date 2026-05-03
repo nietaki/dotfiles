@@ -96,6 +96,13 @@ local function strudel_keymaps()
   vim.keymap.set("n", "<leader>dx", strudel.execute, { desc = "Strudel set current buffer and update" })
 end
 
+local function overseer_keymaps()
+  -- 'm' as in 'make'
+  ntk.map('n', '<Leader>mr', ':OverseerRun<CR>', 'run Overseer task')
+  ntk.map('n', '<Leader>mf', ':w<CR>:OverseerRun fixme<CR>', 'opencode fix(me)')
+  ntk.map('n', '<Leader>ml', ':OverseerToggle<CR>', 'toggle (executed) task list')
+end
+
 local others = function()
   ntk.map('n', '<Leader>qq', ':qa<CR>', 'Quit!')
 end
@@ -106,8 +113,9 @@ function km.setup()
   buffers_and_windows()
   project()
   toggle_tab()
-  open_code()
+  --open_code()
   strudel_keymaps()
+  overseer_keymaps()
   others()
 end
 
