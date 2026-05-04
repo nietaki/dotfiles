@@ -229,3 +229,6 @@ export PATH="/$HOME/bin/picotool:$PATH"
 # OpenCode
 alias opencode_server='cd ~/repos && opencode serve'
 alias opencode_client='opencode attach http://localhost:4096 --dir .'
+
+# use homebrew version of grep and make
+# export PATH="$HOMEBREW_PREFIX/opt/make/libexec/gnubin:$PATH"

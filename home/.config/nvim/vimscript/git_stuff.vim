@@ -122,7 +122,7 @@ nnoremap <Leader>co :copen 24<CR>
 nnoremap <Leader>cO :copen<CR>/.*\[FAILED\]<CR>
 " nnoremap <Leader>cf /.*\[FAILED\]<CR>
 " nnoremap <Leader>cO :copen 10<CR>
-" nnoremap <Leader>cc :copen<CR>
+nnoremap <Leader>cc :copen<CR>
 nnoremap <Leader>cd :cclose<CR>
 
 " :command! -nargs=* Makes :Make! <args>

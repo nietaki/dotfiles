@@ -133,3 +133,6 @@ eval "$(rtx activate bash)"
 alias asdf=rtx
 eval "$(mise activate bash)"
 . "$HOME/.cargo/env"
+
+# use homebrew version of grep and make
+# PATH="$HOMEBREW_PREFIX/opt/make/libexec/gnubin:$PATH"

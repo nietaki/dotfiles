@@ -22,7 +22,7 @@ ntk.map = function(modes, lhs, rhs, description, opts)
       description = rhs
     end
     if type(rhs) == "function" then
-      local info =  debug.getinfo(rhs, 'fnS')
+      local info = debug.getinfo(rhs, 'fnS')
       if info.name then
         description = info.name
       else
@@ -33,7 +33,7 @@ ntk.map = function(modes, lhs, rhs, description, opts)
     end
   end
 
-  local default_opts = {noremap = true, silent = true}
+  local default_opts = { noremap = true, silent = true }
   if description then
     default_opts.desc = description
   end
@@ -49,6 +49,47 @@ end
 
 ntk.map_leader = function(modes, suffix, rhs, description, opts)
   return ntk.map(modes, '<Leader>' .. suffix, rhs, description, opts)
+end
+
+-- https://github.com/cacarico/make.nvim/blob/main/lua/make/utils.lua
+ntk.parse_makefile = function()
+  local fn = vim.fn
+  local log = vim.log.levels
+  local cwd = vim.loop.cwd() or fn.getcwd()
+  local path = cwd .. "/Makefile"
+  if fn.filereadable(path) == 0 and fn.has("nvim-0.9") == 1 then
+    --- Attempt to find Makefile upward
+    local found = vim.fs.find("Makefile", { path = cwd, upward = true })
+    path = (found and found[1]) or ""
+  end
+  if path == "" or fn.filereadable(path) == 0 then
+    vim.notify("No Makefile found", log.ERROR)
+    return {}
+  end
+
+  local lines = fn.readfile(path)
+  local seen = {}
+  local out = {}
+
+  for _, line in ipairs(lines) do
+    local name, _desc = line:match("^([%w%-%_]+)%s*:%s*.-##%s*(.+)$")
+    if name and not seen[name] then
+      table.insert(out, name)
+      seen[name] = true
+    elseif not name then
+      name = line:match("^([%w%-%_]+)%s*:")
+      if name and not seen[name] then
+        table.insert(out, name)
+        seen[name] = true
+      end
+    end
+  end
+
+  return out
+end
+
+ntk.debug = function(sth)
+  print(vim.inspect(sth))
 end
 
 return ntk

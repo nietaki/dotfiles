@@ -1,4 +1,5 @@
 local overseer = require("overseer")
+local ntk = require('ntk_utils')
 
 ---@type overseer.TemplateDefinition
 local hello = {
@@ -80,8 +81,61 @@ local fixme = {
   end,
 }
 
+---@type overseer.TemplateDefinition
+local make = {
+  name = "make...",
+  params = function()
+    local targets = ntk.parse_makefile()
+    -- ntk.debug(targets)
+    if #targets == 0 then
+      targets = { "all", "clean" }
+    end
+    -- ntk.debug(targets)
+    return {
+      target = {
+        type = "enum",
+        choices = targets,
+        name = "Make Target",
+        required = true,
+      },
+    }
+  end,
+  builder = function(params)
+    return {
+      cmd = { "make", params.target },
+    }
+  end,
+  desc = "Run make with a specific target",
+}
+
 
 overseer.register_template(hello)
 overseer.register_template(fixme)
+overseer.register_template(make)
+
+vim.api.nvim_create_user_command("Make", function(params)
+  -- Insert args at the '$*' in the makeprg
+  local cmd, num_subs = vim.o.makeprg:gsub("%$%*", params.args)
+  if num_subs == 0 then
+    cmd = cmd .. " " .. params.args
+  end
+  local task = require("overseer").new_task({
+    cmd = vim.fn.expandcmd(cmd),
+    components = {
+      {
+        "on_output_quickfix",
+        open = not params.bang,
+        open_height = 24,
+        errorformat = vim.o.errorformat,
+      },
+      "default",
+    },
+  })
+  task:start()
+end, {
+  desc = "Run your makeprg as an Overseer task",
+  nargs = "*",
+  bang = true,
+})
 
 print('overseer tasks registered')

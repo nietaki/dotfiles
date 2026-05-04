@@ -44,6 +44,7 @@ return {
           ["?"] = "keymap.show_help",
           ["g?"] = "keymap.show_help",
           ["<CR>"] = "keymap.run_action",
+          ["<C-c>"] = { "keymap.run_action", opts = { action = "dispose" }, desc = "Dispose task" },
           ["dd"] = { "keymap.run_action", opts = { action = "dispose" }, desc = "Dispose task" },
           ["<C-e>"] = { "keymap.run_action", opts = { action = "edit" }, desc = "Edit task" },
           ["o"] = "keymap.open",
