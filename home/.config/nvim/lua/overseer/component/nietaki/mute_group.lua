@@ -50,7 +50,7 @@ return {
           end
         end
         -- set the current task as the task for the group name
-        print('adding task to ' .. group_name)
+        -- print('adding task to ' .. group_name)
         group_tasks[group_name] = task
         -- print('mute group pre start')
 
@@ -70,7 +70,7 @@ return {
       on_pre_result = function(self, task)
         -- Called when the task is finalizing.
         -- Return a map-like table value here to merge it into the task result.
-        return { foo = { "bar", "baz" } }
+        -- return { foo = { "bar", "baz" } }
       end,
       ---@param result table A result table.
       on_preprocess_result = function(self, task, result)
