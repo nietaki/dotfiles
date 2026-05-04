@@ -40,6 +40,7 @@ miniclue.setup(
       { mode = 'n', keys = '<Leader>fe', desc = '+ edit key config files' },
       { mode = 'n', keys = '<Leader>g',  desc = '+ Git' },
       { mode = 'n', keys = '<Leader>m',  desc = '+ Make/Overseer...' },
+      -- { mode = 'n', keys = '<Leader>mt', desc = '+ Test...' },
       { mode = 'n', keys = '<Leader>o',  desc = '+ OpenCode' },
       { mode = 'n', keys = '<Leader>p',  desc = '+ Project' },
       { mode = 'n', keys = '<Leader>q',  desc = '+ Quit?' },

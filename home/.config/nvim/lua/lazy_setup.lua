@@ -89,7 +89,7 @@ require("lazy").setup(
       -- {"terryma/vim-multiple-cursors"},
       { "nelstrom/vim-visual-star-search" },
 
-      { "janko/vim-test" },
+      -- { "janko/vim-test" },
       -- { "tpope/vim-dispatch" },
       { "tpope/vim-eunuch" },
 
@@ -105,7 +105,7 @@ require("lazy").setup(
       { "nvim-treesitter/playground" },
 
       { 'simrat39/symbols-outline.nvim' },
-      { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
+      { "nvim-treesitter/nvim-treesitter", branch = "main",              build = ":TSUpdate" },
       -- which-key, needs configuration
       -- {"Cassin01/wf.nvim", version = "*", config = function() require("wf").setup() end},
       {

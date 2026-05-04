@@ -118,9 +118,19 @@ local copilot_lua_keymaps = function()
   -- ntk.map('n', ',cc', ':Copilot panel toggle<CR>')
 end
 
+local neotest_keymaps = function()
+  ntk.map('n', ',tt', ':lua require("neotest").run.run()<CR>', 'run test under cursor')
+  ntk.map('n', ',tl', ':lua require("neotest").run.run_last()<CR>', 'run last test')
+  ntk.map('n', ',tf', ':lua require("neotest").run.run(vim.fn.expand("%"))<CR>', 'run all tests in current file')
+  ntk.map('n', ',ta', ':lua require("neotest").run.run("./")<CR>', 'run all tests')
+  ntk.map('n', ',ts', ':lua require("neotest").summary.toggle()<CR>', 'toggle test summary')
+end
+
 local others = function()
   ntk.map('n', '<Leader>qq', ':qa<CR>', 'Quit!')
 end
+
+-- note: the "categories" are set up in mini_setup.lua, in the miniclue config
 
 function km.setup()
   ntk.map('n', 'S', '"_diwP', 'replace word with yanked text')
@@ -133,6 +143,7 @@ function km.setup()
   overseer_keymaps()
   quickfix_keymaps()
   copilot_lua_keymaps()
+  neotest_keymaps()
   others()
 end
 

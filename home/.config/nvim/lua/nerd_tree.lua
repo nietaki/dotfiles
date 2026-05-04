@@ -17,6 +17,7 @@ nerd_tree.setup = function()
       vim.cmd 'cclose'
       vim.cmd 'NERDTreeClose'
       vim.cmd 'OverseerClose'
+      require('neotest').summary.close()
     end,
   })
 

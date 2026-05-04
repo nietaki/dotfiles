@@ -74,7 +74,7 @@ au.setup = function()
   au.register_on_close()
   au.register_filetype_specific()
   au.setup_spellchecks()
-  au.close_opencode_on_exit()
+  -- au.close_opencode_on_exit()
 end
 
 

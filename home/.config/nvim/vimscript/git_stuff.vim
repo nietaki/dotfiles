@@ -64,7 +64,10 @@ tnoremap <C-h> <C-\><C-n>
 
 " tnoremap <Esc><Esc> <C-\><C-n>
 " openint terminal in Terminal-mode (ready to go)
-autocmd TermOpen * startinsert
+" autocmd TermOpen * startinsert
+" https://github.com/nvim-neotest/neotest/issues/2
+autocmd TermOpen * lua if vim.startswith(vim.api.nvim_buf_get_name(0), "term://") then vim.cmd("startinsert") end
+
 autocmd FileType glsl setlocal commentstring=//\ %s
 autocmd FileType glsl setlocal tabstop=4
 autocmd FileType glsl setlocal shiftwidth=4
@@ -96,11 +99,11 @@ set nowritebackup
 " let test#strategy = "neovim"
 " let test#strategy = "dispatch"
 " let test#strategy = "dispatch_background"
-nnoremap ,tt :TestNearest<CR>
-nnoremap ,tl :TestLast<CR>
-nnoremap ,tf :TestFile<CR>
-nnoremap ,ts :TestSuite<CR>
-nnoremap ,ta :TestSuite<CR>
+" nnoremap ,tt :TestNearest<CR>
+" nnoremap ,tl :TestLast<CR>
+" nnoremap ,tf :TestFile<CR>
+" nnoremap ,ts :TestSuite<CR>
+" nnoremap ,ta :TestSuite<CR>
 
 " nnoremap ,cs :Copilot status<CR>
 " nnoremap ,ce :Copilot enable<CR>
