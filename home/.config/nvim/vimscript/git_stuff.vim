@@ -94,7 +94,7 @@ set nowritebackup
 
 " Testing using vim test
 " let test#strategy = "neovim"
-let test#strategy = "dispatch"
+" let test#strategy = "dispatch"
 " let test#strategy = "dispatch_background"
 nnoremap ,tt :TestNearest<CR>
 nnoremap ,tl :TestLast<CR>
@@ -102,10 +102,10 @@ nnoremap ,tf :TestFile<CR>
 nnoremap ,ts :TestSuite<CR>
 nnoremap ,ta :TestSuite<CR>
 
-nnoremap ,cs :Copilot status<CR>
-nnoremap ,ce :Copilot enable<CR>
-nnoremap ,cd :Copilot disable<CR>
-nnoremap ,co :Copilot panel<CR>
+" nnoremap ,cs :Copilot status<CR>
+" nnoremap ,ce :Copilot enable<CR>
+" nnoremap ,cd :Copilot disable<CR>
+" nnoremap ,co :Copilot panel<CR>
 
 " imap <C-j> <Plug>(copilot-next)
 " imap <C-l> <Plug>(copilot-accept-word)
@@ -118,12 +118,12 @@ nnoremap ,co :Copilot panel<CR>
 
 " nnoremap <Leader>co :copen 30<CR>
 " let g:dispatch_quickfix_height=30
-nnoremap <Leader>co :copen 24<CR>
-nnoremap <Leader>cO :copen<CR>/.*\[FAILED\]<CR>
+" nnoremap <Leader>co :copen 24<CR>
+" nnoremap <Leader>cO :copen<CR>/.*\[FAILED\]<CR>
 " nnoremap <Leader>cf /.*\[FAILED\]<CR>
 " nnoremap <Leader>cO :copen 10<CR>
-nnoremap <Leader>cc :copen<CR>
-nnoremap <Leader>cd :cclose<CR>
+" nnoremap <Leader>cc :copen<CR>
+" nnoremap <Leader>cd :cclose<CR>
 
 " :command! -nargs=* Makes :Make! <args>
 " nnoremap <Leader>m<Leader> :Make

@@ -103,6 +103,20 @@ local function overseer_keymaps()
   ntk.map('n', '<Leader>ml', ':OverseerToggle<CR>', 'toggle (executed) task list')
 end
 
+local quickfix_keymaps = function()
+  ntk.map('n', '<Leader>co', ':copen 24<CR>', 'quickifx open')
+  ntk.map('n', '<Leader>cc', ':cclose<CR>', 'quickifx close')
+  ntk.map('n', '<Leader>cd', ':cclose<CR>', 'quickifx close')
+end
+
+local copilot_lua_keymaps = function()
+  -- local cp = require("copilot.panel")
+  ntk.map('n', ',cs', ':Copilot status<CR>')
+  ntk.map('n', ',ce', ':Copilot enable<CR>')
+  ntk.map('n', ',cd', ':Copilot disable<CR>')
+  -- ntk.map('n', ',cc', ':Copilot panel toggle<CR>')
+end
+
 local others = function()
   ntk.map('n', '<Leader>qq', ':qa<CR>', 'Quit!')
 end
@@ -116,6 +130,8 @@ function km.setup()
   --open_code()
   strudel_keymaps()
   overseer_keymaps()
+  quickfix_keymaps()
+  copilot_lua_keymaps()
   others()
 end
 

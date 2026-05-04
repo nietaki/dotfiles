@@ -34,7 +34,7 @@ miniclue.setup(
     clues = {
       -- Enhance this by adding descriptions for <Leader> mapping groups
       { mode = 'n', keys = '<Leader>b',  desc = '+ buffer' },
-      { mode = 'n', keys = '<Leader>c',  desc = '+ quickfix (TODO delete)' },
+      { mode = 'n', keys = '<Leader>c',  desc = '+ quickfix' },
       { mode = 'n', keys = '<Leader>d',  desc = '+ strudel / art' },
       { mode = 'n', keys = '<Leader>f',  desc = '+ file' },
       { mode = 'n', keys = '<Leader>fe', desc = '+ edit key config files' },
@@ -49,7 +49,7 @@ miniclue.setup(
       { mode = 'n', keys = '<Leader>y',  desc = '+ Yank (copy sth)' },
       { mode = 'n', keys = ',',          desc = '+ LSP (and similar)' },
       { mode = 'n', keys = ',a',         desc = '+ LSP actions' },
-      { mode = 'n', keys = ',c',         desc = '+ quickifx' },
+      { mode = 'n', keys = ',c',         desc = '+ copilot' },
       { mode = 'n', keys = ',d',         desc = '+ diagnostics' },
       { mode = 'n', keys = ',g',         desc = '+ go to' },
       { mode = 'n', keys = ',l',         desc = '+ LSP list...' },

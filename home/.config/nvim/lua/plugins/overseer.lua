@@ -131,7 +131,7 @@ return {
       experimental_wrap_builtins = {
         enabled = false,
         condition = function(cmd, caller, opts)
-          return true
+          return false
         end,
       },
     },
