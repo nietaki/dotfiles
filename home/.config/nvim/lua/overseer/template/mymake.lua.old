@@ -1,0 +1,50 @@
+print('loading make/shake')
+
+---@type overseer.TemplateFileDefinition
+return {
+  name = "shake",
+  -- params = function()
+  --   local ntk = require('ntk_utils')
+  --   local targets = ntk.parse_makefile()
+  --   ntk.debug(targets)
+  --   -- ntk.debug(targets)
+  --   if #targets == 0 then
+  --     targets = { "all", "clean" }
+  --   end
+  --   -- ntk.debug(targets)
+  --   return {
+  --     target = {
+  --       -- type = "enum",
+  --       -- choices = targets,
+  --       type = "string",
+  --       name = "Make Target",
+  --     },
+  --   }
+  -- end,
+  params = {
+    target = {
+      -- type = "enum",
+      -- choices = { "build", "clean" },
+      type = "string",
+      name = "Make Target",
+    }
+  },
+
+  builder = function(params)
+    return {
+      cmd = { "make", params.target },
+      components = {},
+      -- components = {
+      --   -- { "nietaki/hello_component", foo = 'bar' },
+      --   { "nietaki/mute_group", group = 'make' },
+      --   "default",
+      --   -- {
+      --   --   "on_output_quickfix",
+      --   --   open_height = 24,
+      --   --   errorformat = vim.o.errorformat,
+      --   -- },
+      -- }
+    }
+  end,
+  desc = "Run make with a specific target",
+}

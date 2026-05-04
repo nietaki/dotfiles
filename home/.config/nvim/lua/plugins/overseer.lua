@@ -113,7 +113,10 @@ return {
       -- List of other directories to search for task templates.
       -- This will search under the runtimepath, so for example
       -- "foo/bar" will search "<runtimepath>/lua/foo/bar/*"
-      template_dirs = {},
+      template_dirs = {
+        -- this one gets loaded by default, let's not double-load it
+        -- "overseer/template",
+      },
       -- List of module names or lua patterns that match modules (must start with '^')
       -- to disable. This can be used to disable built in task providers.
       disable_template_modules = {
@@ -125,7 +128,8 @@ return {
       template_timeout_ms = 3000,
       -- Cache template provider results if the provider takes longer than this to run.
       -- Set to 0 to disable caching.
-      template_cache_threshold_ms = 200,
+      -- template_cache_threshold_ms = 200,
+      template_cache_threshold_ms = 0,
       log_level = vim.log.levels.WARN,
       -- Overseer can wrap any call to vim.system and vim.fn.jobstart as a task.
       experimental_wrap_builtins = {

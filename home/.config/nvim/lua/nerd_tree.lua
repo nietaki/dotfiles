@@ -15,6 +15,8 @@ nerd_tree.setup = function()
     pattern = '*',
     callback = function()
       vim.cmd 'NERDTreeClose'
+      vim.cmd 'OverseerClose'
+      vim.cmd 'cclose'
     end,
   })
 
