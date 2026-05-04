@@ -39,15 +39,18 @@ return {
         local group_name = get_group_name(params, task)
         -- check if there is a task in the group name
         if group_tasks[group_name] then
-          -- print('task exists in ' .. group_name .. ', disposing of it')
+          -- print('task exists in ' .. group_name)
           -- if there is, dispose of it
           local old_task = group_tasks[group_name]
           if old_task ~= task then
+            -- print('disposing old task in ' .. group_name)
             old_task:dispose()
+          else
+            -- print('old task is the same as current task in ' .. group_name)
           end
         end
         -- set the current task as the task for the group name
-        -- print('adding task to ' .. group_name)
+        print('adding task to ' .. group_name)
         group_tasks[group_name] = task
         -- print('mute group pre start')
 

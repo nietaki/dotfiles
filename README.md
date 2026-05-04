@@ -5,10 +5,10 @@ I'm automating it with [puter](https://github.com/nietaki/puter)
 
 ## TODO
 - [x] move quickfix (copen) to lua
-- [ ] migrate overseer config to autoloaded files?
+- [x] migrate overseer config to autoloaded files?
 - [ ] try to optimize the opencode invocations
 - [x] https://github.com/stevearc/overseer.nvim/blob/master/doc/recipes.md#asynchronous-make-similar-to-vim-dispatch
-- [ ] custom overseer component for killing old tasks
+- [x] custom overseer component for killing old tasks
 - [x] ~~raise an overseer issue on default/optional prompts~~
 - [ ] test strategy working with overseer (see vimscript/git_stuff.vim for how it used to work)
   - [ ] neotest https://github.com/stevearc/overseer.nvim/blob/master/doc/third_party.md#neotest

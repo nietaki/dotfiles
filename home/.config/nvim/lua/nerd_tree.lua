@@ -14,9 +14,9 @@ nerd_tree.setup = function()
   vim.api.nvim_create_autocmd('VimLeave', {
     pattern = '*',
     callback = function()
+      vim.cmd 'cclose'
       vim.cmd 'NERDTreeClose'
       vim.cmd 'OverseerClose'
-      vim.cmd 'cclose'
     end,
   })
 

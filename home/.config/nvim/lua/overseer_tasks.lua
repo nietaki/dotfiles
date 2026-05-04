@@ -32,7 +32,7 @@ vim.api.nvim_create_user_command("Make", function(params)
       { "nietaki/mute_group", group = 'make' },
       {
         "on_output_quickfix",
-        open = not params.bang,
+        open_on_exit = "failure",
         open_height = 24,
         errorformat = vim.o.errorformat,
       },
@@ -49,7 +49,8 @@ end, {
 -- for the built-in make targets
 overseer.add_template_hook({}, function(task_def, util)
   util.add_component(task_def, { "nietaki/mute_group", group = 'make' })
-  util.add_component(task_def, { "on_output_quickfix", open_height = 24, errorformat = vim.o.errorformat })
+  util.add_component(task_def,
+    { "on_output_quickfix", open_height = 24, open_on_exit = "failure", errorformat = vim.o.errorformat })
 end)
 
 -- print('overseer tasks registered')

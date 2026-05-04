@@ -101,6 +101,7 @@ local function overseer_keymaps()
   ntk.map('n', '<Leader>mr', ':OverseerRun<CR>', 'run Overseer task')
   ntk.map('n', '<Leader>mf', ':w<CR>:OverseerRun fixme<CR>', 'opencode fix(me)')
   ntk.map('n', '<Leader>ml', ':OverseerToggle<CR>', 'toggle (executed) task list')
+  ntk.map('n', '<Leader>mL', ':OverseerToggle!<CR>', 'toggle task list, don\'t move cursor')
 end
 
 local quickfix_keymaps = function()
