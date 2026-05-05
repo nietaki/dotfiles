@@ -138,8 +138,13 @@ require("lazy").setup(
       -- {"Cassin01/wf.nvim", version = "*", config = function() require("wf").setup() end},
       {
         'nvim-telescope/telescope.nvim',
-        tag = '0.1.4',
-        dependencies = { 'nvim-lua/plenary.nvim' },
+        -- tag = '0.1.4',
+        version = '*',
+        dependencies = {
+          'nvim-lua/plenary.nvim',
+
+          { 'nvim-telescope/telescope-fzf-native.nvim', build = "make" },
+        },
         opts = {
           defaults = {
             preview = {
@@ -149,7 +154,6 @@ require("lazy").setup(
         }
       },
       { "ahmedkhalf/project.nvim" },
-      { 'nvim-telescope/telescope-fzf-native.nvim', build = "make" },
       { "lukas-reineke/indent-blankline.nvim" },
       -- {'github/copilot.vim'},
       -- {'fatih/vim-go'},
