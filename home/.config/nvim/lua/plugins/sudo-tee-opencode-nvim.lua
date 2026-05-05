@@ -28,29 +28,29 @@ local opts = {
   },
 }
 
+return {}
+-- return {
+--   "sudo-tee/opencode.nvim",
+--   enabled = false,
+--   config = function()
+--     require("opencode").setup(opts)
+--   end,
+--   dependencies = {
+--     "nvim-lua/plenary.nvim",
+--     {
+--       "MeanderingProgrammer/render-markdown.nvim",
+--       opts = {
+--         anti_conceal = { enabled = false },
+--         file_types = { 'opencode_output' },
+--       },
+--       ft = { 'copilot-chat', 'opencode_output' },
+--     },
+--     'saghen/blink.cmp',
 
-return {
-  "sudo-tee/opencode.nvim",
-  enabled = false,
-  config = function()
-    require("opencode").setup(opts)
-  end,
-  dependencies = {
-    "nvim-lua/plenary.nvim",
-    {
-      "MeanderingProgrammer/render-markdown.nvim",
-      opts = {
-        anti_conceal = { enabled = false },
-        file_types = { 'opencode_output' },
-      },
-      ft = { 'copilot-chat', 'opencode_output' },
-    },
-    'saghen/blink.cmp',
-
-    -- Optional, for file mentions picker, pick only one
-    -- 'folke/snacks.nvim',
-    'nvim-telescope/telescope.nvim',
-    -- 'ibhagwan/fzf-lua',
-    -- 'nvim_mini/mini.nvim',
-  },
-}
+--     -- Optional, for file mentions picker, pick only one
+--     -- 'folke/snacks.nvim',
+--     'nvim-telescope/telescope.nvim',
+--     -- 'ibhagwan/fzf-lua',
+--     -- 'nvim_mini/mini.nvim',
+--   },
+-- }

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+session_id=$(opencode session list --format json -n 10 | jq -r '[.[] | select(.title | test("quickfix"; "i"))] | .[0].id')
+
+if [[ -z "$session_id" ]]; then
+  session_id=$(opencode run --attach http://localhost:4096 --format json --dir "$(pwd)" "respond with exactly 'quickfix'" | jq -r 'first | .sessionID')
+fi
+
+echo "$session_id"

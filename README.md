@@ -14,6 +14,8 @@ I'm automating it with [puter](https://github.com/nietaki/puter)
 - [x] neotest https://github.com/stevearc/overseer.nvim/blob/master/doc/third_party.md#neotest
 - [x] move (neo?) test mappings to lua
 - [x] fix the TreeSitter issue when doing `K` in a lua config file
+- [ ] configure custom regexes for todo-comments
+- [ ] move keymaps  from `lsp_setup` to the keymaps file
 
 ## what this thing does
 - configure shell settings and environment with bash/zsh

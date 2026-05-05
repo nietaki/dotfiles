@@ -79,12 +79,39 @@ au.setup_tresitter = function()
   })
 end
 
+au.detect_extensionless_shell_scripts = function()
+  vim.filetype.add({
+    pattern = {
+      ['.*'] = {
+        function(path, bufnr)
+          -- skip files that have an extension
+          if path:match('%.[^/]+$') then return end
+          local first_line = vim.api.nvim_buf_get_lines(bufnr, 0, 1, false)[1] or ''
+          if first_line:match('^#!/.*bash') then
+            return 'sh', function(b)
+              vim.b[b].is_bash = 1
+            end
+          elseif first_line:match('^#!/.*zsh') then
+            return 'zsh'
+          elseif first_line:match('^#!/.*sh') then
+            return 'sh', function(b)
+              vim.b[b].is_sh = 1
+            end
+          end
+        end,
+        { priority = -math.huge },
+      },
+    },
+  })
+end
+
 au.setup = function()
   -- some copy-pasted stuff, not sure what it was supposed to do
   vim.g.go_def_mappings_enabled = 0
   au.register_on_close()
   au.register_filetype_specific()
   au.setup_spellchecks()
+  au.detect_extensionless_shell_scripts()
   -- au.setup_tresitter()
   -- au.close_opencode_on_exit()
 end

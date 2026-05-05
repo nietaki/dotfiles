@@ -119,10 +119,32 @@ require("lazy").setup(
             "python",
             "markdown",
             "elixir",
-            "go",
+            "erlang",
+            "eex",
             "html",
             "css",
             "gitcommit",
+            --shell
+            "bash",
+            "zsh",
+            "glsl",
+            --go
+            "go",
+            "gomod",
+            "gosum",
+            --json
+            "json",
+            "jsonc",
+            "yaml",
+            "toml",
+            "vim",
+            "vimdoc",
+            "terraform",
+            "sql",
+            "xml",
+            "git_config",
+            "make",
+            "cmake"
           })
 
           -- enable treesitter highlighting
@@ -166,6 +188,17 @@ require("lazy").setup(
             ui_select = true,
           },
         },
+      },
+      {
+        "folke/todo-comments.nvim",
+        dependencies = {
+          'nvim-lua/plenary.nvim',
+        },
+        opts = {}
+        -- keys = {
+        --   { "<leader>st", function() Snacks.picker.todo_comments() end,                                           desc = "Todo" },
+        --   { "<leader>sT", function() Snacks.picker.todo_comments({ keywords = { "TODO", "FIX", "FIXME" } }) end,  desc = "Todo/Fix/Fixme" },
+        -- },
       },
       { import = "plugins" },
     }
