@@ -68,12 +68,24 @@ au.close_opencode_on_exit = function()
   })
 end
 
+au.setup_tresitter = function()
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = { 'lua', 'elixir', 'elixirscript', 'go', 'python', 'javascript', 'html', 'css' },
+    callback = function()
+      vim.treesitter.start()
+      vim.wo[0][0].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+      vim.wo[0][0].foldmethod = 'expr'
+    end,
+  })
+end
+
 au.setup = function()
   -- some copy-pasted stuff, not sure what it was supposed to do
   vim.g.go_def_mappings_enabled = 0
   au.register_on_close()
   au.register_filetype_specific()
   au.setup_spellchecks()
+  -- au.setup_tresitter()
   -- au.close_opencode_on_exit()
 end
 

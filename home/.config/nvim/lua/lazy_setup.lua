@@ -74,7 +74,7 @@ require("lazy").setup(
       { "rbong/vim-flog" },
       { "ctrlpvim/ctrlp.vim" },
       { "elixir-lang/vim-elixir" },
-      { "junegunn/fzf",                    build = ":call fzf#install()" },
+      { "junegunn/fzf",                   build = ":call fzf#install()" },
       { "junegunn/fzf.vim" },
       { "jremmen/vim-ripgrep" },
       { "mhinz/vim-signify" },
@@ -98,14 +98,42 @@ require("lazy").setup(
       -- themes
       { "joshdick/onedark.vim" },
       { "tomasr/molokai" },
-      { "srcery-colors/srcery-vim",        lazy = false },
+      { "srcery-colors/srcery-vim",       lazy = false },
       -- TODO taboo is unmaintained, figure out why I added it and replace with something else
       { "gcmt/taboo.vim" },
 
-      { "nvim-treesitter/playground" },
+      -- { "nvim-treesitter/playground" },
 
       { 'simrat39/symbols-outline.nvim' },
-      { "nvim-treesitter/nvim-treesitter", branch = "main",              build = ":TSUpdate" },
+      {
+        "nvim-treesitter/nvim-treesitter",
+        lazy = false,
+        branch = 'main',
+        build = ":TSUpdate",
+        config = function()
+          -- ensure parsers are installed
+          require("nvim-treesitter").install({
+            "lua",
+            "javascript",
+            "typescript",
+            "python",
+            "markdown",
+            "elixir",
+            "go",
+            "html",
+            "css",
+            "gitcommit",
+          })
+
+          -- enable treesitter highlighting
+          vim.api.nvim_create_autocmd("FileType", {
+            callback = function(args)
+              pcall(vim.treesitter.start, args.buf)
+            end,
+          })
+        end
+
+      },
       -- which-key, needs configuration
       -- {"Cassin01/wf.nvim", version = "*", config = function() require("wf").setup() end},
       {

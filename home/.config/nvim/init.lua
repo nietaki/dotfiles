@@ -18,7 +18,7 @@ vim.cmd 'runtime! vimscript/git_stuff.vim'
 require('workspace_stuff')
 require('lsp_setup')
 
-require('treesitter_setup')
+--require('treesitter_setup')
 
 require('autocommands').setup()
 

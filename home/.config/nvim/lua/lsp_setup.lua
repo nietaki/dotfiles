@@ -95,10 +95,6 @@ ntk.map('n', ',af', vim.lsp.buf.format, 'format file with LSP')
 ntk.map({ 'n', 'v' }, ',aa', vim.lsp.buf.code_action, 'code action')
 ntk.map('n', ',ar', vim.lsp.buf.rename, 'rename thing under cursor')
 
--- LSP diagnostics
-ntk.map('n', ',dn', vim.diagnostic.goto_next, 'go to next diagnostic')
-ntk.map('n', ',dp', vim.diagnostic.goto_prev, 'go to prev diagnostic')
-ntk.map('n', ',dd', vim.diagnostic.open_float, 'open diagnostic floating window')
 
 -- LSP go to...
 ntk.map('n', ',gD', vim.lsp.buf.declaration, 'go to Declaration')
@@ -113,11 +109,20 @@ ntk.map('n', ',ls', telescope_document_symbols, 'FZF document symbols')
 ntk.map('n', ',lo', ':SymbolsOutline<CR>')
 
 local tb = require('telescope.builtin')
+-- diagnostics
+ntk.map('n', ',dn', function() vim.diagnostic.jump({ count = 1, float = true }) end, 'go to next diagnostic')
+ntk.map('n', ',dp', function() vim.diagnostic.jump({ count = -1, float = true }) end, 'go to prev diagnostic')
+ntk.map('n', ',dd', vim.diagnostic.open_float, 'open diagnostic floating window')
+ntk.map('n', ',df', vim.diagnostic.open_float, 'open diagnostic floating window')
+ntk.map('n', ',ds', tb.diagnostics, 'Telescope search diagnostics')
+
 -- tb.keymaps
 
 -- fuzzy/Telescope things
 ntk.map('n', '<Leader>ss', tb.builtin, 'all Telescope pickers')
+ntk.map('n', '<Leader>sd', tb.diagnostics, 'Telescope Diagnostics')
 ntk.map('n', '<Leader>sk', tb.keymaps, 'Telescope keymaps')
+ntk.map('n', '<Leader>sp', tb.planets, 'planets!')
 -- ntk.map('n', '<Leader>fc', tb.grep_string, 'find under cursor in project')
 -- ntk.map('n', '<Leader>fb', tb.current_buffer_fuzzy_find, 'fuzzy find in current buffer')
 -- TODO others

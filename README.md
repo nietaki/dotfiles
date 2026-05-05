@@ -13,6 +13,7 @@ I'm automating it with [puter](https://github.com/nietaki/puter)
 - [ ] ~test strategy working with overseer (see vimscript/git_stuff.vim for how it used to work)~
 - [x] neotest https://github.com/stevearc/overseer.nvim/blob/master/doc/third_party.md#neotest
 - [x] move (neo?) test mappings to lua
+- [x] fix the TreeSitter issue when doing `K` in a lua config file
 
 ## what this thing does
 - configure shell settings and environment with bash/zsh
