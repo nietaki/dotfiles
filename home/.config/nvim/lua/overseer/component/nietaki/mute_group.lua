@@ -9,9 +9,6 @@ local function get_group_name(params, task)
   return task.name
 end
 
-local group_tasks = {}
-
-
 return {
   desc = "disposes of old tasks in the same group when a new task is started",
   -- Define parameters that can be passed in to the component
@@ -38,21 +35,17 @@ return {
       on_pre_start = function(self, task)
         local group_name = get_group_name(params, task)
         -- check if there is a task in the group name
+        print('mute group pre start')
         if group_tasks[group_name] then
-          -- print('task exists in ' .. group_name)
+          print('task exists in ' .. group_name)
           -- if there is, dispose of it
           local old_task = group_tasks[group_name]
-          if old_task ~= task then
-            -- print('disposing old task in ' .. group_name)
-            old_task:dispose()
-          else
-            -- print('old task is the same as current task in ' .. group_name)
-          end
+          ntk.debug(old_task)
+          old_task:dispose()
         end
         -- set the current task as the task for the group name
-        -- print('adding task to ' .. group_name)
+        print('adding task to ' .. group_name)
         group_tasks[group_name] = task
-        -- print('mute group pre start')
 
         -- print('on pre start')
         -- ntk.debug(self)
@@ -70,7 +63,7 @@ return {
       on_pre_result = function(self, task)
         -- Called when the task is finalizing.
         -- Return a map-like table value here to merge it into the task result.
-        -- return { foo = { "bar", "baz" } }
+        return { foo = { "bar", "baz" } }
       end,
       ---@param result table A result table.
       on_preprocess_result = function(self, task, result)

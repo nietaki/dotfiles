@@ -24,11 +24,6 @@ local function project()
   ntk.map('n', '<Leader>pR', ':tcd %:p:h<CR>', 'SET project root')
 end
 
-local function open_code()
-  ntk.map('n', '<Leader>om', require('opencode.api').configure_provider, 'switch Model')
-  ntk.map('n', '<Leader>oa', require('opencode.api').select_agent, 'Agent (plan/build/other)')
-end
-
 local function toggle_tab()
   -- toggle
   ntk.map('n', '<Leader>tw', ':ToggleWorkspace<CR>')
@@ -51,6 +46,41 @@ local function toggle_tab()
   ntk.map('n', '<Leader>t6', ':6tabnext<CR>')
 end
 
+local function get_current_context()
+  local cursor_pos = vim.api.nvim_win_get_cursor(0)
+  -- [1]=line, [2]=col
+  -- get relative path for the current buffer
+  local relative_path = vim.fn.expand("%:~:.")
+  return relative_path, cursor_pos
+end
+
+local copy_to_clipboard = function(text)
+  vim.fn.setreg('+', text)
+end
+
+local explain_line_command = function()
+  local relative_path, cursor_pos = get_current_context()
+  copy_to_clipboard("/explain_line " .. relative_path .. " " .. cursor_pos[1])
+  vim.notify("Copied /explain_line command to clipboard")
+end
+
+local fix_command = function()
+  local relative_path, cursor_pos = get_current_context()
+  copy_to_clipboard("/fix " .. relative_path .. " " .. cursor_pos[1])
+  vim.notify("Copied /fix command to clipboard")
+end
+
+local continue_command = function()
+  local relative_path, cursor_pos = get_current_context()
+  copy_to_clipboard("/continue " .. relative_path .. " " .. cursor_pos[1] .. " " .. cursor_pos[2])
+  vim.notify("Copied /continue command to clipboard")
+end
+
+local function open_code_commands()
+  ntk.map('n', '<Leader>oe', explain_line_command, 'copy /explain_line command')
+  ntk.map('n', '<Leader>of', fix_command, 'copy /fix command')
+  ntk.map('n', '<Leader>oc', continue_command, 'copy /continue command')
+end
 
 local function buffers_and_windows()
   vim.g.windowswap_map_keys = 0 -- prevent default bindings
@@ -144,6 +174,7 @@ function km.setup()
   quickfix_keymaps()
   copilot_lua_keymaps()
   neotest_keymaps()
+  open_code_commands()
   others()
 end
 

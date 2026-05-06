@@ -28,39 +28,50 @@ local opencode_session_id_finder = {
   },
 }
 
----@type overseer.TemplateDefinition
-local fixme = {
-  name = "fixme",
+-----@type overseer.TemplateDefinition
+--local fixme = {
+--  name = "fixme",
+--  params = {},
+--  builder = function(_params)
+--    local cursor_pos = vim.api.nvim_win_get_cursor(0)
+--    -- [1]=line, [2]=col
+--    -- get relative path for the current buffer
+--    local relative_path = vim.fn.expand("%:~:.")
+--    return {
+--      cmd = { "opencode", "run", "--attach", "http://localhost:4096", "-s", quickfix_session_id, "--dir", vim.fn.getcwd(), "--command", "fix", relative_path, tostring(cursor_pos[1]) },
+--      -- cmd = { "ls", "-alh" },
+--      -- cmd = { "env" },
+--      -- env = {
+--      --   -- get the env var
+--      --   OPENCODE_SERVER_PASSWORD = os.getenv("OPENCODE_SERVER_PASSWORD"),
+--      -- },
+--      name = "fixme",
+--      components = {
+--        {
+--          "dependencies",
+--          tasks = {
+--            opencode_session_id_finder,
+--          },
+--          sequential = true,
+--        }
+--      }
+--    }
+--  end,
+--}
+
+-- overseer.register_template(fixme)
+
+overseer.register_template({
+  name = "homeshick link",
+  desc = "run homeshick link",
   params = {},
-  builder = function(_params)
-    local cursor_pos = vim.api.nvim_win_get_cursor(0)
-    -- [1]=line, [2]=col
-    -- get relative path for the current buffer
-    local relative_path = vim.fn.expand("%:~:.")
+  builder = function()
     return {
-      cmd = { "opencode", "run", "--attach", "http://localhost:4096", "-s", quickfix_session_id, "--dir", vim.fn.getcwd(), "--command", "fix", relative_path, tostring(cursor_pos[1]) },
-      -- cmd = { "ls", "-alh" },
-      -- cmd = { "env" },
-      -- env = {
-      --   -- get the env var
-      --   OPENCODE_SERVER_PASSWORD = os.getenv("OPENCODE_SERVER_PASSWORD"),
-      -- },
-      name = "fixme",
-      components = {
-        {
-          "dependencies",
-          tasks = {
-            opencode_session_id_finder,
-          },
-          sequential = true,
-        }
-      }
+      name = "homeshick link",
+      cmd = { vim.uv.os_homedir() .. "/.homesick/repos/homeshick/bin/homeshick", "link" },
     }
   end,
-}
-
-overseer.register_template(fixme)
-
+})
 
 vim.api.nvim_create_user_command("Make", function(params)
   -- Insert args at the '$*' in the makeprg
