@@ -12,7 +12,7 @@ local function key_files_keymaps()
   ntk.map('n', '<Leader>feP', ':tabnew ~/puter/README.md<CR>:tcd %:p:h<CR>', 'open puter in new tab')
   ntk.map('n', '<Leader>fev', ':e ~/.vimrc<CR>')
   ntk.map('n', '<Leader>fez', ':e ~/.zshrc<CR>')
-  -- todo an implementatfon that actually works, this will only work on experimental stuff
+  -- todo an implementation that actually works, this will only work on experimental stuff
   ntk.map('n', '<Leader>fer', ':so ~/.config/nvim/init.lua<CR>', 'reload vim config')
 end
 
@@ -76,10 +76,17 @@ local continue_command = function()
   vim.notify("Copied /continue command to clipboard")
 end
 
+local find_typos = function()
+  local project_root = vim.fn.getcwd()
+  copy_to_clipboard('/find_typos "' .. project_root .. '"')
+  vim.notify("Copied /find_typos command to clipboard")
+end
+
 local function open_code_commands()
   ntk.map('n', '<Leader>oe', explain_line_command, 'copy /explain_line command')
   ntk.map('n', '<Leader>of', fix_command, 'copy /fix command')
   ntk.map('n', '<Leader>oc', continue_command, 'copy /continue command')
+  ntk.map('n', '<Leader>oit', find_typos, 'copy /find_typos command')
 end
 
 local function buffers_and_windows()
@@ -112,7 +119,7 @@ local function buffers_and_windows()
   ntk.map('n', '<Leader>w<', ':vertical resize -10<CR>', 'make narrower')
   ntk.map('n', '<Leader>w/', ':vsp<CR>')
   ntk.map('n', '<Leader>w-', ':sp<CR>')
-  ntk.map('n', '<Leader>wf', '<C-w>F', 'open file:line under curson in new window')
+  ntk.map('n', '<Leader>wf', '<C-w>F', 'open file:line under cursor in new window')
 end
 
 local function strudel_keymaps()
@@ -135,9 +142,9 @@ local function overseer_keymaps()
 end
 
 local quickfix_keymaps = function()
-  ntk.map('n', '<Leader>co', ':copen 24<CR>', 'quickifx open')
-  ntk.map('n', '<Leader>cc', ':cclose<CR>', 'quickifx close')
-  ntk.map('n', '<Leader>cd', ':cclose<CR>', 'quickifx close')
+  ntk.map('n', '<Leader>co', ':copen 24<CR>', 'quickfix open')
+  ntk.map('n', '<Leader>cc', ':cclose<CR>', 'quickfix close')
+  ntk.map('n', '<Leader>cd', ':cclose<CR>', 'quickfix close')
 end
 
 local copilot_lua_keymaps = function()

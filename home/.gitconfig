@@ -24,6 +24,7 @@
   co-recent = "! git reflog | grep checkout | cut -d ' ' -f 8 | awk '!x[$0]++' | head -n 15 | sed -n -e \"$1p\" | xargs git checkout #" 
   empty = commit --allow-empty -m \"empty commit\"
   reconsider = reset --soft HEAD~1
+	changed = "!{ git --no-pager diff HEAD --name-only; git ls-files --others --exclude-standard; } | sort -u"
 [difftool "sourcetree"]
   cmd = opendiff \"$LOCAL\" \"$REMOTE\"
   path = 

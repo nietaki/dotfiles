@@ -79,7 +79,7 @@ unsetopt AUTO_CD
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 # export SDKMAN_DIR="/$HOME/.sdkman"
-# [[ -s "/$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "/ome/nietaki/.sdkman/bin/sdkman-init.sh"
+# [[ -s "/$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "/home/nietaki/.sdkman/bin/sdkman-init.sh"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -228,7 +228,7 @@ export PATH="/$HOME/bin/picotool:$PATH"
 
 # OpenCode
 alias opencode_server='cd ~/repos && opencode serve'
-alias opencode_client='opencode attach http://localhost:4096 --dir .'
+alias opencode_client='opencode attach http://localhost:4096 --dir "$(pwd)"'
 
 # use homebrew version of grep and make
 # export PATH="$HOMEBREW_PREFIX/opt/make/libexec/gnubin:$PATH"

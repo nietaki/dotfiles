@@ -2,6 +2,7 @@
 description: continue user's implementation
 agent: quickfix
 subtask: true
+model: openrouter/anthropic/claude-sonnet-4.6
 ---
 
 The user has started implementing a change in the file @$1.
