@@ -38,12 +38,15 @@ return {
       -- the list of components or component aliases to add to the task
       -- components = { "my_custom_component", "default" },
       components = {
-        { "nietaki/hello_component", foo = 'bar' },
-        { "nietaki/mute_group",      group = 'test_group' },
+        -- { "nietaki/hello_component", foo = 'bar' },
+        "nietaki/mute_group",
+        -- "nietaki/hello_component",
+        -- this is important!
+        "default"
       },
       -- arbitrary table of data for your own personal use
       metadata = {
-        foo = "bar",
+        mute_group = "hello"
       },
     }
   end,

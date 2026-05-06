@@ -134,7 +134,6 @@ require("lazy").setup(
             "gosum",
             --json
             "json",
-            "jsonc",
             "yaml",
             "toml",
             "vim",

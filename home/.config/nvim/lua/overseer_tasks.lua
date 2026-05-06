@@ -1,5 +1,5 @@
 local overseer = require("overseer")
--- local ntk = require('ntk_utils')
+local ntk = require('ntk_utils')
 
 local quickfix_session_id = nil
 
@@ -67,8 +67,15 @@ overseer.register_template({
   params = {},
   builder = function()
     return {
+      metadata = {
+        mute_group = "homeshick",
+      },
       name = "homeshick link",
       cmd = { vim.uv.os_homedir() .. "/.homesick/repos/homeshick/bin/homeshick", "link" },
+      components = {
+        "nietaki/mute_group",
+        "default",
+      }
     }
   end,
 })
@@ -81,8 +88,11 @@ vim.api.nvim_create_user_command("Make", function(params)
   end
   local task = require("overseer").new_task({
     cmd = vim.fn.expandcmd(cmd),
+    metadata = {
+      mute_group = "make",
+    },
     components = {
-      { "nietaki/mute_group", group = 'make' },
+      { "nietaki/mute_group" },
       {
         "on_output_quickfix",
         open_on_exit = "failure",
@@ -100,9 +110,16 @@ end, {
 })
 
 -- -- for the built-in make targets
--- overseer.add_template_hook({}, function(task_def, util)
---   util.add_component(task_def,
---     { "on_output_quickfix", open_height = 24, open_on_exit = "failure", errorformat = vim.o.errorformat })
--- end)
+overseer.add_template_hook({}, function(task_def, util)
+  if task_def.cmd[1] == "make" then
+    task_def.metadata = task_def.metadata or {}
+    task_def.metadata.mute_group = "make"
+    util.add_component(task_def, { "nietaki/mute_group" })
+    util.add_component(task_def,
+      { "on_output_quickfix", open_height = 24, open_on_exit = "failure", errorformat = vim.o.errorformat })
+  end
+  -- util.add_component(task_def,
+  --   { "on_output_quickfix", open_height = 24, open_on_exit = "failure", errorformat = vim.o.errorformat })
+end)
 
 -- print('overseer tasks registered')
