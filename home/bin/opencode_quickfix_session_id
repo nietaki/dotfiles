@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
+# set -x
+
 session_id=$(opencode session list --format json -n 10 | jq -r '[.[] | select(.title | test("quickfix"; "i"))] | .[0].id')
 
-if [[ -z "$session_id" ]]; then
-  session_id=$(opencode run --attach http://localhost:4096 --format json --dir "$(pwd)" "respond with exactly 'quickfix'" | jq -r 'first | .sessionID')
+if [[ -z "$session_id"  || "$session_id" == "null" ]]; then
+  # session_id=$(opencode run --attach http://localhost:4096 --format json --dir "$(pwd)" "respond with exactly 'quickfix'" | jq -r 'first | .sessionID')
+  session_id=$(opencode run --attach http://localhost:4096 --format json --dir "$(pwd)" "respond with exactly 'quickfix'" | tail -n 1 | jq -r '.sessionID')
 fi
 
 echo "$session_id"
