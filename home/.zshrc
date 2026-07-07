@@ -230,5 +230,12 @@ export PATH="/$HOME/bin/picotool:$PATH"
 alias opencode_server='cd ~/repos && opencode serve'
 alias opencode_client='opencode attach http://localhost:4096 --dir "$(pwd)"'
 
+# check if leetcode binary is in path and if so, enable autocomplete
+if command -v leetcode &> /dev/null; then
+  eval "$(leetcode completions)"
+fi
+
+alias lc=leetcode
+
 # use homebrew version of grep and make
 # export PATH="$HOMEBREW_PREFIX/opt/make/libexec/gnubin:$PATH"

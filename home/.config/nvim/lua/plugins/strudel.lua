@@ -51,7 +51,7 @@ return {
         -- browser_exec_path = "/path/to/browser/executable",
         -- Custom URL for Strudel
         -- (optional, default: "https://cold.strudel.cc/")
-        strudel_url = "https://cold.strudel.cc/",
+        strudel_url = "https://warm.strudel.cc/",
       }
       )
     end,

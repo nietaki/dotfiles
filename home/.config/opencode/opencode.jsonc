@@ -219,6 +219,14 @@
       "type": "remote",
       "url": "https://mcp.grep.app",
       "enabled": true
+    },
+    "openzim": {
+      "type": "remote",
+      "url": "http://beehive.internal:45091/mcp",
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer openzim_non_secret"
+      }
     }
   }
 }
