@@ -9,6 +9,7 @@ return {
     'zbirenbaum/copilot.lua',
     cmd = 'Copilot',
     event = 'InsertEnter',
+    enabled = true,
     main = 'copilot',
     opts = {
       suggestion = { enabled = false },
