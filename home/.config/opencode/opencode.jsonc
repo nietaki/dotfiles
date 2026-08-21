@@ -10,14 +10,35 @@
   "permission": {
     "read": "allow",
     "edit": "ask",
-    "external_directory": "deny",
+    "external_directory": {
+      "~/go/pkg/mod/*": "allow",
+      "*": "deny"
+    },
     "bash": {
+      "*": "ask",
+      "echo *": "allow",
+      "find *": "allow",
+      "git add *": "allow",
+      "git check-ignore *": "allow",
       "git commit": "deny",
+      "git diff *": "allow",
+      "git ls-files *": "allow",
       "git push": "deny",
       "git reset": "deny",
-      "git diff": "allow",
+      "git status *": "allow",
+      "go *": "allow",
+      "goimports *": "allow",
       "grep *": "allow",
-      "*": "ask"
+      "helm lint": "allow",
+      "ls *": "allow",
+      "make *": "allow",
+      "make": "allow",
+      "mix *": "allow",
+      "rg *": "allow",
+      "sed *": "allow",
+      "staticcheck *": "allow",
+      "tail *": "allow",
+      "which *": "allow"
     },
     "webfetch": "allow",
     "grep": "allow",
