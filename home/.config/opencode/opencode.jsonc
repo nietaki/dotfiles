@@ -5,13 +5,15 @@
   "compaction": {
     "auto": true,
   },
-  "model": "opencode-go/glm-5.1",
+  "model": "opencode-go/qwen3.7-plus",
+  "small_model": "opencode-go/deepseek-v4-flash",
   // universal defaults
   "permission": {
     "read": "allow",
     "edit": "ask",
     "external_directory": {
       "~/go/pkg/mod/*": "allow",
+      "~/repos/*": "allow",
       "*": "deny"
     },
     "bash": {
@@ -20,16 +22,19 @@
       "find *": "allow",
       "git add *": "allow",
       "git check-ignore *": "allow",
-      "git commit": "deny",
+      "git commit *": "deny",
       "git diff *": "allow",
       "git ls-files *": "allow",
-      "git push": "deny",
-      "git reset": "deny",
+      "git push *": "deny",
+      "git reset *": "deny",
       "git status *": "allow",
+      "git log *": "allow",
       "go *": "allow",
       "goimports *": "allow",
       "grep *": "allow",
-      "helm lint": "allow",
+      "mkdir *": "allow",
+      "helm lint *": "allow",
+      "helm *": "allow",
       "ls *": "allow",
       "make *": "allow",
       "make": "allow",
@@ -46,7 +51,7 @@
     "list": "allow",
     // This tool is only available when OPENCODE_EXPERIMENTAL_LSP_TOOL=true (or OPENCODE_EXPERIMENTAL=true).
     "lsp": "allow",
-    "skill": "ask",
+    "skill": "allow",
     "todowrite": "allow",
     "todoread": "allow",
     // This tool is only available when using the OpenCode provider or when the OPENCODE_ENABLE_EXA environment variable is set to any truthy value (e.g., true or 1).
@@ -59,14 +64,13 @@
   },
   "agent": {
     "plan": {
-      // opencode go model
-      "model": "opencode-go/glm-5.1",
+      "model": "opencode-go/qwen3.7-plus",
       // https://opencode.ai/docs/agents/#permissions
       "permission": {
         "edit": "deny",
         "task": {
           // Control which subagents an agent can invoke via the Task tool with permission.task. Uses glob patterns for flexible matching.
-          "*": "ask",
+          "*": "allow",
           // "orchestrator-*": "allow",
           // "code-reviewer": "ask"
         },
@@ -76,26 +80,30 @@
       }
     },
     "build": {
-      "model": "openrouter/anthropic/claude-sonnet-4.6",
+      "model": "opencode-go/qwen3.7-plus",
       "permission": {
         "edit": "allow",
+        "bash": {
+          "mkdir *": "allow",
+          "git commit *": "allow",
+        },
       }
     },
     "quickfix": {
-      "model": "opencode-go/glm-5.1",
+      "model": "llama.cpp.local/qwen-heavier",
       "description": "Small, focused changes, without iterative feedback. Filling in the gaps in a section of code.",
       "prompt": "{file:./prompts/quickfix.txt}",
       //"steps": 5,
       // "hidden": true,
       "permission": {
         "edit": "allow",
-        "bash": "deny",
+        "bash": "allow",
         "webfetch": "deny",
         "skill": "deny",
         "todowrite": "deny",
         "todoread": "deny",
         "websearch": "deny",
-        "codesearch": "deny",
+        "codesearch": "allow",
         "question": "deny",
         "dash": "deny",
         "github-*": "deny",

@@ -86,7 +86,7 @@ local function open_code_commands()
   ntk.map('n', '<Leader>oe', explain_line_command, 'copy /explain_line command')
   ntk.map('n', '<Leader>of', fix_command, 'copy /fix command')
   ntk.map('n', '<Leader>oc', continue_command, 'copy /continue command')
-  ntk.map('n', '<Leader>oit', find_typos, 'copy /find_typos command')
+  ntk.map('n', '<Leader>ot', find_typos, 'copy /find_typos command')
 end
 
 local function buffers_and_windows()
