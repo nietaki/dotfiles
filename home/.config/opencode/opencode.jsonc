@@ -86,7 +86,8 @@
       "npm": "@ai-sdk/openai-compatible",
       "name": "llama-server (local)",
       "options": {
-        "baseURL": "http://192.168.1.37:8666/v1"
+        "baseURL": "http://192.168.1.37:8666/v1",
+        "setCacheKey": true
       },
       "models": {
         "qwen-heavier": {
