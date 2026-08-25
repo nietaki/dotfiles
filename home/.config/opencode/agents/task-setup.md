@@ -43,7 +43,7 @@ If it does not exist, create it with this exact content:
 
 ### Dependencies
 
-- [Other task this depends on, or "None"]
+- [Prerequisite work or libraries to integrate, or "None"]
 
 ## Notes
 ```
