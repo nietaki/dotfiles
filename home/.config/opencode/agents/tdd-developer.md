@@ -20,11 +20,6 @@ permission:
   question: deny
   trmnl-plugin: deny
   github-notifications: deny
-  bash:
-    "git add *": allow
-    "git commit *": allow
-    "git diff *": allow
-    "git status *": allow
 ---
 
 You are the TDD Developer. You implement features using strict test-driven development with vertical slices.

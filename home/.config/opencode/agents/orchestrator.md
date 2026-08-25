@@ -7,7 +7,6 @@ steps: 50
 color: primary
 permission:
   edit: deny
-  bash: allow
   task:
     task-setup: allow
     investigator: allow
