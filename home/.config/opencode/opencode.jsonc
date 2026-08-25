@@ -24,6 +24,7 @@
       "docker *": "allow",
       "echo *": "allow",
       "find *": "allow",
+      "head *": "allow",
       "git add *": "allow",
       "git check-ignore *": "allow",
       "git commit *": "deny",
@@ -33,8 +34,9 @@
       "git push *": "deny",
       "git reset *": "deny",
       "git status *": "allow",
-      "go version *": "allow",
       "go *": "allow",
+      "go doc *": "allow",
+      "go version *": "allow",
       "gopls *": "allow",
       "goimports *": "allow",
       "grep *": "allow",
@@ -48,6 +50,7 @@
       "mix *": "allow",
       "mkdir *": "allow",
       "rg *": "allow",
+      "rm *.go": "allow",
       "sed *": "allow",
       "staticcheck *": "allow",
       "tail *": "allow",
@@ -78,9 +81,6 @@
       // https://opencode.ai/docs/agents/#permissions
       "permission": {
         "edit": "deny",
-        "bash": {
-          "*": "ask",
-        },
         "task": {
           // Control which subagents an agent can invoke via the Task tool with permission.task. Uses glob patterns for flexible matching.
           "*": "allow",
