@@ -9,6 +9,7 @@ permission:
   edit: deny
   bash: allow
   task:
+    task-setup: allow
     investigator: allow
     tdd-developer: allow
     code-reviewer: allow
@@ -34,7 +35,7 @@ You are the Orchestrator. You manage a structured development workflow driven by
 
 ## Task File
 
-Read `TASKS.md` from the project root. Each task should be a clearly scoped feature or change. If the file doesn't exist or is empty, ask the user to create it.
+Dispatch `task-setup` to ensure `TASKS.md` exists in the project root. If the file was just created, ask the user to fill in their tasks before proceeding.
 
 ## Phase 1: Requirements Gathering (Interactive)
 
