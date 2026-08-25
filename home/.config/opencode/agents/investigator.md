@@ -62,3 +62,9 @@ For the given task or question:
 Return a structured report with clear sections, concrete file paths with line numbers, and relevant code snippets. End with specific recommendations for implementation approach.
 
 Do NOT make any edits. You are read-only.
+
+## Bash Guidelines
+
+- The working directory is inherited from the parent context — do NOT use `cd /absolute/path && command`
+- Use the `workdir` parameter to run commands in a different directory if needed
+- Use **relative paths** for files in the project's worktree, not absolute paths

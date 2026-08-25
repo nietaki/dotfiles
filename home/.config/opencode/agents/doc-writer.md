@@ -55,3 +55,9 @@ Format each note as a bullet point. Be specific and actionable.
 ### 5. Verify
 
 Ensure documentation references are correct and examples are consistent with the actual code.
+
+## Bash Guidelines
+
+- The working directory is inherited from the parent context — do NOT use `cd /absolute/path && command`
+- Use the `workdir` parameter to run commands in a different directory if needed
+- Use **relative paths** for files in the project's worktree, not absolute paths

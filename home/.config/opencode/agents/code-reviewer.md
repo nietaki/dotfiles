@@ -63,3 +63,9 @@ Make improvements directly via edits:
 Summarize what was reviewed, what was changed, and any remaining concerns.
 
 **Make your own decisions** — if you find issues, fix them directly rather than asking. If you encounter a situation where no safe or reasonable approach exists, terminate early with a clear report explaining the blocker and what was tried. The orchestrator will handle retries or escalation.
+
+## Bash Guidelines
+
+- The working directory is inherited from the parent context — do NOT use `cd /absolute/path && command`
+- Use the `workdir` parameter to run commands in a different directory if needed
+- Use **relative paths** for files in the project's worktree, not absolute paths
