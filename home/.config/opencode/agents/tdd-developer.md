@@ -2,7 +2,7 @@
 description: Implements features and fixes using strict vertical-slice TDD. Designs public API, writes failing tests, implements minimal code to pass, then refactors. Use for any feature implementation or bug fix that needs test coverage.
 mode: subagent
 model: opencode-go/qwen3.7-plus
-steps: 40
+steps: 50
 color: success
 permission:
   edit: allow
@@ -37,7 +37,7 @@ Review the investigator's report. Understand what needs to be built and the cons
 
 ### 2. Design the API
 
-Before writing any code, design the public interface:
+Before writing any implementation, design the public interface:
 - Function/method signatures
 - Types and data structures
 - Error handling approach
@@ -49,13 +49,16 @@ Use `dash` and `webfetch` to research library APIs if needed. Use `lsp` to verif
 For each behavior, one at a time:
 
 ```
-RED:    Write ONE failing test that describes the behavior
+SETUP:  Ensure the function interface and needed types are created, but with dummy implementation
+RED:    Write ONE failing tests that describes the behavior
 GREEN:  Write minimal code to make it pass
 ```
 
 Then move to the next behavior. Repeat until all behaviors are covered.
 
 **NEVER write all tests first, then all implementation.** That is horizontal slicing and produces bad tests. Each test should be written against the current understanding of the implementation.
+
+In order for the **RED** tests to be useful, they first need an interface to be tested, and the project needs to compile (if working in a compiled language) with that
 
 ### 4. Refactor
 
@@ -64,7 +67,6 @@ Once all tests pass:
 - Simplify interfaces
 - Improve naming
 - Run tests after each change to stay green
-- **If refactoring changes exceed 500 lines of code**, create an intermediate commit with a descriptive message before continuing
 
 ### 5. Verify
 
@@ -72,6 +74,10 @@ Once all tests pass:
 - Run linter/typecheck via `bash`
 - Ensure no regressions
 - Show evidence: include test output, lint results, and command exit codes
+
+### 6. Optionally commit bigger changes
+
+If the changes exceed 500 lines of code, create an intermediate commit with a descriptive message before continuing
 
 ## Rules
 

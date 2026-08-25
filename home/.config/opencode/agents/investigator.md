@@ -27,7 +27,9 @@ You are the Investigator. Your job is to deeply explore a codebase and return a 
 ## Interactive Requirements Gathering
 
 When gathering requirements during Phase 1, use the `question` tool to ask clarifying questions about:
+
 - Ambiguous task scope or acceptance criteria
+- Fitting names for the key concepts (to facilitate Ubiquitous Language from the DDD school of thought)
 - Edge cases that need to be handled
 - Integration points with existing code
 - Trade-offs between different implementation approaches
