@@ -7,42 +7,51 @@
   },
   "model": "opencode-go/qwen3.7-plus",
   "small_model": "opencode-go/deepseek-v4-flash",
+  "lsp": true,
   // universal defaults
   "permission": {
     "read": "allow",
     "edit": "ask",
     "external_directory": {
+      "*": "deny",
       "~/go/pkg/mod/*": "allow",
-      "~/repos/*": "allow",
-      "*": "deny"
+      "~/repos/*": "allow"
     },
     "bash": {
-      "*": "ask",
+      "*": "deny",
+      "cat *": "allow",
+      "cp *": "allow",
+      "docker *": "allow",
       "echo *": "allow",
       "find *": "allow",
       "git add *": "allow",
       "git check-ignore *": "allow",
       "git commit *": "deny",
       "git diff *": "allow",
+      "git log *": "allow",
       "git ls-files *": "allow",
       "git push *": "deny",
       "git reset *": "deny",
       "git status *": "allow",
-      "git log *": "allow",
+      "go version *": "allow",
       "go *": "allow",
+      "gopls *": "allow",
       "goimports *": "allow",
       "grep *": "allow",
-      "mkdir *": "allow",
-      "helm lint *": "allow",
       "helm *": "allow",
+      "helm lint *": "allow",
+      "jq *": "allow",
       "ls *": "allow",
-      "make *": "allow",
       "make": "allow",
+      "make coverage *": "allow",
+      "make *": "allow",
       "mix *": "allow",
+      "mkdir *": "allow",
       "rg *": "allow",
       "sed *": "allow",
       "staticcheck *": "allow",
       "tail *": "allow",
+      "tar *": "allow",
       "which *": "allow"
     },
     "webfetch": "allow",
@@ -59,6 +68,7 @@
     "codesearch": "allow",
     "question": "allow",
     "dash": "allow",
+    "trmnl-plugin": "ask",
     "github-readonly": "allow",
     "github-notifications": "allow",
   },
@@ -68,6 +78,9 @@
       // https://opencode.ai/docs/agents/#permissions
       "permission": {
         "edit": "deny",
+        "bash": {
+          "*": "ask",
+        },
         "task": {
           // Control which subagents an agent can invoke via the Task tool with permission.task. Uses glob patterns for flexible matching.
           "*": "allow",
@@ -76,7 +89,7 @@
         },
         "lsp": "allow",
         "skill": "allow", // TODO fix this
-        "doom_loop": "ask",
+        "doom_loop": "allow",
       }
     },
     "build": {
@@ -120,7 +133,7 @@
       },
       "models": {
         "qwen-heavier": {
-          "name": "qwen 3.8 reasoning",
+          "name": "qwen-heavier",
           "limit": {
             "context": 114000,
             "output": 32000
@@ -196,6 +209,11 @@
       "headers": {
         "Authorization": "Bearer openzim_non_secret"
       }
+    },
+    "trmnl-plugin": {
+      "type": "remote",
+      "enabled": true,
+      "url": "https://trmnl.com/mcp?api_key={env:TRMNL_MCP_API_KEY}"
     }
   }
 }
