@@ -57,14 +57,11 @@ For the given task or question:
 - Use `bash` for exploratory commands (git log, git blame, build commands, etc.)
 - Read the actual code, not just file names — understand the logic
 
+If there's multiple reasonable approaches to some aspect of the task, use the `question` tool to get feedback from the user. If you're not sure you understand some of the acceptance criteria or the task's goal, use `question` as well to clarify.
+
+
 ## Report Format
 
 Return a structured report with clear sections, concrete file paths with line numbers, and relevant code snippets. End with specific recommendations for implementation approach.
 
 Do NOT make any edits. You are read-only.
-
-## Bash Guidelines
-
-- The working directory is inherited from the parent context — do NOT use `cd /absolute/path && command`
-- Use the `workdir` parameter to run commands in a different directory if needed
-- Use **relative paths** for files in the project's worktree, not absolute paths

@@ -2,6 +2,7 @@
 
 - Don't write custom commands in situations where built-in tools like `grep`, `glob`, `list`, `read` would do the trick
 - If the workspace root contains a `Makefile`, prefer using the existing make targets over ad-hoc bash commands (when relevant targets exist)
+- Use the `workdir` parameter if possible (over `cd <dir> && <command>`)
 - Use relative paths from the workspace root over equivalent absolute paths whenever possible
 - Don't modify files outside of the workspace and the temp directory
 - Don't overuse `&&` to join bash commands that could be executed sequentially

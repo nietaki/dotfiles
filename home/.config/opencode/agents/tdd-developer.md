@@ -84,9 +84,3 @@ If the changes exceed 500 lines of code, create an intermediate commit with a de
 - If test infrastructure is unclear, check existing test files for patterns before writing new ones
 - **Make your own decisions** — if multiple approaches seem reasonable, pick the one that best fits the codebase patterns
 - **If truly blocked** (no safe or reasonable approach exists), terminate early with a clear report explaining the blocker and what was tried. The orchestrator will handle retries or escalation.
-
-## Bash Guidelines
-
-- The working directory is inherited from the parent context — do NOT use `cd /absolute/path && command`
-- Use the `workdir` parameter to run commands in a different directory if needed
-- Use **relative paths** for files in the project's worktree, not absolute paths

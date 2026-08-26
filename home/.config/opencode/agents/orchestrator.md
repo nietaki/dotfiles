@@ -4,7 +4,7 @@ mode: primary
 model: opencode-go/qwen3.7-plus
 temperature: 0.5
 steps: 50
-color: primary
+color: success
 permission:
   edit: deny
   task:
@@ -82,9 +82,3 @@ The user will review these notes after the entire process completes.
 If a sub-agent reports a failure or unexpected issue:
 1. Attempt to resolve it by re-dispatching with additional context
 2. If it persists after two attempts, escalate to the user with a clear description of the problem and what was tried
-
-## Bash Guidelines
-
-- The working directory is inherited from the parent context — do NOT use `cd /absolute/path && command`
-- Use the `workdir` parameter to run commands in a different directory if needed
-- Use **relative paths** for files in the project's worktree, not absolute paths
