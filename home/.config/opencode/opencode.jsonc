@@ -1,5 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "instructions": ["./instructions/*.md"],
   // "model": "ollama/glm-4.7-flash-q4_K_M-24b-84k",
   // "model": "openrouter/anthropic/claude-sonnet-4.6",
   "compaction": {
@@ -14,8 +15,6 @@
     "edit": "ask",
     "external_directory": {
       "*": "deny",
-      "~/go/pkg/mod/*": "allow",
-      "~/repos/*": "allow"
     },
     "bash": {
       "*": "deny",
@@ -71,13 +70,14 @@
     "codesearch": "allow",
     "question": "allow",
     "dash": "allow",
-    "trmnl-plugin": "ask",
+    "trmnl-plugin": "deny",
     "github-readonly": "allow",
     "github-notifications": "allow",
   },
   "agent": {
     "plan": {
       "model": "opencode-go/qwen3.7-plus",
+      "color": "info",
       // https://opencode.ai/docs/agents/#permissions
       "permission": {
         "edit": "deny",
