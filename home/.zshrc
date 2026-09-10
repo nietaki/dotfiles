@@ -145,7 +145,7 @@ unsetopt autopushd
 
 # Platform.io
 export PATH="$PATH:$HOME/.platformio/penv/bin"
-alias pi=platformio
+alias pio=platformio
 
 
 # start a shell session authenticated to AWS
