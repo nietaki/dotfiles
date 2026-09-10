@@ -9,7 +9,8 @@
     "auto": true,
   },
   "model": "opencode-go/qwen3.7-plus",
-  "small_model": "opencode-go/deepseek-v4-flash",
+  // "small_model": "opencode-go/deepseek-v4-flash",
+  // "small_model": "vllm/qwen3.8-27b",
   "lsp": true,
   // universal defaults
   "permission": {
@@ -20,8 +21,10 @@
     },
     "bash": {
       "*": "deny",
+      "base64 *": "allow",
       "cat *": "allow",
       "cp *": "allow",
+      "curl *": "allow",
       "docker *": "allow",
       "echo *": "allow",
       "find *": "allow",
@@ -51,12 +54,21 @@
       "make *": "allow",
       "mix *": "allow",
       "mkdir *": "allow",
+      "pdftotext *": "allow",
+      "printf *": "allow",
+      "qlmanage *": "allow",
       "rg *": "allow",
       "rm *.go": "allow",
+      "rsvg-convert *": "allow",
       "sed *": "allow",
+      "sleep *": "allow",
+      "sort *": "allow",
       "staticcheck *": "allow",
       "tail *": "allow",
       "tar *": "allow",
+      "touch *": "allow",
+      "uniq *": "allow",
+      "wc *": "allow",
       "which *": "allow"
     },
     "webfetch": "allow",
@@ -123,16 +135,36 @@
         "codesearch": "allow",
         "question": "deny",
         "dash": "deny",
-        "github-*": "deny",
+        "github-*": "deny"
       }
     }
   },
   "provider": {
+    "vllm-local": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Qwen 3.8 27B (underturn RTX 3090)",
+      "options": {
+        "baseURL": "{env:VLLM_HOST}/v1",
+        "apiKey": "{env:VLLM_API_KEY}",
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "models": {
+        "qwen3.8-27b": {
+          "name": "Qwen 3.8 27B (local)",
+          "limit": {
+            "context": 131072,
+            "output": 12288
+          }
+        }
+      }
+    },
     "llama.cpp.local": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "llama-server (local)",
       "options": {
-        "baseURL": "http://192.168.1.37:8666/v1",
+        // "baseURL": "http://192.168.1.37:8666/v1",
+        "baseURL": "https://llama.accepting.work/v1",
         "setCacheKey": true
       },
       "models": {
@@ -144,12 +176,12 @@
           },
           "options": {
             "thinking": {
-              "type": "enabled",
-            },
+              "type": "enabled"
+            }
           }
         }
       }
-    },
+    }
   },
   "server": {
     "port": 4096,
@@ -179,7 +211,8 @@
         "--read-only",
         "--toolsets",
         // "code_security,dependabot,discussions,issues,labels,orgs,projects,pull_requests,repos,security_advisories,stargazers,users",
-        "default,discussions,stargazers,labels",
+        // For working with PRs in an org, add: labels,discussions,orgs,users
+        "context,repos,issues,pull_requests",
         "stdio",
       ],
       "environment": {
@@ -216,7 +249,7 @@
     },
     "trmnl-plugin": {
       "type": "remote",
-      "enabled": true,
+      "enabled": false,
       "url": "https://trmnl.com/mcp?api_key={env:TRMNL_MCP_API_KEY}"
     }
   }
