@@ -4,7 +4,7 @@
   "defaultProvider": "opencode-go",
   "defaultModel": "qwen3.8-flash",
   "defaultThinkingLevel": "medium",
-  "hideThinkingBlock": true,
+  "hideThinkingBlock": false,
   "skills": [
     "~/.config/opencode/skills"
   ],
@@ -12,6 +12,10 @@
     "npm:@gotgenes/pi-permission-system",
     "npm:pi-mcp-adapter",
     "npm:@narumitw/pi-lsp",
-    "npm:@juicesharp/rpiv-ask-user-question"
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:@henryqw/pi-footer",
+    "npm:@shinynito/pi-menshen",
+    "npm:@pedro_klein/pi-modes",
+    "npm:@pedro_klein/pi-readonly-bash"
   ]
 }

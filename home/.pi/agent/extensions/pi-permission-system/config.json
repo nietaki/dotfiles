@@ -1,8 +1,44 @@
 {
   "$schema": "https://raw.githubusercontent.com/gotgenes/pi-packages/main/packages/pi-permission-system/schemas/permissions.schema.json",
+
+  // ==========================================================================
+  // LAYER 3/3 of the permission stack — hard, deterministic policy boundaries.
+  //
+  // Architecture (see ../README.md for the full reasoning):
+  //   pi-modes            → which tools EXIST per mode (bash vs bash_readonly)
+  //   pi-menshen          → is this command SAFE? (tree-sitter classification
+  //                        + read-only registry + reviewer model) — owns the
+  //                        former 150-line bash whitelist, now deleted
+  //   THIS FILE (gotgenes)→ may ANYTHING touch this path/tool AT ALL? —
+  //                        cross-cutting denies that no other layer's "allow"
+  //                        can override (pi's tool_call handlers can only
+  //                        block, so gates compose as an intersection)
+  //
+  // The old bash whitelist is recoverable from git history (this file at HEAD
+  // before the prototype change).
+  // ==========================================================================
+
+  "shellTools": {
+    // pi-modes replaces `bash` with `bash_readonly` in Ask/Brainstorm/Plan
+    // modes. Without this alias the permission system would treat it as a
+    // generic extension tool and the path/external_directory gates below
+    // would NOT fire on paths inside its commands — i.e. `bash_readonly
+    // cat ~/.ssh/id_rsa` could slip past despite the path deny.
+    // This mapping gives it full bash parity: command decomposition,
+    // wrapper flooring, path/external token gates, and `bash:` rules.
+    "bash_readonly": { "commandArgument": "command" }
+  },
+
   "permission": {
     "*": "allow",
+
     "path": {
+      // Source of truth for fine-grained file protection (need #3).
+      // Cross-cutting: applies to read/write/edit, MCP/extension tools,
+      // AND path tokens extracted from bash commands — including the
+      // aliased bash_readonly above. Menshen auto-allowing a command does
+      // not open these; deny is the most-restrictive layer. Matching is
+      // symlink-aware (a symlink alias cannot evade a deny).
       "*": "allow",
       "*.env": "deny",
       "*.env.*": "deny",
@@ -10,7 +46,12 @@
       "*.envrc-priv": "deny",
       "~/.ssh/*": "deny"
     },
+
     "external_directory": {
+      // CWD-boundary gate (need #3 continued): reaching outside the
+      // working tree is denied except the temp dirs. This also governs
+      // bash commands — e.g. `cat ~/notes.md` stays denied even if
+      // menshen's registry happily classifies `cat` as read-only.
       "*": "deny",
       "/tmp": "allow",
       "/tmp/*": "allow",
@@ -18,140 +59,33 @@
       "/private/tmp/*": "allow",
       "${TMPDIR}/*": "allow"
     },
+
     "skill": {
       "*": "allow"
     },
+
     "mcp": {
+      // MCP servers are processes with their own file/network reach;
+      // gating here (not in menshen, which only sees the mcp tool names).
       "*": "allow",
       "trmnl-plugin": "deny",
       "trmnl:*": "deny"
     },
+
     "bash": {
-      "*": "deny",
-      "base64 *": "allow",
-      "cat *": "allow",
-      "cksum *": "allow",
-      "cd *": "allow",
-      "cargo build *": "allow",
-      "cargo check *": "allow",
-      "cargo clippy *": "allow",
-      "cargo fmt *": "allow",
-      "cargo test *": "allow",
-      "cp *": "allow",
-      "curl *": "allow",
-      "docker *": "allow",
-      "echo *": "allow",
-      "find *": "allow",
-      "head *": "allow",
-      "git add *": "allow",
-      "git check-ignore *": "allow",
-      "git commit *": "allow",
-      "git blame *": "allow",
-      "git branch --list *": "allow",
-      "git branch --show-current": "allow",
-      "git config --get *": "allow",
-      "git config --list": "allow",
-      "git describe *": "allow",
-      "git grep *": "allow",
-      "git merge-base *": "allow",
-      "git remote": "allow",
-      "git remote -v": "allow",
-      "git remote -v *": "allow",
-      "git rev-parse *": "allow",
-      "git shortlog *": "allow",
-      "git worktree list": "allow",
-      "git diff *": "allow",
-      "git log *": "allow",
-      "git ls-files *": "allow",
+      // The command-by-command whitelist lived here — it is GONE.
+      // Semantic judgment moved to ~/.pi/pi-menshen.json: tree-sitter
+      // AST classification (read-only fast-path / write-review /
+      // dangerous-deny) + a reviewer model for the long tail.
+      //
+      // We keep only a minimal deterministic backstop here, so the two
+      // hard policy decisions from the old whitelist hold even if
+      // menshen is disabled, broken, or its reviewer model misjudges.
+      // A gotgenes `deny` blocks silently in every case; menshen can
+      // never allow past it.
+      "*": "allow",
       "git push *": "deny",
-      "git reset *": "deny",
-      "git show *": "allow",
-      "git status *": "allow",
-      "go *": "allow",
-      "go doc *": "allow",
-      "go version *": "allow",
-      "gopls *": "allow",
-      "goimports *": "allow",
-      "grep *": "allow",
-      "helm *": "allow",
-      "helm lint *": "allow",
-      "jq *": "allow",
-      "kubectl *": "ask",
-      "ls *": "allow",
-      "ln *": "allow",
-      "make": "allow",
-      "make coverage *": "allow",
-      "make *": "allow",
-      "mix *": "allow",
-      "mkdir *": "allow",
-      "mv *": "allow",
-      "npm run *": "allow",
-      "npm test *": "allow",
-      "pdftotext *": "allow",
-      "printf *": "allow",
-      "pwd": "allow",
-      "qlmanage *": "allow",
-      "rg *": "allow",
-      "rm *.go": "allow",
-      "rm /tmp/*": "allow",
-      "rmdir *": "allow",
-      "rm -f /tmp/*": "allow",
-      "rm -rf /tmp/*": "allow",
-      "rm /private/tmp/*": "allow",
-      "rm -f /private/tmp/*": "allow",
-      "rm -rf /private/tmp/*": "allow",
-      "rsvg-convert *": "allow",
-      "sed *": "allow",
-      "sleep *": "allow",
-      "sort *": "allow",
-      "staticcheck *": "allow",
-      "tail *": "allow",
-      "tar *": "allow",
-      "tee *": "allow",
-      "touch *": "allow",
-      "uniq *": "allow",
-      "wc *": "allow",
-      "which *": "allow",
-      "basename *": "allow",
-      "column *": "allow",
-      "comm *": "allow",
-      "cut *": "allow",
-      "date *": "allow",
-      "df *": "allow",
-      "diff *": "allow",
-      "dig *": "allow",
-      "dirname *": "allow",
-      "du *": "allow",
-      "exiftool *": "allow",
-      "fd *": "allow",
-      "ffprobe *": "allow",
-      "file *": "allow",
-      "groups *": "allow",
-      "gsha256sum *": "allow",
-      "hexdump *": "allow",
-      "host *": "allow",
-      "id *": "allow",
-      "md5 *": "allow",
-      "mdfind *": "allow",
-      "mdls *": "allow",
-      "netstat *": "allow",
-      "od *": "allow",
-      "paste *": "allow",
-      "pgrep *": "allow",
-      "ping *": "allow",
-      "ps *": "allow",
-      "realpath *": "allow",
-      "readlink *": "allow",
-      "shasum *": "allow",
-      "stat *": "allow",
-      "strings *": "allow",
-      "sw_vers *": "allow",
-      "tr *": "allow",
-      "tree *": "allow",
-      "uname *": "allow",
-      "uptime *": "allow",
-      "whoami *": "allow",
-      "xxd *": "allow"
+      "git reset *": "deny"
     }
   }
 }
