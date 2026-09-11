@@ -3,8 +3,8 @@
   "enabled": true,
   "_comment_purpose": "LAYER 2/3 of the permission stack: semantic BASH judgment (replaces the deleted 150-line gotgenes whitelist). See home/.pi/agent/extensions/README.md in the dotfiles repo for the full architecture. NOTE: this file is strict JSON (menshen uses JSON.parse) - comments live in _comment keys.",
   "_comment_gatedTools": "We deliberately gate ONLY 'bash' here. write/edit/mcp/path decisions stay with gotgenes (deterministic, symlink-aware, cross-cutting - see pi-permission-system/config.json). Menshen's value is its tree-sitter AST + read-only registry + reviewer model, which is exactly the bash-command question gotgenes cannot answer.",
-  "_comment_classifierModel": "Empty = reviewer model for the long tail is the current session model. Set e.g. \"openai/gpt-4.1-mini\" to offload reviews to a cheap model and keep the main model's context warm.",
-  "classifierModel": "",
+  "_comment_classifierModel": "Empty = reviewer model for the long tail is the current session model. Pinned to a cheap fast-tier opencode-go model so reviews stay low-latency (reviewer thinking is hard-pinned to 'low' by menshen; TTFT is dominated by the model's 'low' budget) and keep the main model's context warm. Chosen from ~/.pi/agent/models-store.json: glm-5.3-flash has explicit low-thinking support + zero cache-write cost (menshen discards/respawns the reviewer trunk on failures, so cache-write pricing matters). Runner-up: deepseek-v4-flash (cheaper cache reads, pricier output). Note: an unresolvable string silently falls back to the session model, so keep the exact 'opencode-go/<id>' format with no ':thinking' suffix.",
+  "classifierModel": "opencode-go/glm-5.3-flash",
   "gatedTools": [
     "bash"
   ],
