@@ -3,5 +3,6 @@
   "theme": "dark",
   "defaultProvider": "opencode-go",
   "defaultModel": "qwen3.8-flash",
-  "defaultThinkingLevel": "medium"
+  "defaultThinkingLevel": "medium",
+  "hideThinkingBlock": true
 }
