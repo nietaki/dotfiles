@@ -40,13 +40,44 @@ order affects only which engine prompts first.
   file when you use `/perm allow|deny …` or deny-&-remember — new rules
   land here and become part of dotfiles, which is a feature (`git diff`
   reviews the growth of your own policy).
+- `pi-mode-ux.ts` — glue extension (no forks), three jobs, all verified
+  against the **installed** pi-modes `src/index.ts` (published npm code
+  lags behind GitHub main — analyze what is actually running, not main):
+  1. **`/mode <ask|brainstorm|plan|build|none>`** — published pi-modes
+     registers *zero* slash commands (only a shortcut). Typing `/build`
+     expands the package's bundled `prompts/build.md` template
+     (`pi.prompts` in its package.json) — that is the `[MODE: BUILD …]`
+     text, not a mode switch. `/mode` is a unique name; it emits
+     `pi-ask:mode-switch`, the event pi-modes already listens for, and
+     pi-modes then runs its real switch pipeline (gating, persistence,
+     notification, contract injection). Known inherited side effect: the
+     switch aborts any in-flight run and injects a "Continue working.
+     Mode is now …" follow-up ~150 ms later (visible to the user as two
+     extra messages — that is the plumbing working, not a bug).
+  2. **Footer mode segment** — `ctx.ui.setStatus("pi-modes", …)` on every
+     `pi-modes:changed`. pi core wires setStatus into the shared
+     `footerDataProvider`, and `@henryqw/pi-footer` renders *all* entries
+     of `getExtensionStatuses()` (footer.ts:347). No fork, no extra
+     status package. Re-published on `before_agent_start` as a safety net.
+  3. **`bash_readonly` kept in build/none** — installed pi-modes filters
+     it out in those modes ("redundant"); we re-add it after each switch
+     (`setActiveTools(getAllTools())`). Safe: it is read-only by
+     construction, menshen does not gate it (`gatedTools: ["bash"]`), and
+     gotgenes' `shellTools` alias applies the full bash path/external
+     policy to it — proven by the `cat ~/.ssh/config` deny routed
+     through `bash_readonly`. Benefit: plain reads in build mode skip
+     menshen's reviewer round-trips.
 - This README — architecture + reasoning.
 
 ## Daily use
 
-- `/build` `/plan` `/ask` `/brainstorm` `/none`, or `Ctrl+Alt+M` to cycle.
-  **New sessions default to `ask`** (read-only) — press `Ctrl+Alt+M` or
-  `/build` to get a writable session.
+- **`/mode` (our shim) or `Ctrl+Alt+M` to switch modes — do NOT use
+  `/build` `/plan` `/ask` `/brainstorm` `/none`: the published pi-modes
+  has no slash commands and those names expand the bundled contract
+  templates as plain messages (see Files: pi-mode-ux).** Cycling with the
+  shortcut goes ask→brainstorm→plan→build→none and only notifies on
+  actual change; from a fresh (ask) session it takes 3 presses to build.
+  **New sessions default to `ask`** (read-only).
 - Read-only commands (`cat`, `ls`, `git log`, …) run silently anywhere in
   the stack now — that was the whole point of deleting the whitelist.
 - Novel/mutating commands get a reviewer-model verdict (session model;
@@ -87,6 +118,13 @@ order affects only which engine prompts first.
   build mode runs `kubectl apply` with ask" per mode. If that becomes a
   real need, the seam is menshen's project rules or a thin authorizer
   chain link in gotgenes.
+- **gotgenes hot-reloads `config.json`** (verified 2026-09-11: a grep at
+  `~/.pi/agent/npm/...` was denied, the config was edited, and the next
+  call passed — no restart). Also note `path` and `external_directory`
+  are separate surfaces: `allow` entries must be in *both* for bash
+  reads outside the workspace (`~/.pi` is now in both; `~/.local/share/
+  mise/*` was added to `path` only, which is what the `read`/`grep`
+  *tools* consult — bash is governed by `external_directory`).
 - **No OS sandbox / network control** in this prototype — every layer
   above is a decision, not containment. `carderne/pi-sandbox` or
   `pi-landstrip` can be added later without touching this design.
@@ -110,9 +148,9 @@ Run as agent probes in a real session; each denial/block attributed to its layer
 | `python3 -c 'print(1)'` | menshen Guardian reviewer | ✅ auto-verdict, no human prompt |
 | `env whoami` | gotgenes wrapper floor | ✅ dialog `(rule '<indirection-bash-wrapper>')`, denial reason echoed back |
 
-Unverified: menshen `deny & remember` persistence; `git commit` ask rule (same code path as kubectl's); only ONE prompt appeared for `env whoami` (gotgenes asked, menshen seemingly deferred — the feared double-prompt didn't materialize here); pi-status footer mode indicator (package not installed).
+Unverified: menshen `deny & remember` persistence; `git commit` ask rule (same code path as kubectl's); only ONE prompt appeared for `env whoami` (gotgenes asked, menshen seemingly deferred — the feared double-prompt didn't materialize here).
 
-Caveat found: **modes are invisible in the TUI by default** — pi-modes publishes its status segment via `pi-status:register`, which requires `@pedro_klein/pi-status`; without it the only feedback is a transient notification on *change* (and `Ctrl+Alt+M` only notifies when the mode actually differs — cycling ask→brainstorm→plan produces near-identical toolsets). Consider installing pi-status.
+**pi-mode-ux.ts verified after restart (2026-09-11):** `/mode plan` → `/mode build` switched modes end-to-end (the two "Continue working. Mode is now …" messages in the transcript are pi-modes' own switch-pipeline side effect), and in build mode both `bash` and `bash_readonly` answered probes — proving the re-exposure. Footer confirmed: `+ BUILD` segment renders in `@henryqw/pi-footer` (user-eyeballed ✓).
 
 ## Activation / rollback
 
@@ -126,6 +164,7 @@ Test after restart:
 - `ls ~/notes` → denied: `ls` is read-only-classified by menshen but gotgenes external gate blocks ✓ (the intersection in action)
 - `/plan` then ask for a file write → tool-level block ✓; `/build` → works
 - `git push origin main` → denied by BOTH layers ✓
+- `/mode build` in a fresh session → toast + bash returns ✓ (verified)
 
 Rollback: `git checkout home/.pi/agent/settings.json home/.pi/agent/extensions/pi-permission-system/config.json && rm home/.pi/pi-menshen.json && homesick link dotfiles && pi remove npm:@shinynito/pi-menshen npm:@pedro_klein/pi-modes npm:@pedro_klein/pi-readonly-bash`
 (the old whitelist returns via git history in config.json)

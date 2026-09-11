@@ -1,6 +1,5 @@
 {
   "$schema": "https://raw.githubusercontent.com/gotgenes/pi-packages/main/packages/pi-permission-system/schemas/permissions.schema.json",
-
   // ==========================================================================
   // LAYER 3/3 of the permission stack — hard, deterministic policy boundaries.
   //
@@ -17,7 +16,6 @@
   // The old bash whitelist is recoverable from git history (this file at HEAD
   // before the prototype change).
   // ==========================================================================
-
   "shellTools": {
     // pi-modes replaces `bash` with `bash_readonly` in Ask/Brainstorm/Plan
     // modes. Without this alias the permission system would treat it as a
@@ -26,12 +24,12 @@
     // cat ~/.ssh/id_rsa` could slip past despite the path deny.
     // This mapping gives it full bash parity: command decomposition,
     // wrapper flooring, path/external token gates, and `bash:` rules.
-    "bash_readonly": { "commandArgument": "command" }
+    "bash_readonly": {
+      "commandArgument": "command"
+    }
   },
-
   "permission": {
     "*": "allow",
-
     "path": {
       // Source of truth for fine-grained file protection (need #3).
       // Cross-cutting: applies to read/write/edit, MCP/extension tools,
@@ -44,26 +42,27 @@
       "*.env.*": "deny",
       "*.env.example": "allow",
       "*.envrc-priv": "deny",
-      "~/.ssh/*": "deny"
+      "~/.ssh/*": "deny",
+      "~/.pi/*": "allow",
+      "~/.local/share/mise/*": "allow"
     },
-
     "external_directory": {
       // CWD-boundary gate (need #3 continued): reaching outside the
       // working tree is denied except the temp dirs. This also governs
       // bash commands — e.g. `cat ~/notes.md` stays denied even if
       // menshen's registry happily classifies `cat` as read-only.
       "*": "deny",
+      "~/.pi": "allow",
+      "~/.pi/*": "allow",
       "/tmp": "allow",
       "/tmp/*": "allow",
       "/private/tmp": "allow",
       "/private/tmp/*": "allow",
       "${TMPDIR}/*": "allow"
     },
-
     "skill": {
       "*": "allow"
     },
-
     "mcp": {
       // MCP servers are processes with their own file/network reach;
       // gating here (not in menshen, which only sees the mcp tool names).
@@ -71,7 +70,6 @@
       "trmnl-plugin": "deny",
       "trmnl:*": "deny"
     },
-
     "bash": {
       // The command-by-command whitelist lived here — it is GONE.
       // Semantic judgment moved to ~/.pi/pi-menshen.json: tree-sitter

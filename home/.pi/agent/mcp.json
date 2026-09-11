@@ -9,8 +9,11 @@
       ]
     },
     "github-readonly": {
-      "command": "${HOME}/repos/github-mcp-server/github-mcp-server",
+      "command": "sh",
       "args": [
+        "-c",
+        "exec \"$HOME/repos/github-mcp-server/github-mcp-server\" \"$@\"",
+        "--",
         "--read-only",
         "--toolsets",
         "context,repos,issues,pull_requests",
@@ -21,8 +24,11 @@
       }
     },
     "github-notifications": {
-      "command": "${HOME}/repos/github-mcp-server/github-mcp-server",
+      "command": "sh",
       "args": [
+        "-c",
+        "exec \"$HOME/repos/github-mcp-server/github-mcp-server\" \"$@\"",
+        "--",
         "--toolsets",
         "context,notifications",
         "stdio"
