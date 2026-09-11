@@ -5,6 +5,7 @@
   "defaultModel": "qwen3.8-flash",
   "defaultThinkingLevel": "medium",
   "hideThinkingBlock": true,
+  "tuiMode": "fullscreen",
   "skills": [
     "~/.config/opencode/skills"
   ],

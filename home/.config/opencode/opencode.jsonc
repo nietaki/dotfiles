@@ -267,6 +267,27 @@
       "type": "remote",
       "enabled": false,
       "url": "https://trmnl.com/mcp?api_key={env:TRMNL_MCP_API_KEY}"
+    },
+    "brave-search": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@brave/brave-search-mcp-server"
+      ],
+      "environment": {
+        "BRAVE_API_KEY": "{env:BRAVE_API_KEY}"
+      },
+      "enabled": true,
+      "tools": {
+        "brave_image_search": false,
+        "brave_video_search": false
+      }
+    },
+    "exa": {
+      "type": "remote",
+      "url": "https://mcp.exa.ai/mcp?api_key={env:EXA_API_KEY}",
+      "enabled": true
     }
   }
 }

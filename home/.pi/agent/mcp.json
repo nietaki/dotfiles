@@ -41,6 +41,17 @@
     "github-grep": {
       "url": "https://mcp.grep.app"
     },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@brave/brave-search-mcp-server"],
+      "env": {
+        "BRAVE_API_KEY": "{env:BRAVE_API_KEY}"
+      },
+      "excludeTools": ["brave_image_search", "brave_video_search"]
+    },
+    "exa": {
+      "url": "https://mcp.exa.ai/mcp?api_key={env:EXA_API_KEY}"
+    },
     "openzim": {
       "url": "http://beehive.internal:45091/mcp",
       "headers": {
