@@ -1,0 +1,50 @@
+{
+  "mcpServers": {
+    "dash": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Kapeli/dash-mcp-server.git",
+        "dash-mcp-server"
+      ]
+    },
+    "github-readonly": {
+      "command": "${HOME}/repos/github-mcp-server/github-mcp-server",
+      "args": [
+        "--read-only",
+        "--toolsets",
+        "context,repos,issues,pull_requests",
+        "stdio"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_MCP_READ_ONLY_TOKEN}"
+      }
+    },
+    "github-notifications": {
+      "command": "${HOME}/repos/github-mcp-server/github-mcp-server",
+      "args": [
+        "--toolsets",
+        "context,notifications",
+        "stdio"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_MCP_NOTIFICATIONS_TOKEN}"
+      },
+      "disabled": true
+    },
+    "github-grep": {
+      "url": "https://mcp.grep.app"
+    },
+    "openzim": {
+      "url": "http://beehive.internal:45091/mcp",
+      "headers": {
+        "Authorization": "Bearer openzim_non_secret"
+      },
+      "disabled": true
+    },
+    "trmnl-plugin": {
+      "url": "https://trmnl.com/mcp?api_key={env:TRMNL_MCP_API_KEY}",
+      "disabled": true
+    }
+  }
+}

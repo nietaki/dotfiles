@@ -7,5 +7,11 @@
   "hideThinkingBlock": true,
   "skills": [
     "~/.config/opencode/skills"
+  ],
+  "packages": [
+    "npm:@gotgenes/pi-permission-system",
+    "npm:pi-mcp-adapter",
+    "npm:@narumitw/pi-lsp",
+    "npm:@juicesharp/rpiv-ask-user-question"
   ]
 }
