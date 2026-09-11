@@ -4,5 +4,8 @@
   "defaultProvider": "opencode-go",
   "defaultModel": "qwen3.8-flash",
   "defaultThinkingLevel": "medium",
-  "hideThinkingBlock": true
+  "hideThinkingBlock": true,
+  "skills": [
+    "~/.config/opencode/skills"
+  ]
 }

@@ -1,5 +1,36 @@
 {
   "providers": {
+    "vllm-local": {
+      "baseUrl": "http://192.168.1.37:18020/v1",
+      "api": "openai-completions",
+      "apiKey": "$VLLM_API_KEY",
+      "compat": {
+        "supportsDeveloperRole": false
+      },
+      "models": [
+        {
+          "id": "qwen3.8-27b",
+          "name": "Qwen 3.8 27B (underturn RTX 3090)",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 131072,
+          "maxTokens": 12288,
+          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+          "samplingParams": {
+            "temperature": 1.0,
+            "top_p": 0.95
+          },
+          "thinkingLevelMap": {
+            "minimal": null,
+            "low": "low",
+            "medium": "medium",
+            "high": null,
+            "xhigh": "xhigh",
+            "max": null
+          }
+        }
+      ]
+    },
     "opencode-go": {
       "modelOverrides": {
         "qwen3.8-flash": {
