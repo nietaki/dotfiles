@@ -122,9 +122,11 @@ order affects only which engine prompts first.
   `~/.pi/agent/npm/...` was denied, the config was edited, and the next
   call passed — no restart). Also note `path` and `external_directory`
   are separate surfaces: `allow` entries must be in *both* for bash
-  reads outside the workspace (`~/.pi` is now in both; `~/.local/share/
-  mise/*` was added to `path` only, which is what the `read`/`grep`
-  *tools* consult — bash is governed by `external_directory`).
+  reads outside the workspace (`~/.pi`, `~/.local/share/mise`, and
+  `~/.config/opencode/skills` are in both; the skills dir is the one from
+  settings.json `skills` — its SKILL.md files load via `read` through the
+  default-allow `path` surface, but bash must reach it to run skill
+  scripts).
 - **No OS sandbox / network control** in this prototype — every layer
   above is a decision, not containment. `carderne/pi-sandbox` or
   `pi-landstrip` can be added later without touching this design.

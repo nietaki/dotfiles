@@ -54,6 +54,16 @@
       "*": "deny",
       "~/.pi": "allow",
       "~/.pi/*": "allow",
+      // Skills dir from settings.json `skills`: SKILL.md files load via `read`
+      // (the default-allow `path` surface), but bash must reach this tree to
+      // run scripts that skills reference.
+      "~/.config/opencode/skills": "allow",
+      "~/.config/opencode/skills/*": "allow",
+      // Mirror of the `path` allow for the mise install tree, so bash reads
+      // match what read/grep can already see (pi docs/examples live under
+      // .../installs/node/<ver>/lib/node_modules/@earendil-works/pi-coding-agent/).
+      "~/.local/share/mise": "allow",
+      "~/.local/share/mise/*": "allow",
       "/tmp": "allow",
       "/tmp/*": "allow",
       "/private/tmp": "allow",
