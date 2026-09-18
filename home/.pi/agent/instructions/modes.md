@@ -11,7 +11,9 @@ shows the active mode.
 - **none** — raw pi: no mode rules, all tools.
 
 In ask/brainstorm/plan, `bash` is replaced by `bash_readonly` and mutating
-writes/subagents are blocked; a blocked call's reason names the active mode.
+subagents are blocked. In ask/brainstorm only, mutating file writes are
+further restricted to markdown (plus `/tmp` and `~/.pi`); plan writes are
+unfiltered. A blocked call's reason names the active mode.
 The mode can change mid-run (Ctrl+Alt+M does not restart the turn), so call
 `mode_status` to check the live mode — always before starting implementation
 work, and whenever a gate blocks you. Never fight a gate; instead tell the

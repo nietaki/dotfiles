@@ -1,11 +1,14 @@
 /**
  * Append instruction files to the system prompt.
  *
- * Reads two directories, in this fixed order, each emitted as its own
- * top-level block:
+ * Reads instruction directories, in this fixed order, each emitted as its
+ * own top-level block:
  *
- *   ~/.config/opencode/instructions/*.md  → "# Additional Instructions"
  *   ~/.pi/agent/instructions/*.md         → "# Pi Instructions"
+ *
+ * (The OpenCode-variant source below is commented out: pi instructions
+ * now live independently in ~/.pi/agent/instructions/; the OpenCode files
+ * remain untouched for OpenCode itself.)
  *
  * The blocks are built ONCE at extension load (per process), from files
  * sorted by name with fixed separators, so the emitted bytes are
@@ -19,10 +22,10 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 const HOME = process.env.HOME ?? process.env.USERPROFILE ?? "";
 
 const INSTRUCTION_SOURCES: Array<{ dir: string; header: string }> = [
-	{
-		dir: join(HOME, ".config", "opencode", "instructions"),
-		header: "# Additional Instructions",
-	},
+	// {
+	// 	dir: join(HOME, ".config", "opencode", "instructions"),
+	// 	header: "# Additional Instructions",
+	// },
 	{
 		dir: join(HOME, ".pi", "agent", "instructions"),
 		header: "# Pi Instructions",
