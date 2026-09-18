@@ -1,8 +1,13 @@
 /**
- * Append opencode-style instruction files to the system prompt.
+ * Append instruction files to the system prompt.
  *
- * Reads ~/.config/opencode/instructions/*.md and appends them as a single
- * block. The block is built ONCE at extension load (per process), from files
+ * Reads two directories, in this fixed order, each emitted as its own
+ * top-level block:
+ *
+ *   ~/.config/opencode/instructions/*.md  → "# Additional Instructions"
+ *   ~/.pi/agent/instructions/*.md         → "# Pi Instructions"
+ *
+ * The blocks are built ONCE at extension load (per process), from files
  * sorted by name with fixed separators, so the emitted bytes are
  * deterministic and stable across turns and prompt-cache friendly. Edits to
  * instruction files take effect on restart or /reload, never mid-session.
@@ -11,18 +16,24 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
-const INSTRUCTIONS_DIR = join(
-	process.env.HOME ?? process.env.USERPROFILE ?? "",
-	".config",
-	"opencode",
-	"instructions",
-);
+const HOME = process.env.HOME ?? process.env.USERPROFILE ?? "";
 
-function buildInstructionsBlock(): string | null {
-	if (!existsSync(INSTRUCTIONS_DIR)) return null;
+const INSTRUCTION_SOURCES: Array<{ dir: string; header: string }> = [
+	{
+		dir: join(HOME, ".config", "opencode", "instructions"),
+		header: "# Additional Instructions",
+	},
+	{
+		dir: join(HOME, ".pi", "agent", "instructions"),
+		header: "# Pi Instructions",
+	},
+];
+
+function buildInstructionsBlock(dir: string, header: string): string | null {
+	if (!existsSync(dir)) return null;
 
 	// sort() is code-unit ordering: deterministic across platforms/runs.
-	const files = readdirSync(INSTRUCTIONS_DIR)
+	const files = readdirSync(dir)
 		.filter((name) => name.endsWith(".md"))
 		.sort();
 
@@ -30,7 +41,7 @@ function buildInstructionsBlock(): string | null {
 	for (const file of files) {
 		let content: string;
 		try {
-			content = readFileSync(join(INSTRUCTIONS_DIR, file), "utf-8");
+			content = readFileSync(join(dir, file), "utf-8");
 		} catch {
 			continue; // unreadable file: skip deterministically (no timestamped warning)
 		}
@@ -42,17 +53,20 @@ function buildInstructionsBlock(): string | null {
 	}
 
 	if (sections.length === 0) return null;
-	return ["# Additional Instructions", ...sections].join("\n\n");
+	return [header, ...sections].join("\n\n");
 }
 
 export default function (pi: ExtensionAPI) {
 	// Frozen for the lifetime of the process: every before_agent_start sees
 	// the exact same string, keeping the system prompt byte-identical turn to
 	// turn. (If no instructions changed, pi can also skip resending them.)
-	const block = buildInstructionsBlock();
-	if (block === null) return;
+	const blocks = INSTRUCTION_SOURCES.map(({ dir, header }) =>
+		buildInstructionsBlock(dir, header),
+	).filter((block): block is string => block !== null);
+	if (blocks.length === 0) return;
+	const suffix = "\n\n" + blocks.join("\n\n");
 
 	pi.on("before_agent_start", async (event) => {
-		return { systemPrompt: `${event.systemPrompt}\n\n${block}` };
+		return { systemPrompt: `${event.systemPrompt}${suffix}` };
 	});
 }

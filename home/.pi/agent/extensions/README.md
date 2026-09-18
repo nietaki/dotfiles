@@ -40,7 +40,7 @@ order affects only which engine prompts first.
   file when you use `/perm allow|deny …` or deny-&-remember — new rules
   land here and become part of dotfiles, which is a feature (`git diff`
   reviews the growth of your own policy).
-- `pi-mode-ux.ts` — glue extension (no forks), three jobs, all verified
+- `pi-mode-ux.ts` — glue extension (no forks), four jobs, all verified
   against the **installed** pi-modes `src/index.ts` (published npm code
   lags behind GitHub main — analyze what is actually running, not main):
   1. **`/mode <ask|brainstorm|plan|build|none>`** — published pi-modes
@@ -67,6 +67,14 @@ order affects only which engine prompts first.
      policy to it — proven by the `cat ~/.ssh/config` deny routed
      through `bash_readonly`. Benefit: plain reads in build mode skip
      menshen's reviewer round-trips.
+  4. **`mode_status` tool** — zero-arg read-only query returning the
+     mirrored mode (same state the footer renders) plus LIVE
+     `pi.getActiveTools()` facts (which shell tool exists right now).
+     Fills the gap where `/mode` re-informs the model (abort + follow-up
+     message) but Ctrl+Alt+M mid-run does not. Reports only; switching
+     stays a human action. Allowed by menshen/gotgenes default-allow
+     (no paths, no args); survives mode gating because pi-modes filters
+     by denylist name only.
 - This README — architecture + reasoning.
 
 ## Daily use

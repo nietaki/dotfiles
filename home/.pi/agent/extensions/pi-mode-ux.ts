@@ -1,4 +1,5 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { Type } from "typebox";
 
 /**
  * pi-mode-ux — glue between @pedro_klein/pi-modes and the rest of the stack.
@@ -27,6 +28,16 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
  *    full bash path/external_directory policy to it — so exposing it in
  *    write-enabled modes is safe and saves reviewer-model round-trips for
  *    plain reads.
+ *
+ * 4. mode_status tool — pi-modes' /mode pipeline re-informs the model after
+ *    a switch (abort + "Mode is now X" follow-up), but Ctrl+Alt+M cycling
+ *    does neither: currentMode changes instantly while the run's system
+ *    prompt stays frozen at its before_agent_start value. The tool is a
+ *    zero-arg read-only projection of the mirrored event state plus LIVE
+ *    pi.getActiveTools() facts, so it cannot disagree with the footer or
+ *    the gating. It reports only — switching remains a human action (a
+ *    switch tool would let the model escape the gates that exist to
+ *    constrain it).
  */
 
 const MODES = ["ask", "brainstorm", "plan", "build", "none"] as const;
@@ -43,6 +54,8 @@ const SEGMENTS: Record<Mode, string> = {
 export default function (pi: ExtensionAPI): void {
 	let ctx: ExtensionContext | null = null;
 	let mode: Mode | null = null;
+	let previousMode: Mode | null = null;
+	let changedAt = 0;
 
 	function publishStatus(): void {
 		if (ctx && mode) ctx.ui.setStatus("pi-modes", SEGMENTS[mode]);
@@ -61,15 +74,73 @@ export default function (pi: ExtensionAPI): void {
 
 	// pi-modes emits this synchronously inside applyMode, AFTER gating.
 	pi.events.on("pi-modes:changed", (data: unknown) => {
-		const next = (data as { mode?: Mode })?.mode;
+		const payload = (data ?? {}) as { mode?: Mode; previousMode?: Mode };
+		const next = payload.mode;
 		if (!next || !MODES.includes(next)) return;
+		previousMode = payload.previousMode ?? mode;
 		mode = next;
+		changedAt = Date.now();
 
 		if (next === "build" || next === "none") {
 			// Re-expose the redundant-by-design read-only wrapper.
 			pi.setActiveTools(pi.getAllTools().map((t) => t.name));
 		}
 		publishStatus();
+	});
+
+	// Read-only projection of the mirrored mode state (see header note 4).
+	// Denylist-based mode gating (pi-modes filters only bash/bash_readonly by
+	// name) never removes this tool, so it answers in every mode — including
+	// none, where pi-modes itself injects nothing.
+	pi.registerTool({
+		name: "mode_status",
+		label: "Mode Status",
+		description:
+			"Report the active pi-modes workflow mode and live tool-gating state (read-only query).",
+		promptSnippet: "Query the active workflow mode and its live tool gating",
+		promptGuidelines: [
+			"Use mode_status before starting implementation work, or whenever unsure which workflow mode is active right now (e.g. after a mid-run Ctrl+Alt+M cycle); it reflects live gating state, not a turn-start assumption.",
+		],
+		parameters: Type.Object({}),
+		async execute() {
+			const active = pi.getActiveTools();
+			if (!mode) {
+				return {
+					content: [
+						{
+							type: "text",
+							text: "mode: unknown (no pi-modes state in this process — e.g. subagent or pre-first-event)",
+						},
+					],
+					details: { mode: null },
+				};
+			}
+			const bash = active.includes("bash")
+				? "bash (unrestricted)"
+				: active.includes("bash_readonly")
+					? "bash_readonly (restricted commands)"
+					: "no shell tool";
+			// Mirrors pi-modes WRITE_FILTERED_MODES (ask + brainstorm only);
+			// keep in sync if the upstream gate changes — this is the one
+			// derived (not sensed) line in the output.
+			const writes =
+				mode === "ask" || mode === "brainstorm"
+					? "filtered (markdown in cwd, /tmp, ~/.pi)"
+					: "unfiltered";
+			const secs = changedAt ? Math.max(0, Math.round((Date.now() - changedAt) / 1000)) : null;
+			const lines = [
+				`mode: ${mode}`,
+				`footer: ${SEGMENTS[mode]}`,
+				`previous: ${previousMode ?? "n/a"}`,
+				`changed: ${secs === null ? "unknown" : `${secs}s ago`}`,
+				`shell tool: ${bash}`,
+				`writes: ${writes}`,
+			];
+			return {
+				content: [{ type: "text", text: lines.join("\n") }],
+				details: { mode, previousMode, bash },
+			};
+		},
 	});
 
 	pi.registerCommand("mode", {
