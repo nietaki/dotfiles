@@ -71,7 +71,12 @@ order affects only which engine prompts first.
      mirrored mode (same state the footer renders) plus LIVE
      `pi.getActiveTools()` facts (which shell tool exists right now).
      Fills the gap where `/mode` re-informs the model (abort + follow-up
-     message) but Ctrl+Alt+M mid-run does not. Reports only; switching
+     message) but Ctrl+Alt+M mid-run does not. The `writes:` line is
+     *sensed*: dynamic-imports `WRITE_FILTERED_MODES` from the installed
+     pi-modes source (absolute path; jiti's `@earendil-works/*`/`typebox`
+     aliases resolve its imports). If that import ever fails it falls
+     back to a hand copy and appends "(mirrored)" — a stale answer is
+     visible, never silent. Reports only; switching
      stays a human action. Allowed by menshen/gotgenes default-allow
      (no paths, no args); survives mode gating because pi-modes filters
      by denylist name only.

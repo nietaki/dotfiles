@@ -1,5 +1,7 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
+import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 
 /**
  * pi-mode-ux — glue between @pedro_klein/pi-modes and the rest of the stack.
@@ -38,6 +40,13 @@ import { Type } from "typebox";
  *    the gating. It reports only — switching remains a human action (a
  *    switch tool would let the model escape the gates that exist to
  *    constrain it).
+ *
+ *    The write-gate answer is *sensed*: it dynamically imports
+ *    WRITE_FILTERED_MODES from the installed pi-modes source (absolute
+ *    path — relative specifiers would resolve against the repo through
+ *    the homeshick symlink). If that import ever fails, the tool falls
+ *    back to a hand-mirrored set and labels the line "(mirrored)", so
+ *    a stale answer is always visible, never silent.
  */
 
 const MODES = ["ask", "brainstorm", "plan", "build", "none"] as const;
@@ -50,6 +59,43 @@ const SEGMENTS: Record<Mode, string> = {
 	build: "+ BUILD",
 	none: "- NONE",
 };
+
+// Sense pi-modes' actual write-gate set instead of hand-mirroring it.
+// Absolute specifier: this file is a homeshick symlink, and jiti resolves
+// relative specifiers against the realpath (inside the repo, where
+// npm/node_modules does not exist). The target imports only
+// @earendil-works/pi-tui (resolved via pi's own aliases) + node builtins;
+// loading the module has no side effects beyond defining the extension fn.
+const PI_MODES_SOURCE = join(
+	process.env.HOME ?? process.env.USERPROFILE ?? "",
+	".pi",
+	"agent",
+	"npm",
+	"node_modules",
+	"@pedro_klein",
+	"pi-modes",
+	"src",
+	"index.ts",
+);
+
+let writeGateSense: Promise<Set<string> | null> | null = null;
+function sensedWriteFilteredModes(): Promise<Set<string> | null> {
+	writeGateSense ??= import(pathToFileURL(PI_MODES_SOURCE).href)
+		.then((mod: unknown) => {
+			const set = (mod as { WRITE_FILTERED_MODES?: unknown })
+				?.WRITE_FILTERED_MODES;
+			return set instanceof Set ? (set as Set<string>) : null;
+		})
+		.catch(() => null); // failure is surfaced as the "(mirrored)" label
+	return writeGateSense;
+}
+
+// Hand-mirrored fallback for WRITE_FILTERED_MODES, used only when the
+// dynamic import fails; the output then carries "(mirrored)" so a stale
+// answer can never be mistaken for a sensed one.
+function fallbackWriteFilteredModes(): Set<string> {
+	return new Set(["ask", "brainstorm"]);
+}
 
 export default function (pi: ExtensionAPI): void {
 	let ctx: ExtensionContext | null = null;
@@ -120,13 +166,14 @@ export default function (pi: ExtensionAPI): void {
 				: active.includes("bash_readonly")
 					? "bash_readonly (restricted commands)"
 					: "no shell tool";
-			// Mirrors pi-modes WRITE_FILTERED_MODES (ask + brainstorm only);
-			// keep in sync if the upstream gate changes — this is the one
-			// derived (not sensed) line in the output.
-			const writes =
-				mode === "ask" || mode === "brainstorm"
-					? "filtered (markdown in cwd, /tmp, ~/.pi)"
-					: "unfiltered";
+			// Ask pi-modes' real WRITE_FILTERED_MODES (sensed, not mirrored);
+			// fall back to a hand copy only if the import failed — visibly.
+			const probed = await sensedWriteFilteredModes();
+			const writeFiltered = probed ?? fallbackWriteFilteredModes();
+			const writes = writeFiltered.has(mode)
+				? "filtered (markdown in cwd, /tmp, ~/.pi)"
+				: "unfiltered";
+			const writesSuffix = probed ? "" : " (mirrored)";
 			const secs = changedAt ? Math.max(0, Math.round((Date.now() - changedAt) / 1000)) : null;
 			const lines = [
 				`mode: ${mode}`,
@@ -134,7 +181,7 @@ export default function (pi: ExtensionAPI): void {
 				`previous: ${previousMode ?? "n/a"}`,
 				`changed: ${secs === null ? "unknown" : `${secs}s ago`}`,
 				`shell tool: ${bash}`,
-				`writes: ${writes}`,
+				`writes: ${writes}${writesSuffix}`,
 			];
 			return {
 				content: [{ type: "text", text: lines.join("\n") }],
