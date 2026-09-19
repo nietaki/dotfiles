@@ -24,6 +24,11 @@
       }
     },
     "github-notifications": {
+      // PARKED (kept for later use). Re-enable: flip "disabled" to false and
+      // restart pi — pi-mcp-adapter connects on demand. Needs
+      // $GITHUB_MCP_NOTIFICATIONS_TOKEN set. Not denied in the permission
+      // config, but it is a write-capable GitHub surface — think before
+      // parking it back in.
       "command": "sh",
       "args": [
         "-c",
@@ -53,6 +58,8 @@
       "url": "https://mcp.exa.ai/mcp?api_key={env:EXA_API_KEY}"
     },
     "openzim": {
+      // PARKED: only reachable on the home LAN (beehive.internal).
+      // Re-enable: flip "disabled" to false and reconnect on the LAN.
       "url": "http://beehive.internal:45091/mcp",
       "headers": {
         "Authorization": "Bearer openzim_non_secret"
@@ -60,6 +67,10 @@
       "disabled": true
     },
     "trmnl-plugin": {
+      // PARKED: e-ink display tools, rarely wanted interactively. Double
+      // safety: also denied in pi-permission-system/config.json (mcp
+      // surface). To re-enable, flip "disabled" AND remove the two deny
+      // rules there, or the tools load but every call is blocked.
       "url": "https://trmnl.com/mcp?api_key={env:TRMNL_MCP_API_KEY}",
       "disabled": true
     }

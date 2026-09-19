@@ -44,6 +44,19 @@
       "*.envrc-priv": "deny",
       "~/.ssh/*": "deny",
       "~/.pi/*": "allow",
+      // Anti self-modification: the credential store and the permission
+      // stack's own state must never be reachable through a tool call.
+      // auth.json holds provider API keys (pi reads it with process fs,
+      // which is not gated; only agent tool calls are). sessions/ holds
+      // every past transcript. The dotfiles repo copy of the policy files
+      // is edited through this workspace anyway (AGENTS.md), so denying
+      // the ~/.pi-side paths costs nothing in managed sessions and stops
+      // the agent rewriting its own gates in any other project.
+      "~/.pi/agent/auth.json": "deny",
+      "~/.pi/agent/sessions/*": "deny",
+      "~/.pi/pi-menshen.json": "deny",
+      "~/.pi/agent/extensions/pi-permission-system/config.json": "deny",
+      "~/.pi/agent/settings.json": "deny",
       "~/.local/share/mise/*": "allow"
     },
     "external_directory": {
@@ -54,11 +67,12 @@
       "*": "deny",
       "~/.pi": "allow",
       "~/.pi/*": "allow",
-      // Skills dir from settings.json `skills`: SKILL.md files load via `read`
-      // (the default-allow `path` surface), but bash must reach this tree to
-      // run scripts that skills reference.
-      "~/.config/opencode/skills": "allow",
-      "~/.config/opencode/skills/*": "allow",
+      // Skills tree (auto-discovered by pi from ~/.agents/skills — the
+      // harness-neutral Agent Skills location): SKILL.md files load via
+      // `read` (the default-allow `path` surface), but bash must reach this
+      // tree to run scripts that skills reference.
+      "~/.agents/skills": "allow",
+      "~/.agents/skills/*": "allow",
       // Mirror of the `path` allow for the mise install tree, so bash reads
       // match what read/grep can already see (pi docs/examples live under
       // .../installs/node/<ver>/lib/node_modules/@earendil-works/pi-coding-agent/).

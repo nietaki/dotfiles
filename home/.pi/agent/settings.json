@@ -6,17 +6,17 @@
   "defaultThinkingLevel": "medium",
   "hideThinkingBlock": true,
   "tuiMode": "fullscreen",
-  "skills": [
-    "~/.config/opencode/skills"
-  ],
   "packages": [
-    "npm:@gotgenes/pi-permission-system",
-    "npm:pi-mcp-adapter",
-    "npm:@narumitw/pi-lsp",
-    "npm:@juicesharp/rpiv-ask-user-question",
-    "npm:@henryqw/pi-footer",
-    "npm:@shinynito/pi-menshen",
-    "npm:@pedro_klein/pi-modes",
-    "npm:@pedro_klein/pi-readonly-bash"
+    "npm:@gotgenes/pi-permission-system@31.1.3",
+    "npm:pi-mcp-adapter@2.33.0",
+    "npm:@narumitw/pi-lsp@0.49.7",
+    "npm:@juicesharp/rpiv-ask-user-question@2.9.0",
+    "npm:@henryqw/pi-footer@1.1.1",
+    "npm:@shinynito/pi-menshen@2.1.0",
+    {
+      "source": "npm:@pedro_klein/pi-modes@0.2.0",
+      "prompts": []
+    },
+    "npm:@pedro_klein/pi-readonly-bash@0.2.0"
   ]
 }

@@ -32,7 +32,7 @@
     "bun.lockb",
     ".gitlab-ci.yml"
   ],
-  "_comment_rules": "Deterministic rules mirroring the OLD gotgenes bash policy for everything the read-only registry does NOT already cover (plain readers like cat/ls/grep/git log are auto-allowed by the registry - do not re-add them here). Syntax: Tool(prefix:*). deny wins over ask wins over allow; rules are checked BEFORE fast-paths, so deny/ask entries also override the registry.",
+  "_comment_rules": "Deterministic rules mirroring the OLD gotgenes bash policy for everything the read-only registry does NOT already cover (plain readers like cat/ls/grep/git log are auto-allowed by the registry - do not re-add them here). Syntax: Tool(prefix:*). deny wins over ask wins over allow; rules are checked BEFORE fast-paths, so deny/ask entries also override the registry. Prefix rules also match the bare command (rules.ts: candidate === prefix), so 'Bash(git push:*)' denies a bare 'git push'. 2026-09: docker/curl/pi broad allows tightened - see _comment_allow.",
   "rules": {
     "deny": [
       "Bash(git push:*)",
@@ -43,7 +43,7 @@
       "Bash(git commit:*)",
       "Bash(kubectl:*)"
     ],
-    "_comment_allow": "Write-side / project-tooling commands you used to allow by whitelist. These are the 'known-good long tail' that would otherwise hit the reviewer model every time (cost + latency). gotgenes path/external layers still bound them: an allowed 'cp' can still not touch ~/.ssh or escape the working tree.",
+    "_comment_allow": "Write-side / project-tooling commands you used to allow by whitelist. These are the 'known-good long tail' that would otherwise hit the reviewer model every time (cost + latency). gotgenes path/external layers still bound them: an allowed 'cp' can still not touch ~/.ssh or escape the working tree. Narrowed 2026-09: docker only for read-only inspection subcommands (docker run/exec can mount $HOME and escape every path rule - those now go to the reviewer); curl removed (read-vs-exfil is exactly the reviewer's judgment call, and friction grows narrow rules via deny & remember as designed); pi narrowed to 'pi list' (config/install/remove/update mutate the gate stack itself; nested 'pi -p' escapes the outer session's gating).",
     "allow": [
       "Bash(git add:*)",
       "Bash(cp:*)",
@@ -69,9 +69,12 @@
       "Bash(npm test:*)",
       "Bash(mix:*)",
       "Bash(helm:*)",
-      "Bash(docker:*)",
-      "Bash(curl:*)",
-      "Bash(pi:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker images:*)",
+      "Bash(docker inspect:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker version:*)",
+      "Bash(pi list:*)",
       "Bash(pdftotext:*)",
       "Bash(rsvg-convert:*)",
       "Bash(qlmanage:*)",
@@ -84,7 +87,7 @@
       "Bash(rm -rf /private/tmp:*)"
     ]
   },
-  "_comment_removed_from_old_whitelist": "Deliberate behavior changes vs the deleted whitelist: (1) 'rm *.go' is NOT allowed anymore - too broad; novel rm forms go to the reviewer model instead. (2) 'cd *' left to the registry. (3) Anything unlisted and non-read-only (npm install, ssh, brew...) now reaches the Guardian reviewer instead of being silently denied - approve a few times with 'deny & remember'/session approvals and menshen grows narrow rules for you.",
+  "_comment_removed_from_old_whitelist": "Deliberate behavior changes vs the deleted whitelist: (1) 'rm *.go' is NOT allowed anymore - too broad; novel rm forms go to the reviewer model instead. (2) 'cd *' left to the registry. (3) Anything unlisted and non-read-only (npm install, ssh, brew, curl, docker run, ...) now reaches the Guardian reviewer instead of being silently denied - approve a few times with 'deny & remember'/session approvals and menshen grows narrow rules for you.",
   "guardian": {
     "maxAttempts": 3,
     "maxChecks": 3,

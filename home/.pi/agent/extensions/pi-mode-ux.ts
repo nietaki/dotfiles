@@ -10,12 +10,18 @@ import { pathToFileURL } from "node:url";
  * which lags behind GitHub main):
  *
  * 1. /mode — the published pi-modes registers NO slash commands; mode
- *    switching is only a Ctrl+Alt+M shortcut. Typing /build expands the
- *    package's bundled prompt template (package.json `pi.prompts`) instead.
- *    The extension DOES listen for the "pi-ask:mode-switch" event, so we
- *    register a non-colliding /mode command that emits it. (Side effect
- *    inherited from pi-modes: switching also injects a "Continue working"
- *    follow-up message and aborts any in-flight run.)
+ *    switching is only a Ctrl+Alt+M shortcut. Its bundled prompt templates
+ *    (package.json `pi.prompts`) are OpenCode-flavored leftovers (they
+ *    reference subagents pi does not have and an "ask_user" tool that
+ *    doesn't exist here), so settings.json loads the package with
+ *    "prompts": [] — they register nothing. The extension DOES listen for
+ *    the "pi-ask:mode-switch" event, so we register a non-colliding /mode
+ *    command that emits it. (Side effect inherited from pi-modes: switching
+ *    also injects a "Continue working" follow-up message and aborts any
+ *    in-flight run. Note pi-modes' optional mode-contract injection reads
+ *    ~/.pi/agent/extensions/pi-modes/prompts/*.md, which we deliberately
+ *    do NOT provide — the static instructions/modes.md is the only mode
+ *    guidance in the system prompt.)
  *
  * 2. Footer status — pi core wires ctx.ui.setStatus(key, text) into the
  *    shared footerDataProvider; @henryqw/pi-footer renders ALL entries of
@@ -203,8 +209,8 @@ export default function (pi: ExtensionAPI): void {
 				c.ui.notify(`Already in ${target} mode`, "info");
 				return;
 			}
-			// Let pi-modes do the real work (gating, persistence, notify,
-			// contract injection) through its one external switch hook.
+			// Let pi-modes do the real work (gating, persistence,
+			// notification) through its one external switch hook.
 			pi.events.emit("pi-ask:mode-switch", { mode: target });
 		},
 	});
