@@ -17,6 +17,7 @@
       "source": "npm:@pedro_klein/pi-modes@0.2.0",
       "prompts": []
     },
-    "npm:@pedro_klein/pi-readonly-bash@0.2.0"
+    "npm:@pedro_klein/pi-readonly-bash@0.2.0",
+    "npm:betterwright"
   ]
 }

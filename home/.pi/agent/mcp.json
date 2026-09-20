@@ -73,6 +73,21 @@
       // rules there, or the tools load but every call is blocked.
       "url": "https://trmnl.com/mcp?api_key={env:TRMNL_MCP_API_KEY}",
       "disabled": true
+    },
+    "betterwright": {
+      // PARKED: BetterWright browser over MCP, pinned to the "work" profile.
+      // Re-enable: flip "disabled" to false and restart pi — pi-mcp-adapter
+      // connects on demand. The MCP server has no --session flag, so all pi
+      // sessions using this server share the default session; parallel work
+      // as the same identity will serialize on that session. For multi-session
+      // scenarios, use the bash route instead:
+      //   betterwright run --profile work --session <name> -c "..."
+      "command": "betterwright",
+      "args": ["mcp"],
+      "env": {
+        "BETTERWRIGHT_PROFILE": "work"
+      },
+      "disabled": true
     }
   }
 }

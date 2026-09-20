@@ -59,6 +59,15 @@
       "~/.pi/agent/settings.json": "deny",
       "~/.local/share/mise/*": "allow"
     },
+    "path_read": {
+      // Read-only carve-out for pi's own config. Bare `path` above is sugar
+      // that expands into `path_read` + `path_write` with its entries placed
+      // FIRST, so this explicit read allow has the final say for reads whatever
+      // the key order, while the ANTI SELF-MODIFICATION write deny still
+      // holds: the agent may inspect the package list / mode settings it is
+      // governed by, and may never rewrite them.
+      "~/.pi/agent/settings.json": "allow"
+    },
     "external_directory": {
       // CWD-boundary gate (need #3 continued): reaching outside the
       // working tree is denied except the temp dirs. This also governs
@@ -78,6 +87,26 @@
       // .../installs/node/<ver>/lib/node_modules/@earendil-works/pi-coding-agent/).
       "~/.local/share/mise": "allow",
       "~/.local/share/mise/*": "allow",
+      // BetterWright state dir ($BETTERWRIGHT_HOME) — screenshot/video
+      // artifacts, browser profiles with cookies, the encrypted vault, the
+      // managed BetterChromium tree, config.json, daemon sockets. Opened as a
+      // whole per user decision (2026-09): the pi `browser` tool already
+      // attaches its own screenshots, so gating this tree blocked only
+      // path-based debugging of artifacts and the profile lock, never browser
+      // operation itself.
+      // NOTE: this does expose vault.enc / master-key.json / profiles to
+      // path-aware tools. The "never reveal stored secrets" rule in the
+      // browser skill stays behavioural for this tree, not policy-enforced.
+      "~/.betterwright": "allow",
+      "~/.betterwright/*": "allow",
+      // The bun-installed betterwright CLI: the shim dir (run it, see what is
+      // installed) and the package tree (docs/source/version debugging).
+      // Deliberately NOT all of global node_modules — other globally installed
+      // packages stay behind the CWD boundary.
+      "~/.bun/bin": "allow",
+      "~/.bun/bin/*": "allow",
+      "~/.bun/install/global/node_modules/betterwright": "allow",
+      "~/.bun/install/global/node_modules/betterwright/*": "allow",
       "/tmp": "allow",
       "/tmp/*": "allow",
       "/private/tmp": "allow",

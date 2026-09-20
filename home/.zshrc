@@ -239,3 +239,6 @@ alias lc=leetcode
 
 # use homebrew version of grep and make
 # export PATH="$HOMEBREW_PREFIX/opt/make/libexec/gnubin:$PATH"
+
+# bun installed things
+export PATH="/Users/nietaki/.bun/bin:$PATH"
