@@ -128,11 +128,12 @@ export SDKMAN_DIR="/home/nietaki/.sdkman"
 [[ -s "/home/nietaki/.sdkman/bin/sdkman-init.sh" ]] && source "/home/nietaki/.sdkman/bin/sdkman-init.sh"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-eval "$(rtx activate bash)"
-
-alias asdf=rtx
 eval "$(mise activate bash)"
 . "$HOME/.cargo/env"
 
 # use homebrew version of grep and make
 # PATH="$HOMEBREW_PREFIX/opt/make/libexec/gnubin:$PATH"
+
+source $HOME/.homesick/repos/homeshick/homeshick.sh
+alias hs=homeshick
+
