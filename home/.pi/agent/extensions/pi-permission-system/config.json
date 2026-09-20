@@ -68,6 +68,20 @@
       // governed by, and may never rewrite them.
       "~/.pi/agent/settings.json": "allow"
     },
+    "external_directory_read": {
+      // Read-only carve-out for the user's project tree: `read`/`grep`/`find`/
+      // `ls` and path tokens in bash may reach into ~/repos/**, while writes
+      // there stay hard-denied by the inherited `external_directory`
+      // `"*": "deny"` (the bare key's entries expand FIRST, so this
+      // directional map has the final say for reads only). `~/repos` matches
+      // the directory entry itself (`ls ~/repos`); `~/repos/*` is greedy and
+      // crosses subdirectory boundaries. No parallel `path_read` grant is
+      // needed — the boundary gate is what blocked it, and a `path` allow
+      // cannot loosen it. Hard `path` denies (*.env, ~/.ssh/*) still apply
+      // inside this tree.
+      "~/repos": "allow",
+      "~/repos/*": "allow"
+    },
     "external_directory": {
       // CWD-boundary gate (need #3 continued): reaching outside the
       // working tree is denied except the temp dirs. This also governs
