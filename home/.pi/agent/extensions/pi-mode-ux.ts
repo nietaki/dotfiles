@@ -113,15 +113,37 @@ export default function (pi: ExtensionAPI): void {
 		if (ctx && mode) ctx.ui.setStatus("pi-modes", SEGMENTS[mode]);
 	}
 
+	// Show the active model's provider in the footer, styled to match
+	// pi-footer's model-name rendering (theme.fg("dim", ...)).
+	// The theme's "dim" is a specific gray (#666666 dark / #767676 light),
+	// not the ANSI dim attribute — so we use truecolor escapes to match.
+	const DIM_FG = "\x1b[38;2;102;102;102m";
+	const RESET_FG = "\x1b[39m";
+	function publishProviderStatus(): void {
+		if (!ctx) return;
+		const provider = ctx.model?.provider;
+		if (provider) {
+			ctx.ui.setStatus("provider", `${DIM_FG}${provider}${RESET_FG}`);
+		}
+	}
+
 	// Keep a fresh ExtensionContext (for setStatus outside event handlers) and
 	// re-publish every turn — covers session restores and any footer resets.
 	pi.on("session_start", (_event, c) => {
 		ctx = c;
 		publishStatus();
+		publishProviderStatus();
 	});
 	pi.on("before_agent_start", (_event, c) => {
 		ctx = c;
 		publishStatus();
+		publishProviderStatus();
+	});
+
+	// Update the provider label when the user switches models.
+	pi.on("model_select", (_event, c) => {
+		ctx = c;
+		publishProviderStatus();
 	});
 
 	// pi-modes emits this synchronously inside applyMode, AFTER gating.
