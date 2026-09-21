@@ -1,72 +1,73 @@
 {
   "$schema": "https://raw.githubusercontent.com/gotgenes/pi-packages/main/packages/pi-permission-system/schemas/permissions.schema.json",
   // ==========================================================================
-  // LAYER 3/3 of the permission stack — hard, deterministic policy boundaries.
+  // SINGLE-LAYER POLICY — hard, deterministic boundaries for every tool call.
   //
-  // Architecture (see ../README.md for the full reasoning):
-  //   pi-modes            → which tools EXIST per mode (bash vs bash_readonly)
-  //   pi-menshen          → is this command SAFE? (tree-sitter classification
-  //                        + read-only registry + reviewer model) — owns the
-  //                        former 150-line bash whitelist, now deleted
-  //   THIS FILE (gotgenes)→ may ANYTHING touch this path/tool AT ALL? —
-  //                        cross-cutting denies that no other layer's "allow"
-  //                        can override (pi's tool_call handlers can only
-  //                        block, so gates compose as an intersection)
+  // This file is the whole permission system now. pi's `tool_call` handlers
+  // can only *block* (an "allow" is silence, not a grant), so the surfaces
+  // below compose as an intersection: `path` → `external_directory` →
+  // per-tool → `bash`, most-restrictive-wins, symlink-aware.
   //
-  // The old bash whitelist is recoverable from git history (this file at HEAD
-  // before the prototype change).
+  // Removed 2026-09: the two layers that used to sit on top of this one —
+  // `@pedro_klein/pi-modes` + `pi-readonly-bash` (per-mode tool substitution,
+  // `bash` → `bash_readonly`) and `@shinynito/pi-menshen` (tree-sitter command
+  // classification + reviewer model). See git history for their design; the
+  // predecessor to the `bash` map at the bottom is this file at commit 5643577
+  // (~150 per-command allow rules, deliberately not restored).
+  //
+  // Consequence worth stating: there is no semantic judgment of commands left.
+  // `bash` is allow-all except the denies below, and every other guard is
+  // path-shaped, not intent-shaped.
   // ==========================================================================
-  "shellTools": {
-    // pi-modes replaces `bash` with `bash_readonly` in Ask/Brainstorm/Plan
-    // modes. Without this alias the permission system would treat it as a
-    // generic extension tool and the path/external_directory gates below
-    // would NOT fire on paths inside its commands — i.e. `bash_readonly
-    // cat ~/.ssh/id_rsa` could slip past despite the path deny.
-    // This mapping gives it full bash parity: command decomposition,
-    // wrapper flooring, path/external token gates, and `bash:` rules.
-    "bash_readonly": {
-      "commandArgument": "command"
-    }
-  },
   "permission": {
     "*": "allow",
     "path": {
       // Source of truth for fine-grained file protection (need #3).
       // Cross-cutting: applies to read/write/edit, MCP/extension tools,
-      // AND path tokens extracted from bash commands — including the
-      // aliased bash_readonly above. Menshen auto-allowing a command does
-      // not open these; deny is the most-restrictive layer. Matching is
-      // symlink-aware (a symlink alias cannot evade a deny).
+      // AND path tokens extracted from bash commands. Denying here is final
+      // — no other surface's allow reopens it, except an explicit `path_read`
+      // entry below. Matching is symlink-aware
+      // (a symlink alias cannot evade a deny).
       "*": "allow",
       "*.env": "deny",
       "*.env.*": "deny",
       "*.env.example": "allow",
       "*.envrc-priv": "deny",
       "~/.ssh/*": "deny",
-      "~/.pi/*": "allow",
-      // Anti self-modification: the credential store and the permission
-      // stack's own state must never be reachable through a tool call.
-      // auth.json holds provider API keys (pi reads it with process fs,
-      // which is not gated; only agent tool calls are). sessions/ holds
-      // every past transcript. The dotfiles repo copy of the policy files
-      // is edited through this workspace anyway (AGENTS.md), so denying
-      // the ~/.pi-side paths costs nothing in managed sessions and stops
-      // the agent rewriting its own gates in any other project.
-      "~/.pi/agent/auth.json": "deny",
-      "~/.pi/agent/sessions/*": "deny",
-      "~/.pi/pi-menshen.json": "deny",
-      "~/.pi/agent/extensions/pi-permission-system/config.json": "deny",
-      "~/.pi/agent/settings.json": "deny",
+      // The whole pi-managed tree is READ-ONLY by default (flipped from
+      // `allow` 2026-09-21). Everything under here is loaded on every future
+      // startup, so writing it is self-modification with a delay:
+      //   extensions/*.ts   -> arbitrary code, runs at next start, ALL projects
+      //   instructions/*.md -> injected into every future system prompt
+      //   prompts/*.md      -> slash-command templates
+      //   mcp.json          -> commands the MCP adapter spawns
+      //   models.json       -> custom providers, incl. baseUrl (redirects traffic)
+      //   npm/              -> what gets installed on next start
+      // Costs nothing in the documented workflow: the repo is the source of
+      // truth (AGENTS.md), so config edits happen at home/.pi/... realpaths
+      // inside the workspace, and `homeshick link` / `pi install` / `npm` do
+      // their writes as child processes, which this gate never sees. Reads are
+      // restored in `path_read` below.
+      "~/.pi/*": "deny",
       "~/.local/share/mise/*": "allow"
     },
     "path_read": {
-      // Read-only carve-out for pi's own config. Bare `path` above is sugar
-      // that expands into `path_read` + `path_write` with its entries placed
-      // FIRST, so this explicit read allow has the final say for reads whatever
-      // the key order, while the ANTI SELF-MODIFICATION write deny still
-      // holds: the agent may inspect the package list / mode settings it is
-      // governed by, and may never rewrite them.
-      "~/.pi/agent/settings.json": "allow"
+      // Bare `path` above is sugar: its entries expand into `path_read` +
+      // `path_write` with its entries placed FIRST, so a later `path_read`
+      // entry has the final say for reads whatever the key order while the
+      // write denial still holds. That is how ~/.pi becomes read-only rather
+      // than opaque: the agent may inspect the config, extensions, prompts and
+      // 11 MB of past transcripts it is governed by, and may never rewrite any
+      // of it. Verified by test: transcript + settings reads work, `touch
+      // ~/.pi/agent/sessions/x` and `touch ~/.pi/agent/extensions/x.ts` are
+      // denied.
+      "~/.pi/*": "allow",
+      // The one path denied in BOTH directions: provider API keys. A read
+      // allow would hand the keys to any tool call naming the file — and now
+      // that transcripts are readable, "quote the secret into the next
+      // request" is one step instead of several. Must stay AFTER the broad
+      // allow above (last match wins).
+      "~/.pi/agent/auth.json": "deny"
     },
     "external_directory_read": {
       // Read-only carve-out for the user's project tree: `read`/`grep`/`find`/
@@ -90,16 +91,27 @@
       // content-addressed sources, so it stays denied by
       // `external_directory`.
       "~/go/pkg/mod": "allow",
-      "~/go/pkg/mod/*": "allow"
+      "~/go/pkg/mod/*": "allow",
+      // pi's own config tree, reachable for reads only (paired with the
+      // `path`/`path_read` pair above, which denies writes fine-grained). The
+      // bare entry covers the directory itself (`ls ~/.pi/agent`); `*` is
+      // greedy, so nested transcripts and extension sources are readable
+      // without any write reach. auth.json is excluded by the `path_read`
+      // deny, which composes as the stricter answer.
+      "~/.pi": "allow",
+      "~/.pi/*": "allow"
     },
     "external_directory": {
       // CWD-boundary gate (need #3 continued): reaching outside the
       // working tree is denied except the temp dirs. This also governs
-      // bash commands — e.g. `cat ~/notes.md` stays denied even if
-      // menshen's registry happily classifies `cat` as read-only.
+      // bash commands — e.g. `cat ~/notes.md` stays denied although the
+      // `bash` map at the bottom happily allows `cat`.
       "*": "deny",
-      "~/.pi": "allow",
-      "~/.pi/*": "allow",
+      // NOTE: ~/.pi is deliberately absent here. It used to be allowed in
+      // both directions; writes are now blocked at the boundary (see
+      // `external_directory_read`) *and* by the fine-grained `path` deny, so
+      // the tree is read-only from every direction rather than relying on one
+      // layer remembering the other.
       // Skills tree (auto-discovered by pi from ~/.agents/skills — the
       // harness-neutral Agent Skills location): SKILL.md files load via
       // `read` (the default-allow `path` surface), but bash must reach this
@@ -141,23 +153,21 @@
       "*": "allow"
     },
     "mcp": {
-      // MCP servers are processes with their own file/network reach;
-      // gating here (not in menshen, which only sees the mcp tool names).
+      // MCP servers are processes with their own file/network reach, so they
+      // are gated here (the `bash` map never sees MCP tool invocations).
       "*": "allow",
       "trmnl-plugin": "deny",
       "trmnl:*": "deny"
     },
     "bash": {
-      // The command-by-command whitelist lived here — it is GONE.
-      // Semantic judgment moved to ~/.pi/pi-menshen.json: tree-sitter
-      // AST classification (read-only fast-path / write-review /
-      // dangerous-deny) + a reviewer model for the long tail.
+      // The entire command-level policy: allow everything, deny two.
+      // Trailing-` *` patterns are optional-suffix in the matcher, so bare
+      // `git push` / `git reset` are covered too (verified in the source).
       //
-      // We keep only a minimal deterministic backstop here, so the two
-      // hard policy decisions from the old whitelist hold even if
-      // menshen is disabled, broken, or its reviewer model misjudges.
-      // A gotgenes `deny` blocks silently in every case; menshen can
-      // never allow past it.
+      // With the reviewer-model layer gone this is not a backstop, it IS the
+      // gate — and it is intentionally permissive rather than a maintained
+      // allowlist. Everything else is bounded by path/external_directory
+      // above, which catches *where* a command writes, not *what* it is.
       "*": "allow",
       "git push *": "deny",
       "git reset *": "deny"

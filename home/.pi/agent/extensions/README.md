@@ -1,126 +1,170 @@
-# Pi permission stack
+# Pi permissions
 
-> Status: in daily use since 2026-09-11 (prototype hardened 2026-09 review).
-> Design driven by three needs: (1) **modes** (ask/brainstorm/plan/build/none)
-> with different permissions per mode, (2) **semantic bash gating** — classify
-> commands read-only / writing / dangerous instead of maintaining a glob
-> whitelist, (3) **fine-grained file rules** — hard denies (`*.envrc-priv`,
-> `~/.ssh/*`, credential stores) that no other layer can open.
+> Status: single-layer since 2026-09-21 (was a three-layer stack since 2026-09-11).
+> One question this answers: *may anything touch this path, tool, or command at
+> all?* — deterministically, with no model in the loop.
 
-## The layers
+## The layer
 
-| Layer | Package | Question it answers | Mechanism |
-|---|---|---|---|
-| Modes | `@pedro_klein/pi-modes` (+ `pi-readonly-bash`) | *Which tools exist right now?* | Tool substitution: ask/brainstorm/plan lose `bash`, get `bash_readonly`; ask/brainstorm restrict `write`/`edit` to markdown-in-project + temp + `~/.pi` |
-| Judgment | `@shinynito/pi-menshen` (`gatedTools: ["bash"]`) | *Is this command safe, given what it does?* | tree-sitter-bash AST → rule engine → read-only registry fast-path → Guardian reviewer model → manual prompt |
-| Boundaries | `@gotgenes/pi-permission-system` | *May anything touch this path/tool AT ALL?* | Deterministic surfaces, most-restrictive-wins: `path` → `external_directory` → per-tool → `bash`; symlink-aware; MCP/skill gating; wrapper flooring (`bash -c`/`eval`/`sudo`/unparseable → ask) |
+`@gotgenes/pi-permission-system` is the whole gate. pi's `tool_call` handlers
+can only **block** — an "allow" is silence, not a grant — so the surfaces in
+`config.json` compose as an **intersection**: an action survives only if every
+surface declines to block it, most-restrictive-wins, and handler order affects
+only which rule prompts first.
 
-**Why this composes safely:** pi's `tool_call` handlers can only *block* — an
-"allow" is silence, not a grant. Gates therefore compose as an **intersection**:
-an action survives only if every engine declines to block it, and handler order
-affects only which engine prompts first. Worst case of a layer misbehaving is
-an extra prompt, never a silent pass.
+Matching is symlink-aware, so a symlink alias cannot evade a `path` deny.
+
+Surfaces, in the order they are consulted:
+
+| Surface | Question |
+|---|---|
+| `path` / `path_read` / `path_write` | may this file be read / written at all? (cross-cutting: read/write/edit, MCP + extension tools, and path tokens inside bash commands) |
+| `external_directory` / `external_directory_read` | may anything reach outside the working directory? |
+| `mcp`, `skill`, per-tool | may this server / skill / tool be used? |
+| `bash` | is this exact command denied? |
+
+**How to read a deny vs. a read-only rule.** Bare `path` is sugar: its entries
+expand into `path_read` *and* `path_write`, placed FIRST. A later explicit
+`path_read` entry therefore wins for reads while the write denial stands — that
+is how the entire `~/.pi` tree is inspectable but immutable. Adding a read-only
+surface = `path` deny + `path_read` allow (and drop it from
+`external_directory`, add it to `external_directory_read`).
 
 ## Files
 
-- `pi-permission-system/config.json` — boundaries. Bash is `allow` except two
-  deterministic backstop denies (`git push`, `git reset`) that hold even if
-  menshen is disabled; trailing-` *` patterns are optional-suffix, so bare
-  `git push` is covered too (verified in the matcher source). `shellTools`
-  aliases `bash_readonly` to full bash parity on these gates. Hard denies for
-  secrets (`*.env*`, `~/.ssh/*`) and for the permission stack's own state +
-  `~/.pi/agent/auth.json`/`sessions` (anti self-modification; managed sessions
-  edit these files through the repo path instead).
-- `~/.pi/pi-menshen.json` → repo `home/.pi/pi-menshen.json` — judgment.
-  Gated on `bash` only. Rules encode the non-read-only long tail; broad
-  `docker`/`curl`/`pi` allows were narrowed to read-only subcommand prefixes
-  (2026-09), everything else goes to the reviewer model. Strict JSON
-  (`JSON.parse`) — reasoning lives in `_comment*` keys. `/perm allow|deny …`
-  rewrites this file, so policy growth shows up as `git diff`.
-- `pi-mode-ux.ts` — glue extension (no forks): `/mode` command, footer mode
-  segment, `bash_readonly` re-exposure in build/none, and the `mode_status`
-  tool. Rationale and verified package internals are documented in the file's
-  own header comments — read those before touching it. One doc-relevant note:
-  pi-modes' optional per-mode contract injection reads
-  `~/.pi/agent/extensions/pi-modes/prompts/*.md`, which we deliberately do
-  not provide; `instructions/modes.md` is the only mode text in the system
-  prompt.
-- This README — architecture + reasoning.
+- `pi-permission-system/config.json` — the policy.
+  - **Hard denies** for secrets: `*.env`, `*.env.*` (with `*.env.example`
+    allowed back), `*.envrc-priv`, `~/.ssh/*`.
+  - **`~/.pi` is read-only, wholesale** (flipped from a broad `allow` + four
+    named denies, 2026-09-21). Everything under it is loaded on every future
+    startup, so a write there is self-modification with a delay:
+    `extensions/*.ts` is arbitrary code that runs at next start in *every*
+    project; `instructions/*.md` is injected into every future system prompt;
+    `mcp.json` is commands the adapter spawns; `models.json` defines providers
+    including `baseUrl`, so it can redirect API traffic; `npm/` is what gets
+    installed. The old shape allowed all of that and carved out only
+    `auth.json`, `sessions/*`, `settings.json` and this config file.
+  - **`path_read` allows `~/.pi/*` back for reads** — config, extension source,
+    prompts, and the ~11 MB of past transcripts are auditable. Writes stay
+    denied by `path` *and* by the `external_directory` boundary, so no single
+    layer's relaxation reopens the tree. `auth.json` is the one path denied in
+    **both** directions (provider API keys); it must stay listed after the
+    broad read allow, since last match wins. Now that transcripts are readable,
+    a readable `auth.json` would make "quote the secret into the next request"
+    one step instead of several.
+  - **CWD boundary**: `external_directory` is `deny` by default; writable
+    carve-outs are `~/.agents/skills`, `~/.local/share/mise`, `~/.betterwright`,
+    the bun-installed betterwright CLI, and the temp dirs (`/tmp`,
+    `/private/tmp`, `${TMPDIR}`). `external_directory_read` adds read-only reach
+    for `~/.pi`, `~/repos/**` and the Go module cache (`~/go/pkg/mod/**`);
+    writes there stay denied.
+  - **`bash`**: `"*": "allow"` plus `"git push *"` and `"git reset *"` denies.
+    Trailing-` *` is optional-suffix in the matcher, so bare `git push` is
+    covered (verified in the source).
+  - `~/.betterwright` was opened as a deliberate whole-tree decision
+    (2026-09): the `browser` tool already attaches its own screenshots, so
+    gating the tree blocked only path-based debugging of artifacts and profile
+    locks. **Consequence:** `vault.enc`, `master-key.json`, and browser
+    profiles are reachable by path-aware tools. The "never reveal stored
+    secrets" rule in the browser skill is behavioural for this tree, not
+    policy-enforced.
+- `footer-provider.ts` — publishes the active model's provider into the
+  `@henryqw/pi-footer` status line via `ctx.ui.setStatus`. Purely cosmetic; it
+  survived the mode-stack removal because it was never part of it.
+- `instructions.ts` — appends `~/.pi/agent/instructions/*.md` to the system
+  prompt as one `# Pi Instructions` block, built once at extension load in
+  filename order so the bytes are stable across turns (prompt-cache friendly).
+  Edits to instruction files need a restart or `/reload`.
+- This README — the reasoning.
 
 ## Settings notes
 
-- `settings.json` pins every package to its installed version (`npm:name@ver`
-  — pinned specs are skipped by `pi update --extensions`). Unpin with
-  `pi install npm:<pkg>` (no version) when you deliberately want updates.
-- pi-modes is loaded in object form with `"prompts": []`: its bundled
-  `/build` `/plan` … slash templates are OpenCode-flavored leftovers
-  (they reference subagents pi does not have and an `ask_user` tool that
-  does not exist here) and are therefore not registered. Switch modes with
-  `/mode` or Ctrl+Alt+M only.
-- Skills live in `~/.agents/skills/` (repo-tracked, the harness-neutral
-  Agent Skills location pi auto-discovers) — no settings entry needed.
-- `pi-menshen.json`'s `classifierModel` pins the reviewer to a cheap
-  opencode-go model; keep the exact `opencode-go/<id>` format — an
-  unresolvable string silently falls back to the session model.
+- `settings.json` pins every package to its installed version (`npm:name@ver`)
+  — pinned specs are skipped by `pi update --extensions`. Unpin with
+  `pi install npm:<pkg>` (no version) when you deliberately want an update.
+- Skills live in `~/.agents/skills/` (repo-tracked, the harness-neutral Agent
+  Skills location pi auto-discovers) — no settings entry needed.
 
 ## Daily use
 
-- `/mode <ask|brainstorm|plan|build|none>` or Ctrl+Alt+M to cycle
-  (ask→brainstorm→plan→build→none). New sessions default to **ask**
-  (read-only). `/mode` additionally aborts any in-flight run and injects a
-  "Continue working. Mode is now …" follow-up ~150 ms later — that's the
-  pi-modes switch pipeline working, not a bug.
-- Read-only commands (`cat`, `ls`, `git log`, …) run silently anywhere in the
-  stack. Novel/mutating commands get a reviewer-model verdict; repeated
-  friction is converted into narrow rules via `deny & remember` / session
-  approvals.
-- gotgenes prompts (`s` = approve pattern for session) still exist for
-  wrapper/`bash -c`/unparseable commands — that floor is independent of the
-  bash map and stays on purpose.
-- `pi-modes` emits `pi-status:register` events for a status package we do
-  not use; the footer mode segment works through `ctx.ui.setStatus` +
-  `@henryqw/pi-footer` instead. The dead events are noise, not breakage.
+- Read-only commands anywhere inside the boundary run silently.
+- A blocked call prompts through gotgenes (`s` = approve the pattern for the
+  session), or fails silently when a `deny` rule matches. Denies on
+  `git push` / `git reset` are silent by design.
+- Commands that reach outside the working tree, or touch a denied path token
+  however they spell it (`cat ~/.ssh/id_rsa`, `> foo.env`), are blocked.
+- **The agent cannot change its own pi configuration.** Anything under `~/.pi`
+  is read-only to tool calls: to add an extension or tweak a policy, edit (or
+  ask to edit) the repo copy under `home/.pi/...` and relink. Direct state
+  surgery in `~/.pi` — clearing a stale cache, pruning `npm/` — is a manual
+  step, by design.
 
-## Deliberate behavior changes vs the old whitelist
+## What we gave up (2026-09-21)
 
-1. `rm *.go` → no longer an allow rule; goes to the reviewer.
-2. `npm install`, `ssh`, `brew`, `bash -c`, … → no longer silent denies; they
-   reach the reviewer model (or gotgenes' wrapper floor).
-3. `git commit` stays **ask** (last manual edit), `git push` / `git reset`
-   stay **deny** — in BOTH menshen rules and gotgenes as a deterministic
-   backstop. Bare `git push`/`git reset` included (verified: both matchers
-   treat a bare command as a prefix-rule match).
-4. `docker`, `curl`, `pi` broad allows removed 2026-09 — see the menshen
-   `_comment_allow`. `docker run`-style escapes and nested `pi` sessions now
-   hit the reviewer instead of passing silently.
+Removed: `@pedro_klein/pi-modes` + `@pedro_klein/pi-readonly-bash` (mode tool
+substitution: ask/brainstorm/plan lost `bash`, gained a whitelisted
+`bash_readonly`; ask/brainstorm restricted `write`/`edit` to markdown + temp +
+`~/.pi`) and `@shinynito/pi-menshen` (tree-sitter bash AST → read-only registry
+→ reviewer model). They were partially working — menshen shipped
+`"enabled": false` — and the modes were enforced by filtering tool *names*, which
+is a speed bump rather than a boundary: an allowed command can still write files.
+
+What is gone with them:
+
+1. **No semantic judgment of commands.** `bash` is allow-all except two denies.
+   Novel or mutating commands are no longer reviewed. `rm -rf` inside the
+   workspace passes silently — the only remaining protection there is your own
+   care plus `git`.
+2. **No read-only modes.** Nothing stops a write or a build in a session that
+   was meant to be read-only. The `/mode` command, the `Ctrl+Alt+M` cycle, the
+   footer mode segment, the `mode_status` tool, and `instructions/modes.md`
+   (the mode text in the system prompt) are all deleted.
+3. **`git commit` is no longer gated.** It was `ask` in menshen's rules; gotgenes
+   does not mention it. The "don't commit unless asked" rule now lives only in
+   `instructions/git.md`.
+4. **Sensitive-path routing is gone** — menshen's `sensitivePaths` sent a
+   read-only command touching e.g. `package-lock.json` to review. Reads are
+   plainly allowed now; only the hard denies remain.
+
+Deliberate: a deterministic layer you can read in one screen over a probabilistic
+one you cannot predict. If the permissiveness ever bites, the old per-command
+whitelist is this file at commit `5643577` (~150 allow rules under
+`"bash": {"*": "deny"}`).
 
 ## Known rough edges
 
-- **Two configs, one truth:** `sensitivePaths` (menshen, routes to review) vs
-  `path` denies (gotgenes, hard). Keep gotgenes as source of truth for denies.
-- **Double prompts** are possible when both engines want to ask. Observed once
-  in testing; if it gets annoying, tune the noisier half.
-- **Maturity:** menshen and the pedro packages are young; gotgenes ships
-  breaking changes regularly — read migration notes when you deliberately
-  unpin and update.
-- **Modes are tool-level, not policy-level:** you cannot express
-  per-mode command policies (`kubectl get` free in plan, `kubectl apply` ask
-  in build). The seam for that would be menshen project rules or a gotgenes
-  authorizer link.
-- **No OS sandbox / network control** — every layer above is a decision, not
-  containment. `carderne/pi-sandbox` or `pi-landstrip` could be added without
-  touching this design.
-- The gotgenes self-protection denies match the `~/.pi/...` side of the
-  homeshick symlinks; inside *this* dotfiles repo the realpaths sit in the
-  workspace, so policy edits go through `home/.pi/...` (which AGENTS.md
-  requires anyway). In any other project both routes are blocked.
+- **Path-shaped, not intent-shaped.** Every guard answers *where* a call goes,
+  not *what* it does. `curl -o script.sh && sh script.sh` is one allow and one
+  allow; the file it then writes is subject to the path rules, but nothing
+  reviews the command pair.
+- **The gate sees tool calls, not syscalls.** It inspects the paths a call
+  *names*, so a child process writing wherever it likes is invisible: `npm`,
+  `pi install`, and `homeshick link` all write into `~/.pi` and are not blocked
+  by the read-only rule. That is load-bearing, not a bug — the repo-first
+  workflow depends on `homeshick link` working — but it means the rule stops
+  the agent *editing its own configuration*, not the agent *causing* an edit
+  (any command with a `--prefix`/`--force` can be coerced into that). Genuine
+  containment needs `carderne/pi-sandbox` or `pi-landstrip`.
+- **Maturity:** gotgenes ships breaking changes regularly — read migration
+  notes when you deliberately unpin and update.
+- **No OS sandbox / network control** — every rule above is a decision, not
+  containment. `carderne/pi-sandbox` or `pi-landstrip` would add the missing
+  axis without touching this design.
+- The read-only tree matches the `~/.pi/...` side of the homeshick symlinks.
+  Inside *this* dotfiles repo the realpaths sit in the workspace, so policy
+  edits go through `home/.pi/...` — which `AGENTS.md` requires anyway (verified:
+  with the `~/.pi` write deny in place, editing `config.json` via its repo path
+  still works, because the deny resolves the symlink's own path, not its
+  target). In any other project both routes are blocked.
 
 ## Activation / rollback
 
-Activate: restart `pi` (package list changed — new packages/pins load at
-startup, not via `/reload`). The gotgenes `config.json` and
-`pi-menshen.json` are picked up on restart too (gotgenes itself
-hot-reloads config changes mid-session).
+Activate: restart `pi`. The package list loads at startup, not via `/reload`;
+gotgenes hot-reloads `config.json` mid-session.
 
-Rollback: `git checkout home/.pi/agent/settings.json home/.pi/agent/extensions/pi-permission-system/config.json home/.pi/pi-menshen.json && zsh -ic 'homeshick link dotfiles' && pi remove npm:@shinynito/pi-menshen npm:@pedro_klein/pi-modes npm:@pedro_klein/pi-readonly-bash`
-(the old bash whitelist returns via git history in config.json).
+Rollback: `git revert` the change, or `git checkout <pre-change-commit> -- home/.pi`
+then `zsh -ic 'homeshick link dotfiles'` and `pi install` the three packages at
+their old pins (`npm:@shinynito/pi-menshen@2.1.0`,
+`npm:@pedro_klein/pi-modes@0.2.0`, `npm:@pedro_klein/pi-readonly-bash@0.2.0`).
+`pi-menshen.json` returns via `git checkout <pre-change-commit> -- home/.pi/pi-menshen.json`;
+`homeshick link` will relink it.
