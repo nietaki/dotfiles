@@ -12,6 +12,7 @@
     "npm:@narumitw/pi-lsp@0.49.7",
     "npm:@juicesharp/rpiv-ask-user-question@2.9.0",
     "npm:@henryqw/pi-footer@1.1.1",
-    "npm:betterwright"
+    "npm:betterwright",
+    "npm:pi-subagents"
   ]
 }
