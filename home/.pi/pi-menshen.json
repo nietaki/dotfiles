@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "enabled": true,
+  "enabled": false,
   "classifierModel": "opencode-go/glm-5.3-flash",
   "classifierTimeoutMs": 30000,
   "maxClassifierChars": 18000,

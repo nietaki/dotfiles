@@ -80,7 +80,17 @@
       // cannot loosen it. Hard `path` denies (*.env, ~/.ssh/*) still apply
       // inside this tree.
       "~/repos": "allow",
-      "~/repos/*": "allow"
+      "~/repos/*": "allow",
+      // Go module cache ($GOMODCACHE, verified `go env GOMODCACHE` =
+      // ~/go/pkg/mod): third-party sources are read for type/import/docs
+      // lookups and `grep`/`find` sweeps. The bare entry covers the
+      // directory itself (`ls ~/go/pkg/mod`); `*` is greedy so every
+      // versioned submodule tree under it is covered. Module caches are
+      // deliberately read-only — a write here would corrupt the
+      // content-addressed sources, so it stays denied by
+      // `external_directory`.
+      "~/go/pkg/mod": "allow",
+      "~/go/pkg/mod/*": "allow"
     },
     "external_directory": {
       // CWD-boundary gate (need #3 continued): reaching outside the
