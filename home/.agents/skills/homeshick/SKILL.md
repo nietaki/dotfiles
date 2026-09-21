@@ -1,3 +1,8 @@
+---
+name: homeshick
+description: Link, unlink, and troubleshoot dotfiles managed by homeshick in the nietaki dotfiles repo using hslink and hsunlink. Use when creating, editing, renaming, or deleting files under the repo's home/ tree, when a newly created config does not appear in $HOME, when $HOME dotfiles are broken or dangling symlinks, or whenever homeshick, dotfiles, hslink, or hsunlink are mentioned. Covers the git-staging requirement: homeshick only links git-tracked files, so new or renamed files must be staged before hslink.
+---
+
 # Homeshick Dotfiles Management
 
 This skill covers linking and unlinking dotfiles managed by homeshick.

@@ -1,6 +1,6 @@
 ---
 name: best-practices
-description: Find best practices when for a given tech stack when implementing new functionality.
+description: Find best practices for a given tech stack when implementing new functionality.
 ---
 
 ## What to do

@@ -30,3 +30,21 @@
 # Backup files
 *.bak
 
+# Python artifacts (e.g. per-skill virtualenvs like .agents/skills/pdf-reader/.venv)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node artifacts
+node_modules/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
