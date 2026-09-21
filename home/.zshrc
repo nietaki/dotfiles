@@ -210,6 +210,9 @@ export STM32CubeMX_PATH=/Applications/STMicroelectronics/STM32CubeMX.app/Content
 
 alias hs=homeshick
 
+# hslink / hsunlink are now standalone scripts in ~/bin/ (tracked in this repo).
+# See home/bin/hslink and home/bin/hsunlink.
+
 # # eval "$(zellij setup --generate-completion zsh)"
 # # check if the terminal is alacritty
 # if [[ "$TERM" == "alacritty" ]]; then

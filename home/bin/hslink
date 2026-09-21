@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Symlink dotfiles from the "dotfiles" castle into $HOME.
+# Thin wrapper around homeshick's own binary — no shell sourcing needed.
+exec "$HOME/.homesick/repos/homeshick/bin/homeshick" link dotfiles "$@"

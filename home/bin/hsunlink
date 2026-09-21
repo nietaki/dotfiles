@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Remove dangling symlinks left behind by dotfiles that were deleted or renamed.
+#
+# `homeshick link` only ever ADDS links (and only links files that git tracks),
+# so removing a file from the repo leaves its $HOME-side symlink pointing at
+# nothing. This finds those and prints every one before deleting it.
+#
+#   hsunlink          list them, then delete them
+#   hsunlink -l       list only, delete nothing
+#
+# Matching is on the link TARGET (-ilname), so a stray broken link that does not
+# point into the dotfiles repo is never touched. Pruned so it finishes in
+# seconds instead of minutes: ~/.homesick (the repos themselves, which hold no
+# managed links) plus dependency/build trees. Trade-off -- a link buried inside
+# one of those pruned dirs is invisible to this; none of homeshick's own links
+# live there.
+
+set -euo pipefail
+
+pattern='*dotfiles*'
+dry=0
+
+case "${1:-}" in
+  -l|--list) dry=1 ;;
+  '')        ;;
+  *)         echo "usage: hsunlink [-l|--list]" >&2; exit 2 ;;
+esac
+
+# Collect broken symlinks whose target matches *dotfiles*.
+# -print0 + mapfile keeps paths with spaces/newlines intact.
+mapfile -d '' dead < <(
+  find "$HOME" \
+    \( -name .git -o -name node_modules -o -name .venv -o -name target \
+       -o -path "$HOME/.homesick" \) -prune -o \
+    -type l -ilname "$pattern" ! -exec test -e {} ';' -print0 2>/dev/null || true
+)
+
+if [[ ${#dead[@]} -eq 0 ]]; then
+  echo "hsunlink: no broken links pointing into '$pattern'"
+  exit 0
+fi
+
+echo "hsunlink: ${#dead[@]} broken dotfiles link(s):"
+for f in "${dead[@]}"; do
+  echo "  ${f#$HOME/} -> $(readlink "$f")"
+done
+
+if [[ $dry -eq 1 ]]; then
+  echo "hsunlink: --list given, nothing deleted"
+  exit 0
+fi
+
+rm -f -- "${dead[@]}"
+echo "hsunlink: removed ${#dead[@]} link(s). Run 'hslink' to (re)link anything that still exists in the repo."
