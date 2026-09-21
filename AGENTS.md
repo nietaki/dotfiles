@@ -23,3 +23,18 @@ Guidelines:
   - `hslink` — `home/bin/hslink`, symlinked to `~/bin/hslink` (on PATH); execs homeshick's binary directly, no shell sourcing needed.
   - `hsunlink` — finds and removes dangling `*dotfiles*` symlinks in `$HOME` (dry-run with `hsunlink -l`); use it after deleting or renaming tracked files.
 - To add an entire new directory of config, stage the directory: `git add home/.foo/`.
+
+## Markdown frontmatter (skills and other pi markdown files)
+
+YAML frontmatter in `home/.agents/skills/*/SKILL.md` (and any other markdown pi loads) is parsed in strict mode by pi's bundled `yaml` package. In an **unquoted** scalar like `description:`, a `: ` (colon + space) anywhere in the text is parsed as a nested mapping and fails with `Nested mappings are not allowed in compact mappings` — pi surfaces a load-time warning and the skill is unusable until fixed.
+
+- Double-quote any long/free-text frontmatter value (e.g. `description: "..."`). Colons inside quotes, and colons *not* followed by a space (URLs, `12:30`), are safe.
+- Verify a file without restarting pi, using the same parser pi ships:
+
+```bash
+node -e '
+const yaml=require("/Users/nietaki/.local/share/mise/installs/node/22.22.1/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/yaml");
+const s=require("fs").readFileSync(process.argv[1],"utf8");
+yaml.parse(s.split(/^---$/m)[1]);
+console.log("frontmatter OK");' home/.agents/skills/<name>/SKILL.md
+```
