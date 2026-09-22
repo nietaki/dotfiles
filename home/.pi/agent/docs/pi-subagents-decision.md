@@ -68,12 +68,16 @@ substantive.
 | `home/.pi/agent/docs/pi-subagents-onboarding-notes.md` | `~/.pi/agent/docs/pi-subagents-onboarding-notes.md` | onboarding session notes + queued steps (workflows, field test) |
 | `home/.pi/agent/agents/doc-drift-sentinel.md` | `~/.pi/agent/agents/doc-drift-sentinel.md` | first custom role (read-only doc-drift auditor) |
 | `home/.pi/agent/extensions/subagent/config.json` | `~/.pi/agent/extensions/subagent/config.json` | behavioral caps (`maxSubagentSpawnsPerRun: 24`, `globalConcurrencyLimit: 4`) |
+| `home/.pi/agent/extensions/subagent-outputs.ts` | `~/.pi/agent/extensions/subagent-outputs.ts` | `/subagent-outputs` command — TUI browser (picker + scrollable markdown viewer) for child output artifacts |
 
 Not added yet: custom workflow scripts and launcher prompts.
 Added 2026-09-22: the `doc-drift-sentinel` custom role (`agents/`), role→model
 tiers plus six disabled external-CLI builtins
 (`settings.json → subagents.agentOverrides`), and spawn/concurrency caps
-(`extensions/subagent/config.json`).
+(`extensions/subagent/config.json`). Same day, post-review fixes: the
+`/subagent-outputs` viewer command (`extensions/subagent-outputs.ts`) —
+manual-windowed markdown scroller, because ui.custom() mounts inside a
+layout-blind container (see onboarding notes for the full story).
 
 Where future pieces go:
 

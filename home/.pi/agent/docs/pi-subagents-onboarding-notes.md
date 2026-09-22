@@ -1,7 +1,8 @@
-# pi-subagents onboarding — session notes (2026-09-22, partial)
+# pi-subagents onboarding — session notes (2026-09-22, complete)
 
 Companion to `pi-subagents-decision.md`. Records where the interactive onboarding
-stopped and everything queued for a future session. Steps 1–5 done, 6–7 deferred.
+reached and everything queued for a future session. Steps 1–5 done, 6–7 deferred.
+All work below is committed (through `5335fbb`).
 
 ## Done this session
 
@@ -22,6 +23,14 @@ stopped and everything queued for a future session. Steps 1–5 done, 6–7 defe
   caught 2 over-corrections in my own rewrite.
 - **Drift fixes applied** to AGENTS.md, extensions/README.md, this decision doc,
   pi-permission-system config comments (values made non-decaying where asked).
+- **`/subagent-outputs` extension command** (`extensions/subagent-outputs.ts`) —
+  pure-TUI browser for child output artifacts: picker (newest first, optional
+  filter arg) → scrollable markdown viewer. Scroll was broken in v1 because
+  ui.custom() components mount inside pi's `editorContainer`, a plain Container
+  invisible to the layout engine — a nested ScrollView never gets
+  updateLayout(), so scrollBy() clamps to a no-op. Fix: manual windowing
+  (render Markdown to lines, slice a `tui.terminal.rows`-height window, redraw
+  via `tui.requestRender()`). Verified live working after the fix.
 
 ## Queued / open threads
 
@@ -42,14 +51,22 @@ stopped and everything queued for a future session. Steps 1–5 done, 6–7 defe
 6. **`a-validation` reviewer's report was lost** (artifact = one-line stub,
    "Saved output: unavailable"). Watch for recurrence → likely a
    retention/persist bug worth reporting upstream with run ids.
-7. **Commit the staged config + agent + fixes** (deliberately uncommitted per AGENTS.md).
+7. ~~Commit the staged config + agent + fixes~~ — **done 2026-09-22**: user
+   committed everything (`36787f1` config/agents/docs, `5335fbb` the
+   subagent-outputs scroll fix).
 
 ## Visibility fix (why questions felt context-free)
 
-Child output lands in the *parent's* tool result, collapsed by default; expand with
-**Ctrl+O**, inspect transcripts via **`/subagents-fleet`**, or read the quoted
-artifact path. Convention adopted: the parent quotes children's verdicts/summaries
-in its own reply *before* calling ask_user_question — candidate to make permanent in
+Child output lands in the *parent's* tool result, collapsed by default. Surfaces,
+in order of preference:
+
+1. **`/subagent-outputs`** (custom extension, committed) — the durable answer:
+   browse any child's saved report after the fact, no model involvement.
+2. **Ctrl+O** expands the live collapsed card during/after a run.
+3. **`/subagents-fleet`** inspects running/recent children with transcripts.
+
+Convention adopted: the parent quotes children's verdicts/summaries in its own
+reply *before* calling ask_user_question — candidate to make permanent in
 `~/.pi/agent/instructions/subagents.md`.
 
 Update (same session): the ask_user_question tool supports `options[].preview`

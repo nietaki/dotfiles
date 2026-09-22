@@ -75,6 +75,11 @@ surface = `path` deny + `path_read` allow (and drop it from
   prompt as one `# Pi Instructions` block, built once at extension load in
   filename order so the bytes are stable across turns (prompt-cache friendly).
   Edits to instruction files need a restart or `/reload`.
+- `subagent-outputs.ts` — `/subagent-outputs [filter]`: TUI browser over
+  pi-subagents child output artifacts (picker, then a manual-windowed
+  markdown scroller; see the layout-engine story in
+  `../docs/pi-subagents-onboarding-notes.md`). Reads files only — never
+  invokes the model.
 - This README — the reasoning.
 
 ## Settings notes
