@@ -19,7 +19,7 @@ Guidelines:
 
 - Always `git add` newly created files under `home/` as part of finishing a config change (do not commit unless asked).
 - After staging, run `hslink` to apply.
-- `homeshick` itself is a shell function loaded by the interactive rc files (`~/.zshrc`, `~/.bashrc`), so it does not exist in an agent's shell. Do **not** reach for `zsh -ic 'homeshick link dotfiles'` — this repo's pi permission system denies opaque shell wrappers (`zsh -ic`, `bash -c`) and steers you to the wrappers instead. Use:
+- `homeshick` itself is a shell function loaded by the interactive rc files (`~/.zshrc`, `~/.bashrc`), so it does not exist in an agent's shell. Do **not** reach for `zsh -ic 'homeshick link dotfiles'` — the gate flags an opaque shell payload (`zsh -ic`, `bash -c`, `eval`) and floors it from `allow` to `ask`, but never re-parses what runs inside (the gate sees tool calls, not child-process syscalls), so path checks inside the payload are bypassed. Use the wrappers instead:
   - `hslink` — `home/bin/hslink`, symlinked to `~/bin/hslink` (on PATH); execs homeshick's binary directly, no shell sourcing needed.
   - `hsunlink` — finds and removes dangling `*dotfiles*` symlinks in `$HOME` (dry-run with `hsunlink -l`); use it after deleting or renaming tracked files.
 - To add an entire new directory of config, stage the directory: `git add home/.foo/`.

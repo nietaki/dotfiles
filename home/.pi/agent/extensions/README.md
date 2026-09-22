@@ -45,7 +45,7 @@ surface = `path` deny + `path_read` allow (and drop it from
     installed. The old shape allowed all of that and carved out only
     `auth.json`, `sessions/*`, `settings.json` and this config file.
   - **`path_read` allows `~/.pi/*` back for reads** — config, extension source,
-    prompts, and the ~11 MB of past transcripts are auditable. Writes stay
+    prompts, and the multi-MB history of past transcripts is auditable. Writes stay
     denied by `path` *and* by the `external_directory` boundary, so no single
     layer's relaxation reopens the tree. `auth.json` is the one path denied in
     **both** directions (provider API keys); it must stay listed after the
@@ -79,9 +79,11 @@ surface = `path` deny + `path_read` allow (and drop it from
 
 ## Settings notes
 
-- `settings.json` pins every package to its installed version (`npm:name@ver`)
-  — pinned specs are skipped by `pi update --extensions`. Unpin with
-  `pi install npm:<pkg>` (no version) when you deliberately want an update.
+- `settings.json` optionally pins packages to their installed version
+  (`npm:name@ver`) — pinned specs are skipped by `pi update --extensions`.
+  Unpin with `pi install npm:<pkg>` (no version) when you deliberately want an
+  update. Currently floating on purpose: `rpiv-ask-user-question`,
+  `betterwright`, `pi-subagents`.
 - Skills live in `~/.agents/skills/` (repo-tracked, the harness-neutral Agent
   Skills location pi auto-discovers) — no settings entry needed.
 
@@ -128,7 +130,7 @@ What is gone with them:
 
 Deliberate: a deterministic layer you can read in one screen over a probabilistic
 one you cannot predict. If the permissiveness ever bites, the old per-command
-whitelist is this file at commit `5643577` (~150 allow rules under
+whitelist is this file at commit `5643577` (~125 allow rules under
 `"bash": {"*": "deny"}`).
 
 ## Known rough edges
@@ -163,7 +165,7 @@ Activate: restart `pi`. The package list loads at startup, not via `/reload`;
 gotgenes hot-reloads `config.json` mid-session.
 
 Rollback: `git revert` the change, or `git checkout <pre-change-commit> -- home/.pi`
-then `zsh -ic 'homeshick link dotfiles'` and `pi install` the three packages at
+then `hslink` and `pi install` the three packages at
 their old pins (`npm:@shinynito/pi-menshen@2.1.0`,
 `npm:@pedro_klein/pi-modes@0.2.0`, `npm:@pedro_klein/pi-readonly-bash@0.2.0`).
 `pi-menshen.json` returns via `git checkout <pre-change-commit> -- home/.pi/pi-menshen.json`;

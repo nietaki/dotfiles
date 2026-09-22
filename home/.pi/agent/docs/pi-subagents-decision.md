@@ -63,13 +63,17 @@ substantive.
 
 | Repo path | Links to | Purpose |
 |---|---|---|
-| `home/.pi/agent/settings.json` | `~/.pi/agent/settings.json` | added `"npm:pi-subagents"` to `packages` |
+| `home/.pi/agent/settings.json` | `~/.pi/agent/settings.json` | added `"npm:pi-subagents"` to `packages`; later also `subagents.agentOverrides` (role→model tiers, 6 disabled external-CLI builtins) |
 | `home/.pi/agent/docs/pi-subagents-decision.md` | `~/.pi/agent/docs/pi-subagents-decision.md` | this document |
+| `home/.pi/agent/docs/pi-subagents-onboarding-notes.md` | `~/.pi/agent/docs/pi-subagents-onboarding-notes.md` | onboarding session notes + queued steps (workflows, field test) |
+| `home/.pi/agent/agents/doc-drift-sentinel.md` | `~/.pi/agent/agents/doc-drift-sentinel.md` | first custom role (read-only doc-drift auditor) |
+| `home/.pi/agent/extensions/subagent/config.json` | `~/.pi/agent/extensions/subagent/config.json` | behavioral caps (`maxSubagentSpawnsPerRun: 24`, `globalConcurrencyLimit: 4`) |
 
-Intentionally **not** added yet (base config only): custom workflow scripts,
-launcher prompts, custom agent roles, and
-`extensions/subagent/config.json`. The extension is zero-config; add those
-when we have concrete workflows to pin down.
+Not added yet: custom workflow scripts and launcher prompts.
+Added 2026-09-22: the `doc-drift-sentinel` custom role (`agents/`), role→model
+tiers plus six disabled external-CLI builtins
+(`settings.json → subagents.agentOverrides`), and spawn/concurrency caps
+(`extensions/subagent/config.json`).
 
 Where future pieces go:
 

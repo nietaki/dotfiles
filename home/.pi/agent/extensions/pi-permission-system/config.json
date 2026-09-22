@@ -13,7 +13,7 @@
   // `bash` → `bash_readonly`) and `@shinynito/pi-menshen` (tree-sitter command
   // classification + reviewer model). See git history for their design; the
   // predecessor to the `bash` map at the bottom is this file at commit 5643577
-  // (~150 per-command allow rules, deliberately not restored).
+  // (~125 per-command allow rules, deliberately not restored).
   //
   // Consequence worth stating: there is no semantic judgment of commands left.
   // `bash` is allow-all except the denies below, and every other guard is
@@ -57,7 +57,7 @@
       // entry has the final say for reads whatever the key order while the
       // write denial still holds. That is how ~/.pi becomes read-only rather
       // than opaque: the agent may inspect the config, extensions, prompts and
-      // 11 MB of past transcripts it is governed by, and may never rewrite any
+      // the multi-MB transcript history it is governed by, and may never rewrite any
       // of it. Verified by test: transcript + settings reads work, `touch
       // ~/.pi/agent/sessions/x` and `touch ~/.pi/agent/extensions/x.ts` are
       // denied.
