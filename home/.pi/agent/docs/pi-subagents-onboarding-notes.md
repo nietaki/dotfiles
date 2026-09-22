@@ -109,22 +109,30 @@ not-ok and silently drops launch rules with it.
 
 Supersedes threads (1) and (2).
 
-1. These notes updated; stale model section fixed; threads (4) downscoped, (5) closed.
-2. `subagents.modelScope` (enforce + strict, per-role allow lists) closes the
-   per-run `model:` escape from the `agentOverrides` pins.
-3. Create `home/.pi/agent/instructions/subagents.md`: script-authoring checklist
-   (no nested async helpers; `runs.all` = ordered array; unique per-round keys;
-   explicit child `async:true` receipts carry `ok:false` by design; set
-   `timeoutMs` on async composites; `state` requires a mission; args header
-   comment + early-throw guard; absolute `workflowScriptPath`), async etiquette
-   (never sleep/poll — completion wakes natively; `bg_wait` only for
-   non-notifying work), one-writer rule, quote children's verdicts before
-   ask_user_question (embed literal findings in option `preview`s).
-4. Prompt-template voice pass: classify the bodies of `continue/fix/explain_line/
-   find_typos` as parent-voice vs child-voice; stamp `description:` with
-   `[parent-run]` / `[child task]` — wrong-surface invocation is silent, so the
-   file must carry its own intent.
-5. Brainstorm session, OPEN-ENDED: decide which workflows we actually want,
+1. **(done 2026-09-23, `eea8f9a`)** These notes updated; stale model section
+   fixed; threads (4) downscoped, (5) closed.
+2. **(done 2026-09-23, `eea8f9a`)** `subagents.modelScope` (enforce + strict,
+   per-role allow lists) closes the per-run `model:` escape from the
+   `agentOverrides` pins.
+3. **(done 2026-09-23, staged)** `home/.pi/agent/instructions/subagents.md`
+   created and linked: script-authoring checklist (no nested async helpers;
+   `runs.all` = ordered array; unique per-round keys; `timeoutMs` on async
+   composites; `state` requires a mission; args header + early-throw guard;
+   absolute `workflowScriptPath`), async etiquette (never sleep/poll;
+   `bg_wait` only for non-notifying work), one-writer rule, model policy
+   (agentOverrides chooses / modelScope contains / watchdog stays off),
+   visibility conventions, prompt-template dual-surface rules.
+4. **(done 2026-09-23, scope changed)** The four `prompts/*.md` were opencode-
+   era editor-integration transplants (auto-injected cursor file/line/col +
+   `@mention` context) — no fit under pi, whose template docs document
+   neither. Dropped `continue`/`fix`/`explain_line` (git rm staged); successors,
+   if ever wanted, get designed in step (5) with pi-native arg dialogs.
+   `find_typos` adapted into the first real `[child task]` delegation template
+   (`subagent: scout`, `fresh: true`; invoke via `/prompt-workflow find_typos
+   [dir]`). Remaining manual step: `rm` the 3 stale symlinks in
+   `~/.pi/agent/prompts/` (permission boundary — only the user may; `rm` on a
+   symlink removes just the link).
+5. **(next)** Brainstorm session, OPEN-ENDED: decide which workflows we actually want,
    then assign one each to parent-recipe / chain-wrapper / script based on the
    style's strengths; small + educational scope.
 6. Author the three chosen workflows (`action:"validate"` first for the script).

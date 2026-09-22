@@ -28,14 +28,46 @@
         "opencode-go/qwen3.8-flash"
       ],
       "agents": {
-        "reviewer": { "allow": ["openrouter/anthropic/claude-opus-5"] },
-        "oracle": { "allow": ["openrouter/anthropic/claude-opus-5"] },
-        "evidence-auditor": { "allow": ["openrouter/openai/gpt-5.6-sol"] },
-        "researcher": { "allow": ["openrouter/google/gemini-3.1-pro-preview"] },
-        "scout": { "allow": ["opencode-go/qwen3.7-plus"] },
-        "doc-drift-sentinel": { "allow": ["opencode-go/qwen3.7-plus"] },
-        "worker": { "allow": ["opencode-go/qwen3.8-flash"] },
-        "delegate": { "allow": ["opencode-go/qwen3.8-flash"] }
+        "reviewer": {
+          "allow": [
+            "openrouter/anthropic/claude-opus-5"
+          ]
+        },
+        "oracle": {
+          "allow": [
+            "openrouter/anthropic/claude-opus-5"
+          ]
+        },
+        "evidence-auditor": {
+          "allow": [
+            "openrouter/openai/gpt-5.6-sol"
+          ]
+        },
+        "researcher": {
+          "allow": [
+            "openrouter/google/gemini-3.1-pro-preview"
+          ]
+        },
+        "scout": {
+          "allow": [
+            "opencode-go/qwen3.7-plus"
+          ]
+        },
+        "doc-drift-sentinel": {
+          "allow": [
+            "opencode-go/qwen3.7-plus"
+          ]
+        },
+        "worker": {
+          "allow": [
+            "opencode-go/qwen3.8-flash"
+          ]
+        },
+        "delegate": {
+          "allow": [
+            "opencode-go/qwen3.8-flash"
+          ]
+        }
       }
     },
     "agentOverrides": {
