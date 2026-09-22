@@ -49,7 +49,7 @@
       // their writes as child processes, which this gate never sees. Reads are
       // restored in `path_read` below.
       "~/.pi/*": "deny",
-      "~/.local/share/mise/*": "allow"
+      "~/obsidian/pi_knowledge/*": "allow"
     },
     "path_read": {
       // Bare `path` above is sugar: its entries expand into `path_read` +
@@ -62,6 +62,7 @@
       // ~/.pi/agent/sessions/x` and `touch ~/.pi/agent/extensions/x.ts` are
       // denied.
       "~/.pi/*": "allow",
+      "~/.local/share/mise/*": "allow",
       // The one path denied in BOTH directions: provider API keys. A read
       // allow would hand the keys to any tool call naming the file — and now
       // that transcripts are readable, "quote the secret into the next
@@ -147,6 +148,14 @@
       "/tmp/*": "allow",
       "/private/tmp": "allow",
       "/private/tmp/*": "allow",
+      // Pi's knowledge vault (learnings per repo): read/write from any
+      // session's cwd. Both entries are required, same shape as ~/repos: the
+      // bare one covers the directory entry itself (`ls ~/obsidian/pi_knowledge`
+      // or `cd` without a subpath — denied by rule '*' before this was added),
+      // the greedy `*` covers everything nested under it. The matching `path`
+      // allow above is redundant against `"*": "allow"` but documents intent.
+      "~/obsidian/pi_knowledge": "allow",
+      "~/obsidian/pi_knowledge/*": "allow",
       "${TMPDIR}/*": "allow"
     },
     "skill": {
