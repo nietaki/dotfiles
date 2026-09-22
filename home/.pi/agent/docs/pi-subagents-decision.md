@@ -63,7 +63,7 @@ substantive.
 
 | Repo path | Links to | Purpose |
 |---|---|---|
-| `home/.pi/agent/settings.json` | `~/.pi/agent/settings.json` | added `"npm:pi-subagents"` to `packages`; later also `subagents.agentOverrides` (role→model tiers, 6 disabled external-CLI builtins) |
+| `home/.pi/agent/settings.json` | `~/.pi/agent/settings.json` | added `"npm:pi-subagents"` to `packages`; later also `subagents.agentOverrides` (role→model tiers, 6 disabled external-CLI builtins) and `subagents.modelScope` (enforce+strict guard: keeps launched models inside the pinned tiers, rejects per-run `model:` escapes) |
 | `home/.pi/agent/docs/pi-subagents-decision.md` | `~/.pi/agent/docs/pi-subagents-decision.md` | this document |
 | `home/.pi/agent/docs/pi-subagents-onboarding-notes.md` | `~/.pi/agent/docs/pi-subagents-onboarding-notes.md` | onboarding session notes + queued steps (workflows, field test) |
 | `home/.pi/agent/agents/doc-drift-sentinel.md` | `~/.pi/agent/agents/doc-drift-sentinel.md` | first custom role (read-only doc-drift auditor) |
