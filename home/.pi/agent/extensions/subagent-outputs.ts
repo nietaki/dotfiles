@@ -5,12 +5,20 @@
  * involvement; data comes from the artifact files pi-subagents persists under
  * ~/.pi/agent/sessions/<cwd-slug>/subagent-artifacts/.
  *
- * Keys in the viewer: ↑/↓ or j/k line · PgUp/PgDn or space half-page ·
- * g/G top/bottom · q/esc/enter close.
+ * Keys in the viewer: ↑/↓ or j/k line · PgUp/space page · Home/End or g/G
+ * top/bottom · q/esc/enter close.
+ *
+ * Why manual windowing (no ScrollView): ui.custom() components are mounted
+ * inside pi's `editorContainer`, a plain Container with no [LAYOUT_NODE].
+ * pi-tui's layout engine treats that whole slot as one leaf, so a nested
+ * ScrollView never receives updateLayout() — its viewportHeight stays 0 and
+ * every scrollBy() is silently clamped to a no-op. Instead we render the
+ * Markdown to styled lines ourselves and slice a terminal-height window in
+ * render(), tracking offset in the key handler.
  */
 import type { ExtensionAPI, ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
-import { DynamicBorder, getMarkdownTheme } from "@earendil-works/pi-coding-agent";
-import { Container, Markdown, matchesKey, ScrollView, Text } from "@earendil-works/pi-tui";
+import { getMarkdownTheme } from "@earendil-works/pi-coding-agent";
+import { matchesKey, Markdown } from "@earendil-works/pi-tui";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -68,32 +76,46 @@ function formatSize(bytes: number): string {
 function showViewer(title: string, markdown: string, ctx: ExtensionCommandContext): Promise<void> {
 	return new Promise((resolve) => {
 		ctx.ui
-			.custom((_tui, theme, _kb, done) => {
-				const container = new Container();
-				const border = new DynamicBorder((s: string) => theme.fg("accent", s));
+			.custom((tui, theme, _kb, done) => {
 				const md = new Markdown(markdown, 1, 1, getMarkdownTheme());
-				const view = new ScrollView(md, { scrollbar: "always", overscroll: "contain" });
-				container.addChild(border);
-				container.addChild(new Text(theme.fg("accent", theme.bold(title)), 1, 0));
-				container.addChild(new Text(theme.fg("dim", "↑↓/jk line · PgUp/PgDn/space page · g/G top/bottom · q/esc close"), 1, 0));
-				container.addChild(view);
-				container.addChild(border);
+				let offset = 0; // first visible body line (scroll position)
+				const CHROME = 6; // blank + title + hints + status + blank + slack
 				const close = () => {
 					done(undefined);
 					resolve();
 				};
-				const half = () => Math.max(1, Math.floor(view.viewportHeight / 2) || 20);
+				const dim = (s: string) => theme.fg("dim", s);
 				return {
-					render: (width: number) => container.render(width),
-					invalidate: () => container.invalidate(),
+					render: (width: number) => {
+						const bodyH = Math.max(5, (tui.terminal?.rows ?? 24) - CHROME);
+						const all = md.render(width);
+						const maxOff = Math.max(0, all.length - bodyH);
+						if (offset > maxOff) offset = maxOff;
+						const visible = all.slice(offset, offset + bodyH);
+						const pct = all.length === 0 ? 100 : Math.round(((offset + visible.length) / all.length) * 100);
+						const pos = `${offset + 1}-${offset + visible.length}/${all.length} lines · ${pct}%`;
+						return [
+							"",
+							theme.fg("accent", theme.bold(title)),
+							dim("↑↓/jk line · PgUp/space page · Home/End or g/G ends · q/esc close"),
+							...visible,
+							dim(pos + (offset + visible.length >= all.length ? " · end" : "")),
+							"",
+						];
+					},
+					invalidate: () => {},
 					handleInput: (data: string) => {
-						if (matchesKey(data, "escape") || matchesKey(data, "q") || matchesKey(data, "enter")) return close();
-						if (matchesKey(data, "up") || matchesKey(data, "k")) view.scrollBy(-1);
-						else if (matchesKey(data, "down") || matchesKey(data, "j")) view.scrollBy(1);
-						else if (matchesKey(data, "pageup")) view.scrollBy(-half());
-						else if (matchesKey(data, "pagedown") || matchesKey(data, " ")) view.scrollBy(half());
-						else if (matchesKey(data, "g")) view.scrollToStart();
-						else if (matchesKey(data, "G")) view.scrollToEnd();
+						const rows = Math.max(5, (tui.terminal?.rows ?? 24) - CHROME);
+						if (matchesKey(data, "escape") || matchesKey(data, "enter") || data === "q") return close();
+						if (matchesKey(data, "up") || data === "k") offset -= 1;
+						else if (matchesKey(data, "down") || data === "j") offset += 1;
+						else if (matchesKey(data, "pageUp")) offset -= rows;
+						else if (matchesKey(data, "pageDown") || data === " ") offset += rows;
+						else if (matchesKey(data, "home") || data === "g") offset = 0;
+						else if (matchesKey(data, "end") || data === "G") offset = Number.MAX_SAFE_INTEGER; // clamped in render
+						else return; // unhandled key: no redraw
+						if (offset < 0) offset = 0;
+						tui.requestRender();
 					},
 				};
 			})
