@@ -25,7 +25,7 @@
 //   no raised spawn budget; use subagent({workflowScriptPath}) when you need
 //   either. Always detached async.
 //
-// Budget: 1 + maxSessions + 1 children (<= 8; run cap 24, global concurrency 4).
+// Budget: 1 + maxSessions + 1 children (<= 18; run cap 24, global concurrency 4).
 // No `state` (launch without a mission is fine). Launch it with an explicit
 // timeoutMs (async composites have no default), e.g. 3_600_000.
 // PERMISSION NOTE: plain `ls ~/.pi/agent/sessions/` works for agents, but
@@ -51,8 +51,11 @@ const maxSessions = Math.min(Math.max(Number(args.maxSessions) || 6, 1), 16);
 // ../feature-dev/script.js.
 const NO_ACCEPTANCE = { acceptance: false };
 
+// Run nonce to avoid collisions with stale digest files from prior runs
+const RUN_NONCE = Date.now().toString(36);
+
 function digestTask(item, idx) {
-  const outFile = "/tmp/pi-retro-digest-" + idx + "-" + item.tag + ".json";
+  const outFile = "/tmp/pi-retro-digest-" + RUN_NONCE + "-" + idx + "-" + item.tag + ".json";
   return [
     "You are one digest worker of a session retrospective. Stay strictly within YOUR session file.",
     "YOUR SESSION: " + item.path + " (~" + item.sizeKb + " KiB).",
@@ -60,10 +63,9 @@ function digestTask(item, idx) {
     "STEP 0 — GO/NO-GO.",
     "Inspect the head and tail of the file (first and last few entries).",
     "Set greenlit=false (write NOTHING, empty outputFile) if ANY of:",
-    "- the file is a near-duplicate/continuation of another transcript of the same session,",
-    "- it is trivially short (< ~10 user-visible turns),",
-    "- it contains no real work (purely meta/testing/abandoned).",
-    "Prefer greenlit=false when in doubt — the operator launches retros on purpose.",
+    "- it is trivially short (< ~5 user-visible turns with no friction),",
+    "- it contains no real work (purely meta/testing/abandoned with no actionable findings).",
+    "Prefer greenlit=true when in doubt — the operator launched this retro to find friction, and even short sessions may contain valuable signals.",
     "",
     "STEP 1 — DIGEST (only if greenlit=true).",
     "Read the transcript in bounded windows with your read tool (it truncates per call; use",
@@ -131,15 +133,16 @@ const boardSpec = {
       items: {
         type: "object",
         additionalProperties: false,
-        required: ["surface", "title", "change", "addresses", "evidence", "confidence", "greenlit"],
+        required: ["surface", "title", "change", "addresses", "evidence", "confidence", "effort", "greenlit"],
         properties: {
           surface: { type: "string", description: "model-policy | agents-config | instructions-skills | permission-rules | operator-behavior | other" },
           title: { type: "string" },
           change: { type: "string", description: "file-level, apply-ready: which file, what edit" },
           addresses: { type: "string" },
-          evidence: { type: "string", description: "grounded quote/pointer you actually opened" },
+          evidence: { type: "string", description: "grounded quote from the actual transcript" },
           confidence: { type: "string" },
-          greenlit: { type: "boolean", description: "true only if you re-opened the cited evidence" }
+          effort: { type: "string", description: "low | medium | high — estimated effort to implement" },
+          greenlit: { type: "boolean", description: "true only if you opened the transcript and quoted the evidence" }
         }
       }
     },
@@ -167,11 +170,13 @@ const list = await runs.run("enumerate", {
     targetCwd + ": " + expectedDir + " — but VERIFY by listing the root; if absent,",
     "pick the closest matching directory name. If listing is denied or nothing matches:",
     "found=false, explain in note, stop.",
-    "List every *.jsonl inside, newest-first (mtime), max 40: absolute path, mtime,",
+    "List every *.jsonl file recursively (including subdirectories for child-run transcripts), newest-first (mtime), max 40: absolute path, mtime,",
     "size in KiB, and tag = filename without extension, truncated to 40 chars, unique per row.",
+    "Include both parent session files (directly in the project directory) and child-run transcripts (in subdirectories like <session>/<uuid>/run-0/session.jsonl).",
     "READ-ONLY; never modify anything."
   ].join("\n"),
   outputSchema: listSpec,
+  timeoutMs: 60_000,  // 1 min for enumeration
   ...NO_ACCEPTANCE
 });
 
@@ -225,14 +230,17 @@ try {
       "Digest workers wrote per-session findings as JSON files. Files to read (use your read tool):",
       settled.map(d => "- " + d.s.outputFile + "  (from " + d.key + ")").join("\n"),
       "",
+      "GROUNDING: For each proposal you consider, open the ACTUAL transcript file (the digest's `session` field) at the position cited in the digest. Quote the literal text from the transcript in your `evidence` field. Do not just re-check the digest — verify against the source.",
+      "",
       "Merge duplicate findings across sessions. Rank by (confidence x expected gain) / effort.",
-      "KEEP AT MOST 10 proposals total. Mark a proposal greenlit=true ONLY after you re-opened",
-      "its digest file and confirmed the cited evidence is real (quote it in `evidence`).",
-      "Drop or greenlit=false anything you cannot ground; record why in unproposedGaps.",
+      "KEEP AT MOST 10 proposals total. Mark a proposal greenlit=true ONLY after you opened the transcript and quoted the evidence.",
+      "Drop or greenlit=false anything you cannot ground in the actual transcript; record why in unproposedGaps.",
       "Group by surface: model-policy | agents-config | instructions-skills | permission-rules",
       "| operator-behavior | other. Proposals must be file-level and apply-ready.",
-      "You are READ-ONLY: never edit dotfiles or project files — you propose, the parent",
-      "session applies only what the user approves.",
+      "",
+      "DOTFILES REPO: The setup files live in the dotfiles repo at ~/.homesick/repos/dotfiles/home/.pi/agent/. When proposing edits, read the current file content first (via read tool) to ensure your proposal is not stale or already done. Propose edits to the repo paths (e.g. ~/.homesick/repos/dotfiles/home/.pi/agent/settings.json), NOT the symlinked $HOME paths (e.g. ~/.pi/agent/settings.json).",
+      "",
+      "You are READ-ONLY: never edit dotfiles or project files — you propose, the parent session applies only what the user approves.",
       "",
       "Context also true (from the orchestration, not to be re-verified): " + skipped.length +
       " digest(s) were skipped or failed: " + (skipped.length ? skipped.map(s => s.key).join(", ") : "-") + "."

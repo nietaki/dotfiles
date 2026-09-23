@@ -20,6 +20,11 @@
       "type": "boolean",
       "default": false,
       "description": "Proceed even though the tree already has changes outside .pi/ (passed to every auditor as pre-existing). Needed for onlyTasks continuations"
+    },
+    "spawnCap": {
+      "type": "number",
+      "default": 24,
+      "description": "Soft guard for the run fan-out budget. The script aborts cleanly with a report before exceeding this, rather than throwing mid-run. Resumes reuse the original claim."
     }
   }
 }

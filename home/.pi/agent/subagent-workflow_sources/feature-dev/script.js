@@ -35,6 +35,11 @@
 //                          working tree has changes outside .pi/ when the run
 //                          starts (e.g. an onlyTasks continuation). Those paths
 //                          are passed to every auditor as "pre-existing".
+//   spawnCap      integer  optional (default 24) — soft guard for the run fan-out
+//                          budget. The script aborts cleanly with a report
+//                          before exceeding this, rather than throwing mid-run.
+//                          Resumes reuse the original claim, so they don't
+//                          consume additional budget.
 //
 // LAUNCH — two surfaces, same script:
 // 1. Saved registry (pi-subagents-workflows): /workflow run feature-dev
@@ -90,11 +95,17 @@ if (args.onlyTasks !== undefined &&
 if (args.allowDirty !== undefined && typeof args.allowDirty !== "boolean") {
   throw new Error("feature-dev: args.allowDirty must be a boolean");
 }
+if (args.spawnCap !== undefined &&
+    !(Number.isInteger(args.spawnCap) && args.spawnCap >= 1)) {
+  throw new Error("feature-dev: args.spawnCap must be a positive integer");
+}
 
 const PLAN_PATH = (typeof args.planPath === "string" && args.planPath.trim()) ? args.planPath.trim() : ".pi/feat/plan.md";
 const MAX_FIX_ROUNDS = Number.isInteger(args.maxFixRounds) ? args.maxFixRounds : 2;
 const ONLY_TASKS = Array.isArray(args.onlyTasks) ? args.onlyTasks.map((n) => Number(n)) : null;
 const ALLOW_DIRTY = args.allowDirty === true;
+const SPAWN_CAP = Number.isInteger(args.spawnCap) ? args.spawnCap : 24;
+let spawnsUsed = 0; // tracked for clean abort before exceeding SPAWN_CAP
 
 const TIMEOUT = {
   decompose: 5 * 60 * 1000,
@@ -132,14 +143,16 @@ const NO_ACCEPTANCE = { acceptance: false };
 const DECOMP_SCHEMA = {
   type: "object",
   additionalProperties: false,
-  required: ["approved", "treeClean", "blockers"],
+  required: ["approved", "treeClean", "baselineGreen", "blockers"],
   properties: {
     approved: { type: "boolean" },
     treeClean: { type: "boolean" },
+    baselineGreen: { type: "boolean" },
     dirtyPaths: { type: "array", items: { type: "string" } },
     goal: { type: "string" },
     nonGoals: { type: "array", items: { type: "string" } },
     testCommand: { type: "string" },
+    context: { type: "string" },
     globalAcceptance: { type: "array", items: { type: "string" } },
     tasks: {
       type: "array",
@@ -243,12 +256,14 @@ function decomposeTask() {
     "If the file is missing or unreadable, return approved=false with a blocker naming the path.",
     "The plan must carry an explicit approval stamp: a line starting with 'Approved:' (usually under the Goal heading). Missing stamp means the plan was never approved: return approved=false with that blocker. Do not proceed regardless of how good the plan looks.",
     "Working-tree check (always, even when not approved): run `git status --porcelain` via bash. Ignore entries under .pi/ (the plan and runtime state live there). treeClean = no remaining entries; dirtyPaths = the remaining paths (empty array when clean). Not a git repo: treeClean=false plus a blocker.",
+    "Baseline test check (always, even when not approved): run the test command from the plan's 'Test command' section via bash. baselineGreen = true only if the suite passes with exit code 0. If the suite is red at baseline, return approved=false with a blocker saying 'baseline suite is red — fix before running feature-dev'.",
     "When approved, extract (verbatim wherever possible — do NOT paraphrase acceptance criteria):",
     "- goal: the Goal, condensed to 1-3 sentences",
     "- nonGoals: the Non-goals entries",
     "- testCommand: the exact shell line from the plan's Test command section",
-    "- globalAcceptance: plan-level acceptance criteria not attached to a single task (empty array if none)",
-    "- tasks: the Task breakdown in order; id = task number starting at 1; title; summary (short, from the plan); acceptance = the testable criteria for that task (if a task has none of its own, give it the globalAcceptance items); files = plan 'Files in scope' entries attributable to that task (empty array if none)",
+    "- context: the Context section (scout's recon findings — key files, conventions, how tests are written). Empty string if the section is missing.",
+    "- globalAcceptance: plan-level acceptance criteria from the 'Global acceptance' section (empty array if none)",
+    "- tasks: the Task breakdown in order; id = task number starting at 1 (from '## Task N:' headings); title; summary (short, from the plan); acceptance = the testable criteria listed under that task's 'Acceptance criteria:' subsection (REQUIRED — if a task has no acceptance criteria of its own, return approved=false with a blocker naming the task; do NOT fall back to globalAcceptance); files = plan 'Files in scope' entries under that task (empty array if none)",
     "- blockers: anything that makes execution ambiguous (no runnable test command, criteria that cannot be verified, contradictory scope). Empty array if none.",
   ].join("\n");
 }
@@ -257,6 +272,9 @@ function implTaskText(t, plan, dirty) {
   return [
     "You are the implementation worker for task " + t.id + " of the approved feature plan at " + PLAN_PATH + ". You are the ONLY writer in this workflow; every other child is read-only. The plan is the contract — follow it, do not renegotiate scope.",
     "GOAL: " + plan.goal,
+    plan.context && plan.context.trim()
+      ? "CONTEXT (from the scout's recon — read these files first to understand the codebase):\n" + plan.context
+      : "",
     "NON-GOALS (do not build any of these):",
     ...bullets(plan.nonGoals, "- (none listed)"),
     "TASK " + t.id + ": " + t.title + (t.summary ? " — " + t.summary : ""),
@@ -340,18 +358,26 @@ function closingQualityTask(plan, rows, dirty) {
 }
 
 function closingAcceptanceTask(plan, selected, fullRun, dirty) {
+  // On full runs, only check global acceptance criteria (per-task criteria already
+  // passed their gates). On partial runs, check the selected tasks' criteria.
+  const criteria = fullRun
+    ? (plan.globalAcceptance || []).map((a) => "- [global] " + a)
+    : selected.flatMap((t) => t.acceptance.map((a) => "- [task " + t.id + "] " + a));
+
   return [
-    "Whole-feature ACCEPTANCE pass (not a single-task verification): every task below already passed its own per-task gate. You did not write it and did not see intermediate reasoning — judge only the artifact.",
+    "Whole-feature ACCEPTANCE pass.",
+    fullRun
+      ? "Every task already passed its own per-task gate. This check focuses on GLOBAL acceptance criteria only (cross-cutting concerns like 'no regressions'). Per-task criteria are not re-checked."
+      : "This run implemented only tasks " + selected.map((t) => t.id).join(", ") + " of the plan. Check their acceptance criteria.",
     "GOAL: " + plan.goal,
     "TEST COMMAND: " + plan.testCommand + " — run it yourself; the suite must pass on the final tree.",
     "CRITERIA IN SCOPE (report one acceptance entry per criterion, citing the proof you found: test name + file:line, or observed behavior):",
-    ...selected.flatMap((t) => t.acceptance.map((a) => "- [task " + t.id + "] " + a)),
-    ...(fullRun ? (plan.globalAcceptance || []).map((a) => "- [global] " + a) : []),
+    ...criteria,
     fullRun
-      ? "EXTRACTION CROSS-CHECK: these criteria were extracted from the plan by another agent. Read " + PLAN_PATH + " and add an acceptance entry (status missing, evidence 'not in extracted list') plus a finding for every plan acceptance criterion that is absent above or was materially paraphrased."
-      : "SCOPE: this run implemented only tasks " + selected.map((t) => t.id).join(", ") + " of the plan; do not judge criteria of other tasks.",
+      ? "EXTRACTION CROSS-CHECK: these global criteria were extracted from the plan by another agent. Read " + PLAN_PATH + " and add an acceptance entry (status missing, evidence 'not in extracted list') plus a finding for every plan global acceptance criterion that is absent above or was materially paraphrased."
+      : "",
     preexistingNote(dirty),
-    "Mark a criterion unverifiable when no test or observable behavior can prove it — that is itself a finding. verdict PASS only if the suite passes and every entry is covered; partials alone -> PASS with the partials listed in findings; any missing/unverifiable -> FAIL. Do not edit anything.",
+    "Mark a criterion unverifiable when no test or observable behavior can prove it — that is itself a finding. verdict PASS only if the suite passes and every entry is covered. Any partial, missing, or unverifiable -> FAIL. Do not edit anything.",
   ].filter((line) => line !== "").join("\n");
 }
 
@@ -403,6 +429,14 @@ if (!plan.treeClean && !ALLOW_DIRTY) {
     hint: "Commit/stash them, or relaunch with args.allowDirty=true (e.g. continuing a previous run via onlyTasks).",
   };
 }
+if (plan.baselineGreen !== true) {
+  return {
+    verdict: "NO-GO",
+    stage: "preflight",
+    reason: ["baseline test suite is red — fix failing tests before running feature-dev"],
+    hint: "Run '" + plan.testCommand + "' and fix any failures, then relaunch.",
+  };
+}
 
 const tasks = ONLY_TASKS ? plan.tasks.filter((t) => ONLY_TASKS.includes(t.id)) : plan.tasks;
 if (!tasks.length) {
@@ -411,11 +445,20 @@ if (!tasks.length) {
 const fullRun = tasks.length === plan.tasks.length;
 
 emit("feature-dev: " + tasks.length + " task(s); spawn budget needed: " + (3 + 2 * tasks.length) +
-  " happy path, " + (3 + 2 * (MAX_FIX_ROUNDS + 1) * tasks.length) + " worst case (default cap 24 — raise via maxSubagentSpawnsPerRun)");
+  " happy path, " + (3 + 2 * (MAX_FIX_ROUNDS + 1) * tasks.length) + " worst case (spawnCap: " + SPAWN_CAP + ")");
+
+// Helper to check spawn budget before launching
+function checkSpawnBudget(needed) {
+  if (spawnsUsed + needed > SPAWN_CAP) {
+    return { ok: false, reason: "spawn budget exceeded: " + spawnsUsed + " used + " + needed + " needed > " + SPAWN_CAP + " cap" };
+  }
+  return { ok: true };
+}
 
 // ---------------------------------------------------------------- per task
 
 const perTask = [];
+try {
 for (const [index, t] of tasks.entries()) {
   emit("feature-dev: task " + (index + 1) + "/" + tasks.length + " (#" + t.id + ") — " + t.title);
   const files = new Set();
@@ -428,16 +471,49 @@ for (const [index, t] of tasks.entries()) {
   for (; round <= MAX_FIX_ROUNDS; round++) {
     if (round > 0) {
       emit("feature-dev: task #" + t.id + " rejected — fix round " + round + "/" + MAX_FIX_ROUNDS);
+      // Resumes reuse the original claim, so they don't consume additional budget
     }
     impl = await runs.run("impl-t" + t.id + "-r" + round, round === 0
       ? { agent: "worker", context: "fresh", skill: "tdd", label: "Implement task " + t.id + ": " + t.title,
           task: implTaskText(t, plan, dirty), outputSchema: WORKER_SCHEMA, ...NO_ACCEPTANCE, timeoutMs: TIMEOUT.worker }
       : { resume: runId, skill: "tdd", label: "Fix task " + t.id + " round " + round,
           task: fixTaskText(t, plan, v.structuredOutput, round), outputSchema: WORKER_SCHEMA, ...NO_ACCEPTANCE, timeoutMs: TIMEOUT.worker });
+    if (round === 0) spawnsUsed++; // only fresh launches count
     if (!impl.ok || !impl.structuredOutput || impl.structuredOutput.status === "blocked") break;
+    // Guard: resume requires runId from the previous round
+    if (round > 0 && !runId) {
+      emit("feature-dev: ABORT — round 0 returned no runId, cannot resume");
+      return {
+        verdict: "ABORTED",
+        stage: "WORKER_ERROR",
+        failedTask: t.id,
+        reason: "round 0 worker returned no runId — cannot resume for fix rounds",
+        perTask,
+        goal: plan.goal,
+        testCommand: plan.testCommand,
+        treeState: "partially implemented plan left UNCOMMITTED in the working tree",
+      };
+    }
     runId = impl.runId || runId; // each resume returns a new runId — follow the latest
     impl.structuredOutput.filesTouched.forEach((f) => files.add(f));
     red.push(...impl.structuredOutput.redEvidence.map((e) => "r" + round + ": " + e));
+
+    // Check budget before launching verifier
+    const budgetCheck = checkSpawnBudget(1);
+    if (!budgetCheck.ok) {
+      emit("feature-dev: ABORT — " + budgetCheck.reason);
+      return {
+        verdict: "ABORTED",
+        stage: "BUDGET_EXCEEDED",
+        failedTask: t.id,
+        reason: budgetCheck.reason,
+        perTask,
+        goal: plan.goal,
+        testCommand: plan.testCommand,
+        hint: "Relaunch with args.spawnCap higher, or use args.onlyTasks to split the plan.",
+        treeState: "partially implemented plan left UNCOMMITTED in the working tree",
+      };
+    }
 
     v = await runs.run("verify-t" + t.id + "-r" + round, {
       agent: "verifier",
@@ -448,6 +524,7 @@ for (const [index, t] of tasks.entries()) {
       ...NO_ACCEPTANCE,
       timeoutMs: TIMEOUT.verifier,
     });
+    spawnsUsed++;
     if (!v.ok || !v.structuredOutput || v.structuredOutput.verdict === "PASS") break;
   }
 
@@ -492,16 +569,48 @@ for (const [index, t] of tasks.entries()) {
     };
   }
 }
+} catch (err) {
+  emit("feature-dev: ERROR — " + (err && err.message ? err.message : String(err)));
+  return {
+    verdict: "ABORTED",
+    stage: "SCRIPT_ERROR",
+    reason: "script threw: " + (err && err.message ? err.message : String(err)),
+    perTask,
+    goal: plan.goal,
+    testCommand: plan.testCommand,
+    treeState: "partially implemented plan left UNCOMMITTED in the working tree",
+  };
+}
 
 // ---------------------------------------------------------------- closing
 
 emit("feature-dev: all " + tasks.length + " task(s) verified — closing quality + acceptance checks");
+
+// Check budget before closing fan-out (2 children)
+const closingBudgetCheck = checkSpawnBudget(2);
+if (!closingBudgetCheck.ok) {
+  emit("feature-dev: ABORT — " + closingBudgetCheck.reason);
+  return {
+    verdict: "ABORTED",
+    stage: "BUDGET_EXCEEDED",
+    reason: closingBudgetCheck.reason,
+    perTask,
+    goal: plan.goal,
+    testCommand: plan.testCommand,
+    hint: "Relaunch with args.spawnCap higher, or use args.onlyTasks to split the plan.",
+    treeState: "all tasks verified but closing checks could not run; tree is UNCOMMITTED",
+  };
+}
+
+try {
 const [quality, acceptance] = await runs.all([
   { key: "quality-final", agent: "reviewer", context: "fresh", label: "Closing code-quality review",
+    model: "openrouter/anthropic/claude-opus-5.5",
     task: closingQualityTask(plan, perTask, dirty), outputSchema: QUALITY_SCHEMA, ...NO_ACCEPTANCE, timeoutMs: TIMEOUT.closing },
   { key: "acceptance-final", agent: "verifier", context: "fresh", label: "Closing acceptance check",
     task: closingAcceptanceTask(plan, tasks, fullRun, dirty), outputSchema: VERIFY_SCHEMA, ...NO_ACCEPTANCE, timeoutMs: TIMEOUT.closing },
 ]);
+spawnsUsed += 2;
 const q = quality.ok ? quality.structuredOutput : undefined;
 const a = acceptance.ok ? acceptance.structuredOutput : undefined;
 const verdict = !q || !a ? "COMPLETE_REVIEW_INCOMPLETE"
@@ -520,3 +629,15 @@ return {
   },
   treeState: "all changes left UNCOMMITTED for your review (git diff)",
 };
+} catch (err) {
+  emit("feature-dev: ERROR in closing — " + (err && err.message ? err.message : String(err)));
+  return {
+    verdict: "COMPLETE_REVIEW_INCOMPLETE",
+    stage: "CLOSING_ERROR",
+    reason: "closing checks threw: " + (err && err.message ? err.message : String(err)),
+    perTask: perTask.map((r) => ({ id: r.id, title: r.title, status: r.status, fixRoundsUsed: r.fixRoundsUsed, workerConcerns: r.workerConcerns })),
+    goal: plan.goal,
+    testCommand: plan.testCommand,
+    treeState: "all tasks verified but closing checks failed; tree is UNCOMMITTED",
+  };
+}

@@ -1,6 +1,6 @@
 ---
 description: "[child task] pre-release chain step 5/5: final GO/NO-GO verdict (use via the pre-release-check wrapper)"
-subagent: reviewer
+subagent: verifier
 fresh: true
 ---
 You are the final step of a pre-release check chain over the staged changes.
