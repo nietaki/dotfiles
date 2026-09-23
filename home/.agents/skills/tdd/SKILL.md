@@ -24,7 +24,7 @@ This produces **crap tests**:
 - Tests become insensitive to real changes - they pass when behavior breaks, fail when behavior is fine
 - You outrun your headlights, committing to test structure before understanding the implementation
 
-**Correct approach**: Vertical slices via specific tests. One test → one implementation → repeat.
+**Correct approach**: Vertical slices via specific tests. One behavior (or a small cohesive cluster) → implementation → repeat.
 ```
 WRONG (horizontal):
   RED:   test1, test2, test3, test4, test5
@@ -32,8 +32,8 @@ WRONG (horizontal):
 
 RIGHT (vertical):
   RED→GREEN: test1→impl1
-  RED→GREEN: test2→impl2
-  RED→GREEN: test3→impl3
+  RED→GREEN: test2, test3 (one cohesive cluster)→impl2
+  RED→GREEN: test4→impl3
   ...
 ```
 
@@ -54,52 +54,90 @@ Ask: "What should the public interface look like? Which behaviors are most impor
 
 **You can't test everything.** Confirm with the user exactly which behaviors matter most. Focus testing effort on critical paths and complex logic, not every possible edge case.
 
-### 2. Smoke Test
+### 2. Interface Sketch
+
+Before the first test, sketch the public interface this piece of work needs: signatures, types, error shapes — with dummy implementations where necessary. Sketch first deliberately: it makes RED meaningful (the project builds, so tests fail on **assertions**, not on compile errors or missing symbols), and it gives your editor/LSP something to work with while writing tests.
+
+Treat the sketch as **provisional** — tests and implementation are allowed to reshape it. Extend it minimally, only when the current test demands it; never sketch ahead for future cycles.
+
+### 3. Smoke Test
 
 Write ONE test that confirms ONE thing about the system:
 
 ```
-RED:   Write test for first behavior → test fails
+RED:   Write test for first behavior → run it → watch it fail on an
+       assertion, for the intended reason
 GREEN: Write minimal code to pass → test passes
 ```
 
 This is your "smoke test" - proves the path works end-to-end.
 
-### 3. Incremental Loop
+### 4. Incremental Loop
 
 For each remaining behavior:
 
 ```
-RED:   Write next test → fails
+RED:   Write next test(s) → run → watch each fail on an assertion,
+       for its intended reason
+       (missing symbol / compile error instead? extend the interface
+       sketch minimally — only what this test needs — and re-run)
 GREEN: Minimal code to pass → passes
 ```
 
+A cycle covers **one behavior, or a small cohesive cluster** of behaviors (e.g. a happy path plus its two closely-related edge cases on the same interface). The unit is not "exactly one test" — it is "tests you can watch fail for distinct, intended reasons".
+
 Rules:
 
-- One test at a time
-- Only enough code to pass current test
+- Every RED test must be **observed failing on an assertion, for its intended reason** — keep the failure output. A test never seen failing might be testing nothing.
+- Never write a test for a behavior whose interface you haven't sketched (dummies ok).
+- Only enough code to pass current tests
 - Don't anticipate future tests
 - Keep tests focused on observable behavior
+- **Tripwire**: batching more than ~3 tests in one RED, or a GREEN phase much heavier than its RED phase, means you've drifted horizontal — stop and split the cycle.
 
-### 4. Refactor
+### 4b. Bug Fixes: Reproduce First
 
-After all tests pass, look for refactor candidates:
+Before touching any implementation:
+
+```
+RED:   Write a test that reproduces the bug through the public interface
+       → observe it failing with the bug's signature
+GREEN: Fix → the reproduction test passes
+```
+
+Keep the reproduction test as a regression guard.
+
+### 5. Refactor
+
+Refactor after cycles go green, and opportunistically when a third test reveals duplication (rule of three) — don't wait until "the end". **Never refactor while RED.** Get to GREEN first.
+
+Refactor candidates:
 
 - [ ] Extract duplication
-- [ ] Deepen modules (move complexity behind simple interfaces)
-- [ ] Apply SOLID principles where natural
-- [ ] Consider what new code reveals about existing code
-- [ ] Run tests after each refactor step
+- Deepen modules (move complexity behind simple interfaces)
+- Apply SOLID principles where natural
+- Consider what new code reveals about existing code
+- Run tests after each refactor step
 
-**Never refactor while RED.** Get to GREEN first.
+## When NOT to TDD (escape hatches)
+
+Test-first only pays off when you can state the expected behavior. When you can't, don't cargo-cult:
+
+- **Pure config, glue code, one-off scripts**: verify by running them; a test suite adds ceremony, not safety.
+- **Unknown domain / unfamiliar API / exploratory data work**: timebox a throwaway **spike** to learn what the behavior even is — then discard the spike code and TDD the real thing with what you learned.
+- **Throwaway prototypes**: if the code won't outlive the question it answers, skip the tests.
+
+A spike is not an excuse to skip TDD on code you keep: spike code gets deleted, kept code gets tests.
 
 ## Checklist Per Cycle
 
 ```
+[ ] Interface sketched before tests run (dummies ok, provisional)
+[ ] Every RED test observed failing on an assertion, for its intended reason
 [ ] Test describes behavior, not implementation
 [ ] Test uses public interface only
 [ ] Test would survive internal refactor
-[ ] Code is minimal for this test
+[ ] Code is minimal for these tests
 [ ] No speculative features added
 ```
 

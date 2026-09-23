@@ -1,4 +1,7 @@
-// sessions-retro.js — pi-subagents workflow script
+// sessions-retro — pi-subagents workflow script
+// Saved-workflow registry copy: ~/.pi/agent/subagent-workflows/sessions-retro/script.js
+// (pi-subagents-workflows package). Canonical repo path:
+// home/.pi/agent/subagent-workflow_sources/sessions-retro/script.js
 //
 // Two-stage session retrospective for ONE working directory:
 //   enumerate (scout) -> parallel per-session digests (scout, fresh context,
@@ -7,10 +10,20 @@
 // File handoff keeps giant transcript text out of task strings and receipts.
 //
 // @args
-//   cwd       string  required — the project whose sessions to review
-//                     (pi stores them under ~/.pi/agent/sessions/--<path>--/,
-//                     per docs/session-format.md; verify encoding on first run)
+//   cwd       string  required — the project whose sessions to review.
+//                     pi stores them under ~/.pi/agent/sessions/--<path>--/,
+//                     i.e. the absolute path with '/' replaced by '-'
+//                     (verified 2026-09-23: /Users/nietaki/repos/grr-fyi ->
+//                     --Users-nietaki-repos-grr-fyi--)
 //   maxSessions number optional (default 4, capped 6) — newest-N session files
+//
+// LAUNCH: /workflow run sessions-retro cwd=/path/to/project
+//   (or pi_subagent_workflow action=run, name=sessions-retro). The registry
+//   injects its own `cwd` = the pi run directory, which is NOT args.cwd — the
+//   project to review must be passed explicitly. Its runner passes only
+//   {workflowScript, cwd} to pi-subagents, so no outer timeoutMs/deadline and
+//   no raised spawn budget; use subagent({workflowScriptPath}) when you need
+//   either. Always detached async.
 //
 // Budget: 1 + maxSessions + 1 children (<= 8; run cap 24, global concurrency 4).
 // No `state` (launch without a mission is fine). Launch it with an explicit
@@ -23,7 +36,7 @@
 
 if (typeof args !== "object" || args === null ||
     typeof args.cwd !== "string" || args.cwd.trim() === "") {
-  throw new Error("sessions-retro: args.cwd is required — the working directory to review, e.g. \"/Users/nietaki/obsidian\"");
+  throw new Error("sessions-retro: args.cwd is required — the working directory to review, e.g. \"/Users/nietaki/repos/grr-fyi\"");
 }
 const targetCwd = args.cwd.trim();
 const maxSessions = Math.min(Math.max(Number(args.maxSessions) || 4, 1), 6);
@@ -134,6 +147,10 @@ const expectedDir = "--" + targetCwd.replace(/^\/+/, "").replace(/\//g, "-") + "
 const list = await runs.run("enumerate", {
   agent: "scout",
   context: "fresh",
+  // scout's `output: context.md` is routed into ~/.pi/agent/sessions/..., which
+  // our permission policy write-denies (~/.pi/*). We consume structuredOutput,
+  // so disable it rather than pay a denied write per child.
+  output: false,
   task: [
     "Enumerate pi session transcripts stored for one project.",
     "Store root: ~/.pi/agent/sessions/ . Expected per-project directory for",
@@ -167,6 +184,7 @@ const digests = await runs.all(files.map((item, idx) => ({
   agent: "scout",
   context: "fresh",
   task: digestTask(item, idx),
+  output: false,   // same ~/.pi write-deny; digests go to /tmp by task text
   outputSchema: digestSpec
 })));
 

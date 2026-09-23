@@ -26,9 +26,11 @@ deliverable is the plan file.
    `Approved: <YYYY-MM-DD>` under the Goal heading — this stamp is what the
    executing workflow checks for. Stop there — do not scaffold or implement.
 
-Next stages are separate on purpose: the `feature-dev.js` workflow
-(`~/.pi/agent/workflows/feature-dev.js`, invoked by asking the agent to run
-it via the subagent tool with `workflowScriptPath`) executes the approved plan
+Next stages are separate on purpose: the `feature-dev` workflow
+(`~/.pi/agent/subagent-workflows/feature-dev/script.js`, registered with the
+pi-subagents-workflows package — run it as `/workflow run feature-dev`, or via
+the subagent tool with `workflowScriptPath` when you need an explicit
+`timeoutMs`/`maxSubagentSpawnsPerRun`) executes the approved plan
 task-by-task with verification rounds. If that workflow does not exist yet,
 implement the approved plan directly or run the packaged `/review-loop` for
 ad-hoc implement→review cycles.

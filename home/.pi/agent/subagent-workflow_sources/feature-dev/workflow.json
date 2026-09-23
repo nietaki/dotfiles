@@ -1,0 +1,25 @@
+{
+  "name": "feature-dev",
+  "description": "Execute an approved feature plan task-by-task with TDD: a fresh worker implements each task, an independent verifier gates it, capped fix rounds, then closing quality + acceptance reviews. Leaves the tree uncommitted for you to review. See README.md for limits.",
+  "parameters": {
+    "planPath": {
+      "type": "string",
+      "default": ".pi/feat/plan.md",
+      "description": "Approved plan (must carry an 'Approved:' stamp), relative to the run cwd"
+    },
+    "maxFixRounds": {
+      "type": "number",
+      "default": 2,
+      "description": "Verifier-driven fix rounds per task before abort (0-5)"
+    },
+    "onlyTasks": {
+      "type": "string[]",
+      "description": "Run only these task ids, e.g. [\"2\",\"3\"] - continue after an abort, or stay inside the spawn budget"
+    },
+    "allowDirty": {
+      "type": "boolean",
+      "default": false,
+      "description": "Proceed even though the tree already has changes outside .pi/ (passed to every auditor as pre-existing). Needed for onlyTasks continuations"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "sessions-retro",
+  "description": "Two-stage retrospective over pi session transcripts for one project: parallel cheap-model per-session digests, then one strong-model synthesis producing a ranked proposal board for the setup. Read-only children; a human decides what to apply. See README.md for limits.",
+  "parameters": {
+    "cwd": {
+      "type": "string",
+      "required": true,
+      "description": "The project whose sessions to review, e.g. /Users/nietaki/repos/grr-fyi (pi stores them under ~/.pi/agent/sessions/--Users-nietaki-repos-grr-fyi--/ - absolute path with '/' replaced by '-')"
+    },
+    "maxSessions": {
+      "type": "number",
+      "default": 4,
+      "description": "Newest-N session files to digest (capped at 6)"
+    }
+  }
+}
