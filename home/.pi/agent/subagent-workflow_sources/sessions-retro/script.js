@@ -197,6 +197,7 @@ const digests = await runs.all(files.map((item, idx) => ({
   task: digestTask(item, idx),
   output: false,   // same ~/.pi write-deny; digests go to /tmp by task text
   outputSchema: digestSpec,
+  timeoutMs: 300_000,  // 5 min per digest — prevent hangs
   ...NO_ACCEPTANCE
 })));
 
@@ -218,6 +219,7 @@ try {
   board = await runs.run("synthesize", {
     agent: "reviewer",
     context: "fresh",
+    model: "openrouter/anthropic/claude-opus-5.5",  // strong model for synthesis judgment
     task: [
       "You are the synthesis judge of a pi session retrospective for " + targetCwd + ".",
       "Digest workers wrote per-session findings as JSON files. Files to read (use your read tool):",
@@ -236,6 +238,7 @@ try {
       " digest(s) were skipped or failed: " + (skipped.length ? skipped.map(s => s.key).join(", ") : "-") + "."
     ].join("\n"),
     outputSchema: boardSpec,
+    timeoutMs: 1_200_000,  // 20 min for synthesis — complex merge + rank
     ...NO_ACCEPTANCE
   });
 } catch (e) {

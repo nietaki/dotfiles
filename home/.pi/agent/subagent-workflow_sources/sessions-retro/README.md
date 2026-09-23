@@ -25,6 +25,19 @@ enumerate (scout: ls ~/.pi/agent/sessions/--<cwd>--/)
 
 Budget: `1 + maxSessions + 1` children (≤ 8), inside the default 24-spawn cap.
 
+## Model tiers
+
+- **Digest workers** (scout): `opencode-go/qwen3.7-plus` — cheap extraction
+- **Synthesis judge** (reviewer): `openrouter/anthropic/claude-opus-5.5` — strong judgment for merging duplicates, ranking by confidence × gain / effort, grounding proposals in evidence
+
+The model override is per-launch, not global — it doesn't change the reviewer tier for other workflows.
+
+## Timeouts
+
+- **Per digest**: 5 minutes (`timeoutMs: 300_000`)
+- **Synthesis**: 20 minutes (`timeoutMs: 1_200_000`)
+- **Outer deadline**: pass `timeoutMs` at launch (e.g. `3_600_000` for 1 hour) — async composites have no default
+
 ## Limits of the `/workflow run` surface
 
 The registry passes only `{workflowScript, cwd}`, so there is **no outer
