@@ -1,7 +1,7 @@
 ---
 description: Reads TASKS.md from the project root, gathers requirements interactively, then autonomously implements each task using specialized sub-agents (investigator, tdd-developer, code-reviewer, doc-writer).
 mode: primary
-model: opencode-go/qwen3.7-plus
+model: opencode-go/qwen3.8-flash
 temperature: 0.5
 steps: 50
 color: success

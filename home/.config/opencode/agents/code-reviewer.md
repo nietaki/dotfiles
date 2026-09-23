@@ -1,7 +1,7 @@
 ---
 description: Reviews implemented code for quality, correctness, and patterns. Runs tests and lint, then makes refactors directly. Use after implementation to verify and improve code quality.
 mode: subagent
-model: opencode-go/qwen3.7-plus
+model: opencode-go/qwen3.8-flash
 steps: 20
 color: warning
 permission:

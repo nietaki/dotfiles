@@ -11,6 +11,24 @@ re-verify before trusting specifics).
   are spent — that is the design, not a bug to work around.
 - To run a role on a different model deliberately, edit `agentOverrides` +
   `modelScope` and reload pi. Check live state with `/subagents-models`.
+- Roster (budget tiering, prices verified 2026-09): cheap bulk on
+  `opencode-go` (qwen3.8-flash, deepseek-v4.1-flash, glm-5.3-flash — $10/mo
+  Go sub), openai gpt models hosted by `openrouter` (gpt-6-luna,
+  gpt-5.6-luna-pro, gpt-5.6-sol — pay-as-you-go; openrouter sol is half the
+  direct-openai price), `vllm-local/qwen3.8-27b` as free local overflow.
+- Model fallback is NOT a feature: each launch resolves one model and a 429 /
+  quota failure is returned, never re-routed (pi-subagents docs/models.md).
+  On such a failure the PARENT relaunches the same task once on the role's
+  fallback model via an explicit per-run `model:` override — no fallback logic
+  belongs in workflow scripts. Per-role chains (main → fallback):
+  - worker → qwen3.8-flash → openrouter/openai/gpt-6-luna
+  - delegate → qwen3.8-flash → opencode-go/deepseek-v4.1-flash
+  - scout → opencode-go/deepseek-v4.1-flash → opencode-go/glm-5.3-flash
+  - researcher → opencode-go/deepseek-v4.1-flash → openrouter/openai/gpt-5.6-luna-pro
+  - reviewer / verifier → openrouter/openai/gpt-5.6-luna-pro → qwen3.8-flash
+  - oracle / evidence-auditor / retro-judge → openrouter/openai/gpt-5.6-sol → openrouter/openai/gpt-5.6-luna-pro
+  Both models of each chain are in `modelScope` (global + agent lists), so
+  the fallback relaunch passes enforcement.
 - The watchdog is deliberately OFF. Its config belongs in Pi settings
   (`subagents.watchdog`), never in `extensions/subagent/config.json`; an invalid
   key there also silently disables launch rules.

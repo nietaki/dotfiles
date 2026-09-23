@@ -2,7 +2,7 @@
 name: retro-judge
 description: Synthesis judge for sessions-retro — grounds digest findings against raw transcripts, merges and ranks a proposal board, and writes the vault report note; the ONLY file it writes is the report path the task names
 tools: read, grep, find, ls, bash, write, contact_supervisor
-model: openrouter/anthropic/claude-opus-5.5
+model: openrouter/openai/gpt-5.6-sol
 thinking: high
 systemPromptMode: replace
 inheritProjectContext: true

@@ -605,7 +605,7 @@ if (!closingBudgetCheck.ok) {
 try {
 const [quality, acceptance] = await runs.all([
   { key: "quality-final", agent: "reviewer", context: "fresh", label: "Closing code-quality review",
-    model: "openrouter/anthropic/claude-opus-5.5",
+    model: "openrouter/openai/gpt-5.6-sol",
     task: closingQualityTask(plan, perTask, dirty), outputSchema: QUALITY_SCHEMA, ...NO_ACCEPTANCE, timeoutMs: TIMEOUT.closing },
   { key: "acceptance-final", agent: "verifier", context: "fresh", label: "Closing acceptance check",
     task: closingAcceptanceTask(plan, tasks, fullRun, dirty), outputSchema: VERIFY_SCHEMA, ...NO_ACCEPTANCE, timeoutMs: TIMEOUT.closing },

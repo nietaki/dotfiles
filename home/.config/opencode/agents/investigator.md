@@ -1,7 +1,7 @@
 ---
 description: Deep codebase exploration and research. Returns structured reports covering affected files, dependencies, existing patterns, APIs, and implementation considerations. Use when context needs to be gathered before implementation or review.
 mode: subagent
-model: opencode-go/qwen3.7-plus
+model: opencode-go/qwen3.8-flash
 steps: 30
 color: info
 permission:

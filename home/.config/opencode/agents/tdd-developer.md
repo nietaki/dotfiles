@@ -1,7 +1,7 @@
 ---
 description: Implements features and fixes using strict vertical-slice TDD. Designs public API, writes failing tests, implements minimal code to pass, then refactors. Use for any feature implementation or bug fix that needs test coverage.
 mode: subagent
-model: opencode-go/qwen3.7-plus
+model: opencode-go/qwen3.8-flash
 steps: 50
 color: success
 permission:

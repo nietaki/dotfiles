@@ -2,7 +2,7 @@
 name: retro-scout
 description: Session-transcript scout for retrospectives — enumerates pi session files via pi_sessions_list and digests parent+child transcripts into bounded evidence
 tools: read, grep, find, ls, bash, write, contact_supervisor, pi_sessions_list
-model: opencode-go/qwen3.7-plus
+model: opencode-go/deepseek-v4.1-flash
 thinking: low
 systemPromptMode: replace
 inheritProjectContext: true

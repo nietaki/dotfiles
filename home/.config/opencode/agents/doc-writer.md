@@ -1,7 +1,7 @@
 ---
 description: Updates project documentation to reflect implemented changes. Covers README, CHANGELOG, inline docs, and any other relevant documentation. Use after implementation and review are complete.
 mode: subagent
-model: opencode-go/qwen3.7-plus
+model: opencode-go/qwen3.8-flash
 steps: 15
 color: accent
 permission:

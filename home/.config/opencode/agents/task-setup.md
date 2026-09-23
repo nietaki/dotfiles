@@ -1,7 +1,7 @@
 ---
 description: Creates TASKS.md template in project root if it doesn't exist. Does not ask questions or modify existing files.
 mode: subagent
-model: opencode-go/qwen3.7-plus
+model: opencode-go/qwen3.8-flash
 steps: 5
 color: secondary
 permission:

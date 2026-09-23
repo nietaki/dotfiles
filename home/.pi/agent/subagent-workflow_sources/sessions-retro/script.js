@@ -299,7 +299,7 @@ try {
   board = await runs.run("synthesize", {
     agent: "retro-judge",
     context: "fresh",
-    model: "openrouter/anthropic/claude-opus-5.5",  // strong model for synthesis judgment
+    model: "openrouter/openai/gpt-5.6-sol",  // strong model for synthesis judgment
     task: [
       "You are the synthesis judge of a pi session retrospective for " + targetCwd + ".",
       "Digest workers wrote per-session findings as JSON files. Files to read (use your read tool):",

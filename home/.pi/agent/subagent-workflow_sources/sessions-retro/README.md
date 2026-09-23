@@ -67,8 +67,8 @@ permission policy, dotfiles stay propose-only.
 
 ## Model tiers
 
-- **Enumerate + digest workers** (retro-scout): `opencode-go/qwen3.7-plus`, pinned in the agent's frontmatter — cheap extraction
-- **Synthesis judge** (retro-judge): `openrouter/anthropic/claude-opus-5.5`, pinned in the agent's frontmatter (and passed per-launch) — strong judgment for merging duplicates, ranking by confidence × gain / effort, grounding proposals in evidence
+- **Enumerate + digest workers** (retro-scout): `opencode-go/deepseek-v4.1-flash`, pinned in the agent's frontmatter — cheap, fast extraction with a 384K output allowance for long transcripts
+- **Synthesis judge** (retro-judge): `openrouter/openai/gpt-5.6-sol`, pinned in the agent's frontmatter (and passed per-launch) — strong judgment for merging duplicates, ranking by confidence × gain / effort, grounding proposals in evidence (fallback if sol is rate-limited: `openrouter/openai/gpt-5.6-luna-pro`)
 
 `retro-judge` is the builtin reviewer's discipline + `write`, scoped to the
 report note — kept a dedicated user agent so the builtin reviewer (code/plan
