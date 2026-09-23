@@ -21,9 +21,9 @@ enumerate (scout: ls ~/.pi/agent/sessions/--<cwd>--/)
   `--Users-nietaki-repos-grr-fyi--` (verified 2026-09-23). The registry injects
   its own `cwd` = the pi run directory, which is **not** `args.cwd`; pass the
   target explicitly.
-- `maxSessions` (default 4, capped at 6) — newest-N transcripts.
+- `maxSessions` (default 6, capped at 16) — newest-N transcripts.
 
-Budget: `1 + maxSessions + 1` children (≤ 8), inside the default 24-spawn cap.
+Budget: `1 + maxSessions + 1` children (≤ 18), inside the default 24-spawn cap.
 
 ## Model tiers
 

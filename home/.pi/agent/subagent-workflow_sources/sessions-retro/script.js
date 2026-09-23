@@ -15,7 +15,7 @@
 //                     i.e. the absolute path with '/' replaced by '-'
 //                     (verified 2026-09-23: /Users/nietaki/repos/grr-fyi ->
 //                     --Users-nietaki-repos-grr-fyi--)
-//   maxSessions number optional (default 4, capped 6) — newest-N session files
+//   maxSessions number optional (default 6, capped 16) — newest-N session files
 //
 // LAUNCH: /workflow run sessions-retro cwd=/path/to/project
 //   (or pi_subagent_workflow action=run, name=sessions-retro). The registry
@@ -39,7 +39,7 @@ if (typeof args !== "object" || args === null ||
   throw new Error("sessions-retro: args.cwd is required — the working directory to review, e.g. \"/Users/nietaki/repos/grr-fyi\"");
 }
 const targetCwd = args.cwd.trim();
-const maxSessions = Math.min(Math.max(Number(args.maxSessions) || 4, 1), 6);
+const maxSessions = Math.min(Math.max(Number(args.maxSessions) || 6, 1), 16);
 
 // Every schema-bound child gets acceptance disabled. OMITTING `acceptance`
 // makes pi-subagents infer a level ("attested" for scout/reviewer, "checked"

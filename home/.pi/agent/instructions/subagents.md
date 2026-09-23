@@ -37,6 +37,8 @@ re-verify before trusting specifics).
   values persist as evidence — never secrets. Relative `workflowScriptPath`
   resolves against request cwd — prefer absolute.
 - Run `action: "validate"` before first real execution.
+- Launch every child that has an `outputSchema` with `acceptance: false`. If you leave it out, pi-subagents guesses an acceptance level and adds an "Acceptance Contract" asking for an `acceptanceReport`, which `structured_output` has no field for, so the child fails validation. Details: gotcha #30 in `Pi-subagents workflow authoring.md`.
+- `toolBudget.block` only activates AFTER the hard budget is exceeded — it guards against overruns, not a standing deny-list. To keep a child read-only or no-edit for its whole run, use a custom agent whose `tools:` allowlist leaves out edit/write (ours: `verifier`, see gotcha #25).
 - Prefer returned `output`/`structuredOutput` over shared files; `defaultReads`
   magic files (context.md/plan.md) are a chain-era vestige — solo runs do not
   auto-connect.
@@ -44,8 +46,7 @@ re-verify before trusting specifics).
 ## Visibility & reporting
 - Quote children's verdicts/summaries in the parent reply BEFORE calling
   ask_user_question; embed literal findings/diffs in option `preview`s.
-- After the fact: `/subagent-outputs` (saved reports), `/subagents-fleet`
-  (transcripts), Ctrl+O (live card).
+- After the fact: `/subagent-outputs` (saved reports), `/subagents-fleet` (transcripts; **J/K (Shift+j/k) or PgUp/PgDn scroll the right-hand detail pane**; arrows and j/k only change the selected agent, and the status bar doesn't show the scroll keys), Ctrl+O (live card).
 
 ## Prompt templates (dual surface — decide intent when authoring)
 - `/name` expands the body into the PARENT's prompt; `/prompt-workflow`

@@ -9,8 +9,8 @@
     },
     "maxSessions": {
       "type": "number",
-      "default": 4,
-      "description": "Newest-N session files to digest (capped at 6)"
+      "default": 6,
+      "description": "Newest-N session files to digest (capped at 16)"
     }
   }
 }

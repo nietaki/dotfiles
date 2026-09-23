@@ -18,6 +18,11 @@
   // Consequence worth stating: there is no semantic judgment of commands left.
   // `bash` is allow-all except the denies below, and every other guard is
   // path-shaped, not intent-shaped.
+  //
+  // LIVE: this file is re-read at tool-call time (call-time path resolution,
+  // extension-paths.ts). Edits apply on the NEXT tool call in the current
+  // session, with no /reload or restart. To check a rule, run the command
+  // that was denied again.
   // ==========================================================================
   "permission": {
     "*": "allow",
