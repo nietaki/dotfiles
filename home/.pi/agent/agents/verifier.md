@@ -3,7 +3,7 @@ name: verifier
 description: Fresh-context TDD gate — re-runs the suite, audits test honesty and diffs for a completed implementation task; can never edit files
 tools: read, grep, find, ls, bash, watchdog_diff, contact_supervisor
 model: opencode-go/qwen3.8-flash
-thinking: high
+thinking: medium
 systemPromptMode: replace
 inheritProjectContext: true
 inheritSkills: false

@@ -156,7 +156,27 @@
       // allow above is redundant against `"*": "allow"` but documents intent.
       "~/obsidian/pi_knowledge": "allow",
       "~/obsidian/pi_knowledge/*": "allow",
-      "${TMPDIR}/*": "allow"
+      // pi-subagents' own temp trees: async run dirs (status.json, events.jsonl,
+      // per-child output logs) under $TMPDIR/pi-subagents-uid-<uid>/async-subagent-runs/
+      // and workflow artifacts under $TMPDIR/pi-subagents-<scope>/chain-runs/.
+      // Needed to debug subagent runs (validation errors, child transcripts) from
+      // any cwd. Scoped to `pi-subagents-*` rather than the whole per-user temp
+      // tree so other apps' temp data (sockets, browser profiles, caches) stays
+      // behind the boundary.
+      //
+      // Two spellings because on macOS $TMPDIR is /var/folders/<..>/T/ and the
+      // gate resolves symlinks (/var -> /private/var) — same reason /tmp and
+      // /private/tmp are both listed above. The middle segments are
+      // machine-specific, so they stay wildcards (this file is portable dotfiles).
+      // `*` compiles to a greedy `.*` (crosses `/`), verified in
+      // wildcard-matcher.ts, so one wildcard covers the uid/hash/run-id levels.
+      //
+      // NOTE: the previous `"${TMPDIR}/*"` entry was REMOVED 2026-09-23 — the
+      // matcher only expands `~` (expandHomePath); there is no env-var
+      // expansion, so that rule matched a literal directory named `${TMPDIR}`
+      // and never applied.
+      "/var/folders/*/pi-subagents-*": "allow",
+      "/private/var/folders/*/pi-subagents-*": "allow"
     },
     "skill": {
       "*": "allow"

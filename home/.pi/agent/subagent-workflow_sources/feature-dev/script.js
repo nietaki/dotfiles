@@ -103,6 +103,29 @@ const TIMEOUT = {
   closing: 15 * 60 * 1000,
 };
 
+// EVERY schema-bound child must be launched with acceptance disabled.
+// Omitting `acceptance` makes pi-subagents INFER a level (acceptance.js
+// `inferLevel`): "checked" for agents declaring `acceptanceRole: writer` (the
+// builtin worker), "attested" for everything else (scout, reviewer, our
+// verifier — they declare no role). Any level but "none" injects a ~1.5 KB
+// "## Acceptance Contract" section into the child's prompt that ends with:
+//   "Completion is not accepted from prose alone. End with a structured
+//    acceptance report."
+// But the `structured_output` tool never exposes an `acceptanceReport`
+// property: registerStructuredOutputTool passes `structured.acceptanceReport`,
+// which createStructuredOutputRuntime does not set (it only sets
+// acceptanceReportPath/Required). So the instruction is unsatisfiable through
+// the tool — the model puts `acceptanceReport` INSIDE `value`, our schema's
+// `additionalProperties: false` rejects it, and it retries. Observed on 6 of 8
+// children in the 2026-09-23 smoke test (scout, both workers, both verifiers,
+// closing reviewer), three error families. `acceptance: false` -> level "none"
+// -> formatAcceptancePrompt returns "" (verified: 0 chars injected, was 1555
+// for worker / 1516 for the others). We lose nothing: our evidence contract is
+// the task text + these schemas, and we never read acceptance reports.
+// Also cheaper per child — "checked" additionally demanded changed-files,
+// tests-added, commands-run, residual-risks and no-staged-files evidence.
+const NO_ACCEPTANCE = { acceptance: false };
+
 // Only `approved`, `treeClean` and `blockers` are required so a missing or
 // unapproved plan can return a clean NO-GO without inventing tasks; the
 // remaining fields are checked in JS when approved.
@@ -347,6 +370,7 @@ const dec = await runs.run("decompose", {
   // structuredOutput, so disable the file output explicitly.
   output: false,
   outputSchema: DECOMP_SCHEMA,
+  ...NO_ACCEPTANCE,
   timeoutMs: TIMEOUT.decompose,
 });
 if (!dec.ok || !dec.structuredOutput) {
@@ -407,9 +431,9 @@ for (const [index, t] of tasks.entries()) {
     }
     impl = await runs.run("impl-t" + t.id + "-r" + round, round === 0
       ? { agent: "worker", context: "fresh", skill: "tdd", label: "Implement task " + t.id + ": " + t.title,
-          task: implTaskText(t, plan, dirty), outputSchema: WORKER_SCHEMA, timeoutMs: TIMEOUT.worker }
+          task: implTaskText(t, plan, dirty), outputSchema: WORKER_SCHEMA, ...NO_ACCEPTANCE, timeoutMs: TIMEOUT.worker }
       : { resume: runId, skill: "tdd", label: "Fix task " + t.id + " round " + round,
-          task: fixTaskText(t, plan, v.structuredOutput, round), outputSchema: WORKER_SCHEMA, timeoutMs: TIMEOUT.worker });
+          task: fixTaskText(t, plan, v.structuredOutput, round), outputSchema: WORKER_SCHEMA, ...NO_ACCEPTANCE, timeoutMs: TIMEOUT.worker });
     if (!impl.ok || !impl.structuredOutput || impl.structuredOutput.status === "blocked") break;
     runId = impl.runId || runId; // each resume returns a new runId — follow the latest
     impl.structuredOutput.filesTouched.forEach((f) => files.add(f));
@@ -421,6 +445,7 @@ for (const [index, t] of tasks.entries()) {
       label: "Verify task " + t.id + " round " + round,
       task: verifyTaskText(t, plan, impl.structuredOutput, [...files], red, round, dirty),
       outputSchema: VERIFY_SCHEMA,
+      ...NO_ACCEPTANCE,
       timeoutMs: TIMEOUT.verifier,
     });
     if (!v.ok || !v.structuredOutput || v.structuredOutput.verdict === "PASS") break;
@@ -473,9 +498,9 @@ for (const [index, t] of tasks.entries()) {
 emit("feature-dev: all " + tasks.length + " task(s) verified — closing quality + acceptance checks");
 const [quality, acceptance] = await runs.all([
   { key: "quality-final", agent: "reviewer", context: "fresh", label: "Closing code-quality review",
-    task: closingQualityTask(plan, perTask, dirty), outputSchema: QUALITY_SCHEMA, timeoutMs: TIMEOUT.closing },
+    task: closingQualityTask(plan, perTask, dirty), outputSchema: QUALITY_SCHEMA, ...NO_ACCEPTANCE, timeoutMs: TIMEOUT.closing },
   { key: "acceptance-final", agent: "verifier", context: "fresh", label: "Closing acceptance check",
-    task: closingAcceptanceTask(plan, tasks, fullRun, dirty), outputSchema: VERIFY_SCHEMA, timeoutMs: TIMEOUT.closing },
+    task: closingAcceptanceTask(plan, tasks, fullRun, dirty), outputSchema: VERIFY_SCHEMA, ...NO_ACCEPTANCE, timeoutMs: TIMEOUT.closing },
 ]);
 const q = quality.ok ? quality.structuredOutput : undefined;
 const a = acceptance.ok ? acceptance.structuredOutput : undefined;

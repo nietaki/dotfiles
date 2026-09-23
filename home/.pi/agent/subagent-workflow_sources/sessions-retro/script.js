@@ -41,6 +41,16 @@ if (typeof args !== "object" || args === null ||
 const targetCwd = args.cwd.trim();
 const maxSessions = Math.min(Math.max(Number(args.maxSessions) || 4, 1), 6);
 
+// Every schema-bound child gets acceptance disabled. OMITTING `acceptance`
+// makes pi-subagents infer a level ("attested" for scout/reviewer, "checked"
+// for the writer role), which injects an "## Acceptance Contract" telling the
+// child to "end with a structured acceptance report" — a property the
+// structured_output tool does not expose, so the model stuffs it into `value`
+// and validation retries (6 of 8 children in the 2026-09-23 smoke test).
+// `false` -> level "none" -> nothing injected. Full write-up:
+// ../feature-dev/script.js.
+const NO_ACCEPTANCE = { acceptance: false };
+
 function digestTask(item, idx) {
   const outFile = "/tmp/pi-retro-digest-" + idx + "-" + item.tag + ".json";
   return [
@@ -161,7 +171,8 @@ const list = await runs.run("enumerate", {
     "size in KiB, and tag = filename without extension, truncated to 40 chars, unique per row.",
     "READ-ONLY; never modify anything."
   ].join("\n"),
-  outputSchema: listSpec
+  outputSchema: listSpec,
+  ...NO_ACCEPTANCE
 });
 
 const all = ((list && list.structuredOutput && list.structuredOutput.files) || []);
@@ -185,7 +196,8 @@ const digests = await runs.all(files.map((item, idx) => ({
   context: "fresh",
   task: digestTask(item, idx),
   output: false,   // same ~/.pi write-deny; digests go to /tmp by task text
-  outputSchema: digestSpec
+  outputSchema: digestSpec,
+  ...NO_ACCEPTANCE
 })));
 
 const settled = digests
@@ -223,7 +235,8 @@ try {
       "Context also true (from the orchestration, not to be re-verified): " + skipped.length +
       " digest(s) were skipped or failed: " + (skipped.length ? skipped.map(s => s.key).join(", ") : "-") + "."
     ].join("\n"),
-    outputSchema: boardSpec
+    outputSchema: boardSpec,
+    ...NO_ACCEPTANCE
   });
 } catch (e) {
   boardError = String(e && e.message ? e.message : e).slice(0, 300);
