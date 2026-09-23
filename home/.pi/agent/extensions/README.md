@@ -77,9 +77,11 @@ surface = `path` deny + `path_read` allow (and drop it from
   Edits to instruction files need a restart or `/reload`.
 - `subagent-outputs.ts` — `/subagent-outputs [filter]`: TUI browser over
   pi-subagents child output artifacts (picker, then a manual-windowed
-  markdown scroller; see the layout-engine story in
-  `../docs/pi-subagents-onboarding-notes.md`). Reads files only — never
-  invokes the model.
+  markdown scroller: a nested ScrollView never works inside pi's
+  `editorContainer` — it's invisible to the layout engine, so `updateLayout()`
+  is never called and `scrollBy()` clamps to a no-op; hence render-to-lines,
+  slice a `tui.terminal.rows`-height window, redraw via `tui.requestRender()`).
+  Reads files only — never invokes the model.
 - This README — the reasoning.
 
 ## Settings notes
@@ -88,7 +90,10 @@ surface = `path` deny + `path_read` allow (and drop it from
   (`npm:name@ver`) — pinned specs are skipped by `pi update --extensions`.
   Unpin with `pi install npm:<pkg>` (no version) when you deliberately want an
   update. Currently floating on purpose: `rpiv-ask-user-question`,
-  `betterwright`, `pi-subagents`.
+  `betterwright`, `pi-subagents`, `@juicesharp/rpiv-todo`.
+- `@juicesharp/rpiv-todo` — "A todo list for the model, rendered as a live
+  overlay that survives /reload and conversation compaction." Added 2026-09-23
+  for model-side task tracking with persistent visibility.
 - Skills live in `~/.agents/skills/` (repo-tracked, the harness-neutral Agent
   Skills location pi auto-discovers) — no settings entry needed.
 

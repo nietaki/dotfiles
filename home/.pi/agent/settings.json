@@ -13,7 +13,8 @@
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:@henryqw/pi-footer@1.1.1",
     "npm:betterwright",
-    "npm:pi-subagents"
+    "npm:pi-subagents",
+    "npm:@juicesharp/rpiv-todo"
   ],
   "subagents": {
     "modelScope": {
@@ -30,7 +31,8 @@
       "agents": {
         "reviewer": {
           "allow": [
-            "openrouter/anthropic/claude-opus-5"
+            "openrouter/anthropic/claude-opus-5",
+            "opencode-go/qwen3.8-flash"
           ]
         },
         "oracle": {
@@ -72,7 +74,7 @@
     },
     "agentOverrides": {
       "reviewer": {
-        "model": "openrouter/anthropic/claude-opus-5"
+        "model": "opencode-go/qwen3.8-flash"
       },
       "oracle": {
         "model": "openrouter/anthropic/claude-opus-5"
