@@ -89,7 +89,7 @@ Include whatever fits the note's type:
 - **Formatting:** tables for comparisons, fenced code blocks with language hints (```` ```bash ````), task lists `- [x]` / `- [ ]` for checklists, `##`-headed sections (never skip H1).
 - No HTML, no Dataview inline fields (`key:: value`) unless the user asks — plugin-dependent.
 
-## Procedure
+## Procedure for adding a new note
 
 1. Derive target folder (basename of cwd; user overrides win); `mkdir -p` if needed.
 2. Check the folder + vault-wide filename uniqueness; update an existing note instead of duplicating.

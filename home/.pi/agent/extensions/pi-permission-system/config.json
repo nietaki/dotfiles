@@ -64,6 +64,7 @@
       // inside the workspace, and `homeshick link` / `pi install` / `npm` do
       // their writes as child processes, which this gate never sees. Reads are
       // restored in `path_read` below.
+      "~/.pi/agent/prompts/*": "allow",
       "~/.pi/*": "deny",
       "~/obsidian/pi_knowledge/*": "allow"
     },

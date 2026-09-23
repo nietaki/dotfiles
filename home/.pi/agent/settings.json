@@ -15,7 +15,8 @@
     "npm:betterwright",
     "npm:pi-subagents",
     "npm:@juicesharp/rpiv-todo",
-    "npm:pi-subagents-workflows@0.2.1"
+    "npm:pi-subagents-workflows@0.2.1",
+    "npm:pi-prompt-template-model"
   ],
   "subagents": {
     "modelScope": {
@@ -144,5 +145,14 @@
         "disabled": true
       }
     }
-  }
+  },
+  "enabledModels": [
+    "opencode-go/qwen3.8-flash",
+    "opencode-go/glm-5.3-flash",
+    "opencode-go/deepseek-v4.1-flash",
+    "openrouter/openai/gpt-6-luna",
+    "openrouter/openai/gpt-5.6-luna",
+    "openrouter/openai/gpt-5.6-luna-pro",
+    "openrouter/openai/gpt-5.6-sol"
+  ]
 }
