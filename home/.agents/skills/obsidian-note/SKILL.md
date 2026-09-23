@@ -7,6 +7,8 @@ description: "Create or update knowledge notes in the user's Obsidian vault at ~
 
 Capture what a session uncovered into the user's Obsidian vault for future reference by the user or by agents.
 
+The invoking prompt decides why the note is being created, what session material to emphasize, and whether clarification is needed. This skill governs vault safety, placement, deduplication, Obsidian formatting, and verified writes. Do not repeat an interview already completed by the invoking prompt.
+
 ## Vault location & access rules
 
 - Vault root: `~/obsidian/pi_knowledge/` — the **only** part of the vault the agent may read or write.
@@ -24,14 +26,14 @@ Capture what a session uncovered into the user's Obsidian vault for future refer
 
 - Descriptive Title Case, **no date prefix**: `DMARC policy graduation - nietaki.com.md`. The date lives in frontmatter.
 - Avoid `# ^ [ ] | " \ : / < >` in filenames — they break wikilinks. Spaces and hyphens are fine.
-- Wikilinks resolve by filename vault-wide, so filenames must stay unique across all subfolders. Check with `ls ~/obsidian/pi_knowledge/*/ | grep -i "<key phrase>"` before inventing a title.
+- Wikilinks resolve by filename vault-wide, so filenames must stay unique across all subfolders. Search recursively with `find ~/obsidian/pi_knowledge/ -type f -name '*.md' -print | rg -i -- '<key phrase>'`, then read plausible matches before deciding whether to update or create.
 
 ## Note template
 
 ```markdown
 ---
 title: "Short descriptive title"
-date: 2026-09-22
+date: YYYY-MM-DD
 tags: [topic/subtopic, another-tag]
 status: active
 ---
@@ -56,11 +58,13 @@ Gaps noticed while writing. Do NOT go research them.
 Links actually used during the session.
 ```
 
-`status` values: `active` (working doc), `done` (plan executed), `stale` (needs re-verification).
+Replace `YYYY-MM-DD` with the current local date. `status` values: `active` (working doc), `done` (plan executed), `stale` (needs re-verification).
 
 ## Content rules
 
 **Self-contained test:** a reader with zero access to the conversation must be able to act on the note. State the original problem, the constraints that mattered, what was verified vs assumed, and what to do next.
+
+**Shared-reader test:** remove conversational shorthand such as “as discussed,” “above,” or unexplained “we.” Expand project-specific acronyms on first use, separate verified facts from recommendations, and omit secrets or irrelevant private session details.
 
 **Document, don't research:** the note records what the session already uncovered. Never do new web searches, tool calls for discovery, or codebase exploration *for the note itself*. Re-verify a fact only if it is trivial and cheap (one `dig`, one `ls`). Found a gap while writing? Add it to `Open questions` and move on.
 
@@ -72,7 +76,7 @@ Include whatever fits the note's type:
 | Workflow / how-to | Exact tools and commands as used, example usage where relevant, pitfalls hit during the session |
 | Plan / implementation | Ordered steps with timeline, the effect each change causes (good and bad), a task checklist with `- [ ]` items to tick off later |
 | Troubleshooting / incident | Symptoms, root cause, fix, how it was confirmed working |
-| Reference | Verified date for every fact, authoritative online sources |
+| Reference | Dates for time-sensitive claims, authoritative sources actually used during the session, and unverified gaps under Open questions |
 
 ## Obsidian syntax guide
 
@@ -89,17 +93,19 @@ Include whatever fits the note's type:
 - **Formatting:** tables for comparisons, fenced code blocks with language hints (```` ```bash ````), task lists `- [x]` / `- [ ]` for checklists, `##`-headed sections (never skip H1).
 - No HTML, no Dataview inline fields (`key:: value`) unless the user asks — plugin-dependent.
 
-## Procedure for adding a new note
+## Procedure for adding or updating a note
 
 1. Derive target folder (basename of cwd; user overrides win); `mkdir -p` if needed.
-2. Check the folder + vault-wide filename uniqueness; update an existing note instead of duplicating.
-3. Write the note with the `write` tool, following the template and type checklist.
-4. Verify the write (`head` the file or read it back) and report the full path to the user.
-5. If updating an existing note, preserve its structure and frontmatter date semantics (keep original `date`, add an `updated:` key).
+2. Check the folder and vault-wide filename uniqueness; read plausible matches and update an existing note instead of duplicating.
+3. For a new note, use `write` and follow the template and type checklist.
+4. For an existing note, read it in full and make targeted changes with `edit`. Never overwrite existing content wholesale unless the operator explicitly requests a rewrite. Preserve its structure and frontmatter date semantics: keep the original `date` and add or update an `updated:` key.
+5. Default to changing only the primary note. Edit a related index or linking note only when the operator or invoking prompt authorizes it and the change materially improves discoverability. Read it first and keep the edit minimal.
+6. Verify every written file by reading it back. Report the full path of the primary note and every additional path changed.
 
 ## Never
 
 - Write outside `~/obsidian/pi_knowledge/`.
+- Edit related notes without authorization from the operator or invoking prompt.
 - Delete or restructure other notes unless explicitly asked.
 - Trigger this skill for note-taking destinations other than this vault (repo-local docs/READMEs are ordinary file edits, not skill work).
 - Pad notes with unverified filler to match a template — omit sections that don't apply.
