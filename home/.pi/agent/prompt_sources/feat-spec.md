@@ -18,10 +18,18 @@ deliverable is the plan file.
 2. Run the test command (once you know it from the scout) to confirm the suite
    is currently green. If it's red, stop and report — do not proceed until the
    baseline is green.
-3. Interview me with ask_user_question: 2-4 questions on the genuinely open
-   decisions the scout surfaced (scope edges, API shape, compatibility,
-   priority). Embed the scout's literal findings as options[].preview — do not
-   paraphrase them.
+3. Interview me with ask_user_question about the genuinely open decisions the
+   scout surfaced (scope edges, API shape, compatibility, priority). First
+   present the relevant findings and any context needed to understand the
+   decision and its trade-offs. Then ask 2-4 concise, single-decision
+   questions. Use short option labels for the suggested approaches (mark the
+   recommended one when there is a clear recommendation), with brief
+   descriptions only where needed. Do not turn the scout's findings into
+   long, context-free option text; use the question, descriptions, or
+   options[].preview to provide context and concrete comparisons. Ground the
+   choices in the scout's findings, but summarize or quote them as appropriate.
+   The built-in custom-answer choice should remain available so I can propose
+   a different approach.
 4. Write `.pi/feat/plan.md` in this repo (create `.pi/feat/` if needed) with
    this structure:
 
