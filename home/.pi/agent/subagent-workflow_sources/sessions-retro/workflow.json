@@ -1,6 +1,6 @@
 {
   "name": "sessions-retro",
-  "description": "Two-stage retrospective over pi session transcripts for one project: parallel cheap-model per-session digests, then one strong-model synthesis producing a ranked proposal board for the setup. Read-only children; a human decides what to apply. See README.md for limits.",
+  "description": "Retrospective over pi session transcripts for one project: enumerate via the pi_sessions_list tool (parents + nested child subagent sessions), parallel cheap-model per-parent digests that also mine children for evidence, then a strong-model synthesis that grounds, merges and ranks a proposal board and writes the report note into ~/obsidian/pi_knowledge/sessions-retro/, returning its path. Read-only children except the report note; a human decides what to apply. See README.md for limits.",
   "parameters": {
     "cwd": {
       "type": "string",
@@ -10,7 +10,12 @@
     "maxSessions": {
       "type": "number",
       "default": 6,
-      "description": "Newest-N session files to digest (capped at 16)"
+      "description": "Newest-N PARENT sessions to digest (capped at 16); each parent's child (subagent) transcripts ride along in its digest worker"
+    },
+    "noteDir": {
+      "type": "string",
+      "required": false,
+      "description": "Vault directory for the report note (default /Users/nietaki/obsidian/pi_knowledge/sessions-retro)"
     }
   }
 }

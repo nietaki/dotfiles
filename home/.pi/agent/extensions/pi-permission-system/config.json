@@ -5,8 +5,19 @@
   //
   // This file is the whole permission system now. pi's `tool_call` handlers
   // can only *block* (an "allow" is silence, not a grant), so the surfaces
-  // below compose as an intersection: `path` → `external_directory` →
-  // per-tool → `bash`, most-restrictive-wins, symlink-aware.
+  // below compose as an intersection: `path`/`path_read` →
+  // `external_directory`/`external_directory_read` → per-tool → `bash`,
+  // most-restrictive-wins, symlink-aware.
+  //
+  // DECODING A DENIAL (bash): the gate classifies each path token by the
+  // command's effect. Proven reads (ls, cat, head, read/grep/find tools) are
+  // checked against the *_read maps; everything else (jq <file>, readlink,
+  // test, unknown scripts) is checked against the bare/write maps.
+  //   'external_directory_read' rule '*' → even a proven read is outside every read carve-out.
+  //   'external_directory' rule '*'      → the command isn't a proven read and the path is outside cwd; read carve-outs don't apply.
+  //   'path' rule '~/.pi/*'              → the command isn't a proven read on the read-only pi tree.
+  // KEYS: only a leading `~` is expanded (expandHomePath). $VARS / ${TMPDIR}
+  // match literally, so use absolute or `~` paths.
   //
   // Removed 2026-09: the two layers that used to sit on top of this one —
   // `@pedro_klein/pi-modes` + `pi-readonly-bash` (per-mode tool substitution,
@@ -105,7 +116,22 @@
       // without any write reach. auth.json is excluded by the `path_read`
       // deny, which composes as the stricter answer.
       "~/.pi": "allow",
-      "~/.pi/*": "allow"
+      "~/.pi/*": "allow",
+      // homeshick-linked user scripts (hslink, hsunlink, pi-sessions, ...).
+      // What this DOES fix (source-verified 2026-09-23,
+      // handlers/gates/external-directory-policy.ts): proven-read tokens —
+      // `ls ~/bin`, `cat ~/bin/hslink`, read/grep/`find` over the scripts —
+      // are selected onto this read surface by their effect, so debugging
+      // what a bare-name command actually runs works from any cwd.
+      // What it does NOT fix: full-path INVOCATION (`~/bin/x args`). Unknown
+      // commands are unproven-effect, so their path tokens go to the bare
+      // `external_directory` family ("*": deny) and only a write-map allow
+      // would open that — deliberately not done: ~/bin/* are symlinks into
+      // the dotfiles repo and script writes belong there via git. Invoke
+      // these scripts by bare name (PATH lookup; the command token is not a
+      // path and is never inspected).
+      "~/bin": "allow",
+      "~/bin/*": "allow"
     },
     "external_directory": {
       // CWD-boundary gate (need #3 continued): reaching outside the

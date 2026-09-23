@@ -37,6 +37,7 @@ re-verify before trusting specifics).
   values persist as evidence — never secrets. Relative `workflowScriptPath`
   resolves against request cwd — prefer absolute.
 - Run `action: "validate"` before first real execution.
+- Execute with `subagent({ workflowScriptPath: "<absolute>", args: { … }, async: true, timeoutMs: … })` and NO `action` — only `validate` and `schedule.create` take `action` together with a workflow script; `action: "run"` is rejected. Always pass the script's required `args`: a missing `args` still launches, then fails on the script's guard.
 - Launch every child that has an `outputSchema` with `acceptance: false`. If you leave it out, pi-subagents guesses an acceptance level and adds an "Acceptance Contract" asking for an `acceptanceReport`, which `structured_output` has no field for, so the child fails validation. Details: gotcha #30 in `Pi-subagents workflow authoring.md`.
 - `toolBudget.block` only activates AFTER the hard budget is exceeded — it guards against overruns, not a standing deny-list. To keep a child read-only or no-edit for its whole run, use a custom agent whose `tools:` allowlist leaves out edit/write (ours: `verifier`, see gotcha #25).
 - Prefer returned `output`/`structuredOutput` over shared files; `defaultReads`
@@ -46,6 +47,11 @@ re-verify before trusting specifics).
 ## Visibility & reporting
 - Quote children's verdicts/summaries in the parent reply BEFORE calling
   ask_user_question; embed literal findings/diffs in option `preview`s.
+  The quote must be a visible text block in the same assistant message as
+  the ask_user_question call. Thinking, earlier tool results, and short
+  option `description`s do not count, because the user never sees them.
+  If the user says they didn't see the results, answer in plain chat text
+  first and only then ask again.
 - After the fact: `/subagent-outputs` (saved reports), `/subagents-fleet` (transcripts; **J/K (Shift+j/k) or PgUp/PgDn scroll the right-hand detail pane**; arrows and j/k only change the selected agent, and the status bar doesn't show the scroll keys), Ctrl+O (live card).
 
 ## Prompt templates (dual surface — decide intent when authoring)
