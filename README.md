@@ -7,12 +7,14 @@ I'm automating it with [puter](https://github.com/nietaki/puter)
 
 ### `pi`
 
-- [ ] models matching prompts
-- [ ] simple prompts augmenting the workflow
+- [x] models matching prompts
+- [x] simple prompts augmenting the workflow
   - [ ] creating a plan markdown file
-  - [ ] reviewing what I say
-  - [ ] ...
-- [ ] automatic model fallbacks plugin?
-- [ ] favourite models?
+  - [x] reviewing what I say
+  - [x] creating a prompt template
+  - [x] creating an onyx note
+- [ ] ~~automatic model fallbacks plugin?~~ probably not needed
+- [x] favourite models? - built in with scoped models
 - [ ] TODO based implementation loop?
-- [ ] verify skill discovery
+  - better yet a plan-based foreground implementation loop
+- [x] verify skill discovery
