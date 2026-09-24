@@ -7,7 +7,7 @@ description: Interview the user about a proposed plan or design until reaching s
 
 Interview me about the plan until we reach shared understanding — but only about **material** decisions. A question is material when the answer changes product scope, behavior, compatibility, security, migration, operations, or an irreversible architectural choice.
 
-Walk the design tree branch by branch, resolving dependencies between decisions, one question at a time. For each question, provide your recommended answer.
+Walk the design tree branch by branch, resolving dependencies between decisions, asking no more than 3 questions at a time. For each question, provide your recommended answer.
 
 Before asking anything, explore the codebase (and docs, history, config): if repository evidence or a sensible default can answer it, resolve it yourself and state what you found instead of asking.
 

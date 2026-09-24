@@ -16,7 +16,8 @@
     "npm:pi-subagents",
     "npm:@juicesharp/rpiv-todo",
     "npm:pi-subagents-workflows@0.2.1",
-    "npm:pi-prompt-template-model"
+    "npm:pi-prompt-template-model",
+    "npm:pi-web-access@0.31.0"
   ],
   "subagents": {
     "modelScope": {

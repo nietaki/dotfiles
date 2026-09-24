@@ -1,0 +1,36 @@
+{
+  "webSearch": {
+    "enabled": true,
+    "allowedProviders": ["exa", "brave"]
+  },
+  "tools": {
+    "webSearch": { "enabled": true },
+    "sourceCheck": { "enabled": true },
+    "fetchContent": { "enabled": true },
+    "getSearchContent": { "enabled": true }
+  },
+  "commands": {
+    "websearch": { "enabled": false },
+    "curator": { "enabled": false },
+    "search": { "enabled": false },
+    "google-account": { "enabled": false }
+  },
+  "workflow": "none",
+  "fetchRouting": {
+    "allowRemoteHostedProviders": false
+  },
+  "allowBrowserCookies": false,
+  "githubClone": {
+    "enabled": true,
+    "maxRepoSizeMB": 350,
+    "cloneTimeoutSeconds": 30,
+    "clonePath": "/tmp/pi-github-repos"
+  },
+  "githubPrIssue": {
+    "enabled": false
+  },
+  "image": { "enabled": false },
+  "pdf": { "enabled": false },
+  "youtube": { "enabled": false },
+  "video": { "enabled": false }
+}

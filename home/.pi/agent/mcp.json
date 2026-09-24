@@ -47,15 +47,27 @@
       "url": "https://mcp.grep.app"
     },
     "brave-search": {
+      // PARKED (migrated to pi-web-access): web search now runs through the
+      // pinned npm:pi-web-access extension and its web_search tool, configured
+      // in ~/.pi/agent/web-search.json (providers: exa + brave, credentials from
+      // the BRAVE_API_KEY env var — same wiring as below). Re-enable: flip
+      // "disabled" to false, restart pi, and remove/adjust the pi-web-access
+      // package + instructions/search.md so agents stop using the extension.
       "command": "npx",
       "args": ["-y", "@brave/brave-search-mcp-server"],
       "env": {
         "BRAVE_API_KEY": "{env:BRAVE_API_KEY}"
       },
-      "excludeTools": ["brave_image_search", "brave_video_search"]
+      "excludeTools": ["brave_image_search", "brave_video_search"],
+      "disabled": true
     },
     "exa": {
-      "url": "https://mcp.exa.ai/mcp?api_key={env:EXA_API_KEY}"
+      // PARKED (migrated to pi-web-access): Exa is now one of the two allowed
+      // search providers inside pi-web-access, keyed from the EXA_API_KEY env
+      // var (see ~/.pi/agent/web-search.json). Re-enable: flip "disabled" to
+      // false, restart pi, and retire the pi-web-access package + instructions.
+      "url": "https://mcp.exa.ai/mcp?api_key={env:EXA_API_KEY}",
+      "disabled": true
     },
     "openzim": {
       // PARKED: only reachable on the home LAN (beehive.internal).
