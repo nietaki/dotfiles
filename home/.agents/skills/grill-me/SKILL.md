@@ -5,13 +5,24 @@ description: Interview the user about a proposed plan or design until reaching s
 
 ## What to do
 
-Interview me relentlessly about every aspect of the plan until we reach a shared understanding.
-Walk down each branch of the design tree, resolving dependencies between decisions one-by-one.
-For each question, provide your recommended answer.
+Interview me about the plan until we reach shared understanding — but only about **material** decisions. A question is material when the answer changes product scope, behavior, compatibility, security, migration, operations, or an irreversible architectural choice.
 
-Ask the questions one at a time.
+Walk the design tree branch by branch, resolving dependencies between decisions, one question at a time. For each question, provide your recommended answer.
 
-If a question can be answered by exploring the codebase, explore the codebase instead.
+Before asking anything, explore the codebase (and docs, history, config): if repository evidence or a sensible default can answer it, resolve it yourself and state what you found instead of asking.
+
+**Record every decision** as you go: the choice made, its rationale, and the rejected alternatives worth remembering.
+
+### Stopping rule
+
+Stop the interview once all of these are agreed:
+
+- [ ] Goals and non-goals
+- [ ] Acceptance criteria (how we'll know it works)
+- [ ] Major trade-offs and their rationale
+- [ ] Remaining risks acknowledged
+
+When I can't answer a low-level implementation question, don't grind — mark it as an open question for the implementer with your recommendation, and move on. List unresolved questions explicitly at the end rather than inventing answers.
 
 ## When to use the skill
 

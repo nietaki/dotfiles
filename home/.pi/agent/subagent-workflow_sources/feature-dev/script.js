@@ -7,7 +7,8 @@
 //   decompose (fresh scout, outputSchema: checks the 'Approved:' stamp and
 //   that the working tree is clean)
 //   -> per task, serially: a FRESH `worker` implements it (tdd skill, sole
-//      writer, designs the interface sketch itself, RED = assertion-level
+//      writer, designs the interface sketch itself, RED = intended-reason
+//      failure (assertion once the path is runnable)
 //      evidence) -> fresh `verifier` (custom agent: bash + watchdog_diff, NO
 //      edit/write tools) re-runs the suite and audits test honesty
 //   -> FAIL resumes THAT task's worker with the literal findings (capped
@@ -287,8 +288,8 @@ function implTaskText(t, plan, dirty) {
     preexistingNote(dirty),
     "",
     "METHOD — strict test-driven development per your loaded tdd skill, with one override: the approved plan IS the skill's Planning step (step 1). Do NOT ask anyone to confirm the interface or which behaviors to test — the acceptance criteria above are the approved behaviors. Start at the Interface Sketch.",
-    "1. Sketch the public interface this task needs first (signatures/types with dummy implementations so the project builds and tests fail on assertions, not missing symbols). Keep the sketch provisional.",
-    "2. Vertical slices: one behavior or one small cohesive cluster per cycle. RED: write the test(s), RUN them, observe each fail on an ASSERTION for its intended reason — keep the exact failure output. GREEN: minimal code to pass. Never write all tests before all implementation.",
+    "1. Sketch the public interface this task needs first (signatures/types as declarations or fixtures so the test path resolves; production dummies only as a last resort, removed in GREEN). Keep the sketch provisional.",
+    "2. Vertical slices: one behavior or one small cohesive cluster per cycle. RED: write the test(s), RUN them, observe each fail FOR ITS INTENDED REASON — an assertion failure once the path is runnable (a compile/import failure only counts while you are still establishing this test's interface sketch; extend it minimally, re-run, then require the assertion failure) — keep the exact failure output. GREEN: minimal code to pass. Never write all tests before all implementation.",
     "3. Refactor while staying green; when the task's behaviors are covered, run the FULL suite with the command above — it must pass.",
     "4. Do NOT commit anything. Leave the working tree dirty on purpose; a fresh-context verifier audits it next.",
     "Skill escape hatches: only 'pure config / glue code' may skip test-first here, and only for the part that genuinely has no testable behavior; spikes must be deleted before you finish. Every use must be reported as a concerns entry 'TDD-EXCEPTION: <file/part> — <why> — <how you verified it instead>'. Anything covered by an acceptance criterion always needs a test.",
@@ -331,7 +332,7 @@ function verifyTaskText(t, plan, impl, files, red, round, dirty) {
     "WORKER CLAIMS:",
     "- summary: " + impl.summary,
     "- behaviorsCovered: " + impl.behaviorsCovered.join(" | "),
-    "- redEvidence (claims each of these was seen failing on an assertion; prefix = round):",
+    "- redEvidence (claims each of these was seen failing for its intended reason — assertion once runnable; prefix = round):",
     ...(red.length ? red.map((e) => "  - " + e) : ["  - (none claimed)"]),
     "- concerns: " + (impl.concerns && impl.concerns.length ? impl.concerns.join(" | ") : "(none)"),
     "- suiteOutput (claimed): " + impl.suiteOutput,

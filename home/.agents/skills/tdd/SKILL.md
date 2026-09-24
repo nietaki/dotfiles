@@ -9,9 +9,9 @@ description: Test-driven development with red-green-refactor loop.
 
 **Core principle**: Tests should verify behavior through public interfaces, not implementation details. Code can change entirely; tests shouldn't.
 
-**Good tests** are integration-style: they exercise real code paths through public APIs. They describe _what_ the system does, not _how_ it does it. A good test reads like a specification - "user can checkout with valid cart" tells you exactly what capability exists. These tests survive refactors because they don't care about internal structure.
+**Good tests** verify observable behavior through public interfaces rather than private implementation details. For pure or deterministic domain logic, a focused unit test through the public API is fine; reach for integration-style tests — exercising real code paths through public APIs — where collaboration, persistence, authorization, or serialization is part of the contract. A good test reads like a specification - "user can checkout with valid cart" tells you exactly what capability exists. These tests survive refactors because they don't care about internal structure.
 
-**Bad tests** are coupled to implementation. They mock internal collaborators, test private methods, or verify through external means (like querying a database directly instead of using the interface). The warning sign: your test breaks when you refactor, but behavior hasn't changed. If you rename an internal function and tests fail, those tests were testing implementation, not behavior.
+**Bad tests** are coupled to implementation. They mock internal collaborators to assert on call sequences, test private methods, or verify internals that aren't the behavior under test (e.g. peeking at a database to check plumbing when the interface already exposes the result). The warning sign: your test breaks when you refactor, but behavior hasn't changed. If you rename an internal function and tests fail, those tests were testing implementation, not behavior. Exception: when persistence, transactions, or durability *are* the behavior under test, asserting on the store directly is legitimate — a response-only assertion could miss state that was never actually saved.
 
 ## Anti-Pattern: Horizontal Slices
 
@@ -56,7 +56,7 @@ Ask: "What should the public interface look like? Which behaviors are most impor
 
 ### 2. Interface Sketch
 
-Before the first test, sketch the public interface this piece of work needs: signatures, types, error shapes — with dummy implementations where necessary. Sketch first deliberately: it makes RED meaningful (the project builds, so tests fail on **assertions**, not on compile errors or missing symbols), and it gives your editor/LSP something to work with while writing tests.
+Before the first test, sketch the public interface this piece of work needs: signatures, types, error shapes. Prefer declarations (types, interfaces, exported no-op signatures) or test fixtures over production dummy behavior — the sketch exists to make the test path resolvable, not to fake results. Sketch first deliberately: it makes RED meaningful (the failure you see is about missing behavior, not about an unresolvable import you didn't plan for), and it gives your editor/LSP something to work with while writing tests.
 
 Treat the sketch as **provisional** — tests and implementation are allowed to reshape it. Extend it minimally, only when the current test demands it; never sketch ahead for future cycles.
 
@@ -65,8 +65,9 @@ Treat the sketch as **provisional** — tests and implementation are allowed to 
 Write ONE test that confirms ONE thing about the system:
 
 ```
-RED:   Write test for first behavior → run it → watch it fail on an
-       assertion, for the intended reason
+RED:   Write test for first behavior → run it → watch it fail for the
+       intended reason (assertion failure, or a compile/import failure
+       while the interface sketch is being established)
 GREEN: Write minimal code to pass → test passes
 ```
 
@@ -77,10 +78,13 @@ This is your "smoke test" - proves the path works end-to-end.
 For each remaining behavior:
 
 ```
-RED:   Write next test(s) → run → watch each fail on an assertion,
-       for its intended reason
-       (missing symbol / compile error instead? extend the interface
-       sketch minimally — only what this test needs — and re-run)
+RED:   Write next test(s) → run → watch each fail for its intended reason:
+       - expected once the path is runnable: an assertion failure
+       - acceptable while establishing the interface: a compile/import/
+         missing-symbol failure → extend the sketch minimally (only what
+         this test needs) and re-run; after that, require the assertion
+         failure
+       - never acceptable: harness, fixture, or environment breakage
 GREEN: Minimal code to pass → passes
 ```
 
@@ -88,8 +92,8 @@ A cycle covers **one behavior, or a small cohesive cluster** of behaviors (e.g. 
 
 Rules:
 
-- Every RED test must be **observed failing on an assertion, for its intended reason** — keep the failure output. A test never seen failing might be testing nothing.
-- Never write a test for a behavior whose interface you haven't sketched (dummies ok).
+- Every RED test must be **observed failing for its intended reason** — keep the failure output. Once the test path is runnable, that means an assertion failure; a transient compile/import failure is only valid as evidence that the interface sketch still needs establishing for *this* test. A test never seen failing might be testing nothing.
+- Never write a test for a behavior whose interface you haven't sketched (declarations or fixtures ok; production dummies only as a last resort, and remove them in GREEN).
 - Only enough code to pass current tests
 - Don't anticipate future tests
 - Keep tests focused on observable behavior
@@ -132,8 +136,8 @@ A spike is not an excuse to skip TDD on code you keep: spike code gets deleted, 
 ## Checklist Per Cycle
 
 ```
-[ ] Interface sketched before tests run (dummies ok, provisional)
-[ ] Every RED test observed failing on an assertion, for its intended reason
+[ ] Interface sketched before tests run (declarations/fixtures, provisional)
+[ ] Every RED test observed failing for its intended reason (assertion once runnable)
 [ ] Test describes behavior, not implementation
 [ ] Test uses public interface only
 [ ] Test would survive internal refactor
