@@ -1,0 +1,69 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gotgenes/pi-packages/main/packages/pi-permission-system/schemas/permissions.schema.json",
+  "debugLog": false,
+  "permissionReviewLog": true,
+  "yoloMode": false,
+  "permission": {
+    "*": "allow",
+    "path": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow",
+      "*.envrc-priv": "deny",
+      "~/.ssh/*": "deny",
+      "~/.pi/agent/prompts/*": "allow",
+      "~/.pi/*": "deny",
+      "~/obsidian/pi_knowledge/*": "allow"
+    },
+    "path_read": {
+      "~/.pi/*": "allow",
+      "~/.local/share/mise/*": "allow",
+      "~/.pi/agent/auth.json": "deny"
+    },
+    "external_directory": {
+      "*": "deny",
+      "~/.agents/skills": "allow",
+      "~/.agents/skills/*": "allow",
+      "~/.local/share/mise": "allow",
+      "~/.local/share/mise/*": "allow",
+      "~/.betterwright": "allow",
+      "~/.betterwright/*": "allow",
+      "~/.bun/bin": "allow",
+      "~/.bun/bin/*": "allow",
+      "~/.bun/install/global/node_modules/betterwright": "allow",
+      "~/.bun/install/global/node_modules/betterwright/*": "allow",
+      "/tmp": "allow",
+      "/tmp/*": "allow",
+      "/private/tmp": "allow",
+      "/private/tmp/*": "allow",
+      "~/obsidian/pi_knowledge": "allow",
+      "~/obsidian/pi_knowledge/*": "allow",
+      "/var/folders/*/pi-subagents-*": "allow",
+      "/private/var/folders/*/pi-subagents-*": "allow"
+    },
+    "external_directory_read": {
+      "~/repos": "allow",
+      "~/repos/*": "allow",
+      "~/go/pkg/mod": "allow",
+      "~/go/pkg/mod/*": "allow",
+      "~/.pi": "allow",
+      "~/.pi/*": "allow",
+      "~/bin": "allow",
+      "~/bin/*": "allow"
+    },
+    "bash": {
+      "*": "allow",
+      "git push *": "deny",
+      "git reset *": "deny"
+    },
+    "mcp": {
+      "*": "allow",
+      "trmnl-plugin": "deny",
+      "trmnl:*": "deny"
+    },
+    "skill": {
+      "*": "allow"
+    }
+  }
+}

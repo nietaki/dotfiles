@@ -33,6 +33,11 @@ surface = `path` deny + `path_read` allow (and drop it from
 ## Files
 
 - `pi-permission-system/config.json` — the policy.
+  - **`authorizerChain: ["session-yolo"]`** (added 2026-09-24) is the opt-in
+    activation for the `session-yolo.ts` ask switch (see *Session-scoped ask
+    switch* below). Naming a link is the only thing that gives it authority; a
+    link that is registered but not named here decides nothing, and a named link
+    that never registered is skipped fail-safe (asks still prompt).
   - **Hard denies** for secrets: `*.env`, `*.env.*` (with `*.env.example`
     allowed back), `*.envrc-priv`, `~/.ssh/*`.
   - **`~/.pi` is read-only, wholesale** (flipped from a broad `allow` + four
@@ -82,9 +87,68 @@ surface = `path` deny + `path_read` allow (and drop it from
   is never called and `scrollBy()` clamps to a no-op; hence render-to-lines,
   slice a `tui.terminal.rows`-height window, redraw via `tui.requestRender()`).
   Reads files only — never invokes the model.
+- `session-yolo.ts` — a **per-session operator switch for `ask` decisions**
+  (prompt / allow / deny), registered as a `pi-permission-system` authorizer
+  link. `/yolo [on|off|allow|deny|toggle|status]` or **Ctrl+Alt+Y** change it; a
+  read-only `session_yolo_status` tool lets the *agent report* the mode (to
+  propose enabling it before a long autonomous run) but never change it; the
+  footer shows the current mode (`ask:prompt` / `ask:auto-allow` /
+  `ask:auto-deny`). Full writeup in *Session-scoped ask switch* below.
 - This README — the reasoning.
 
-## Settings notes
+## Session-scoped ask switch (`session-yolo.ts`)
+
+The package's built-in `yoloMode` auto-approves every ask, but it is a
+*persisted* config knob — the `/permission-system` modal / `save()` writes
+`~/.pi/.../config.json` and it is re-read from disk — so it is neither ephemeral
+nor reliably session-scoped. `session-yolo.ts` adds an in-memory, per-session
+equivalent that **only bypasses the interactive prompt, never the rule engine**.
+
+**Why it can't touch the rules.** `policy/permission-gate.ts::applyPermissionGate`
+escalates to the live-authority chain *only when the deterministic rule resolves
+to `ask`*. A rule `allow` is granted and a rule `deny` blocks with the chain never
+consulted. So registering this link cannot weaken any `allow`/`deny` in
+`config.json`: the `~/.pi` write-deny, the `.env`/`~/.ssh` denies, and the
+`git push`/`git reset` denies all still hold, ask or not. The chain owner also
+wraps the link in a **bounded-delegation envelope**
+(`authority/delegation-envelope.ts`): a link's `allow` on the `path` /
+`external_directory` surface families is downgraded to `defer`. **Consequence:**
+with the current policy (which has zero `ask` rules), the only asks you actually
+hit are the *synthetic bash floors* — `sudo`, `env`, `xargs`, `find -exec`,
+`bash -c`, `eval`, and unparseable commands — and those gate on the `bash`
+surface, which is **not** excluded, so `allow` mode covers exactly the
+autonomous-run pain. A hypothetical future `ask` on a path surface would still
+prompt in `allow` mode; that is a package guardrail we do not defeat.
+
+**Modes** (in-memory; reset to `prompt` whenever the session id changes):
+`prompt` (defer → normal dialog, default) · `allow` (approve permitted asks) ·
+`deny` (reject asks with a teaching reason — a strict/headless posture).
+
+**Service access without importing the package.** The extension reaches the
+session's `PermissionsService` through the documented process-global map keyed by
+`Symbol.for("@gotgenes/pi-permission-system:session-services")` — the same slot
+`getPermissionsService(sessionId)` reads. It does *not* `import` the package:
+`@gotgenes/pi-permission-system` installs under `~/.pi/agent/npm/node_modules`,
+which is **off Node's upward resolution path from `~/.pi/agent/extensions/`**
+(pi-tui / pi-coding-agent / typebox only resolve there because Pi's jiti loader
+*aliases* them; the permission package is not in that alias map). Registration is
+on `permissions:ready` (fires ≥ once per session and repeats; the handler is
+idempotent) with a `before_agent_start` retry. Subagent asks are adjudicated by
+the **serving parent's** mode, so enable it in the interactive session that
+answers prompts.
+
+**Caveat — config.json symlink integrity.** `authorizerChain` lives in
+`config.json`, which must be the homeshick **symlink** into this repo for edits
+here to reach a running agent. The package's own `save()` path does
+`rename(tmp, configPath)`, which **detaches a symlink** and replaces it with a
+regular file — so a `/permission-system` save silently un-tracks this file. Verify
+with `ls -l ~/.pi/agent/extensions/pi-permission-system/config.json` (should be a
+`->` symlink); relink with `hslink` (manual `~/.pi` surgery is blocked by this very
+policy). This was observed broken on 2026-09-24.
+
+**Activate:** `git add home/.pi/agent/extensions/session-yolo.ts`, `hslink` to
+link it, then `/reload` (loads the new `.ts`). The `authorizerChain` config edit is
+picked up on the next config refresh once the symlink points back at the repo.
 
 - `settings.json` optionally pins packages to their installed version
   (`npm:name@ver`) — pinned specs are skipped by `pi update --extensions`.
@@ -103,6 +167,11 @@ surface = `path` deny + `path_read` allow (and drop it from
 - A blocked call prompts through gotgenes (`s` = approve the pattern for the
   session), or fails silently when a `deny` rule matches. Denies on
   `git push` / `git reset` are silent by design.
+- **Session-scoped ask switch** (`session-yolo.ts`): `/yolo` (or Ctrl+Alt+Y)
+  flips how `ask` decisions are handled for this session only — `prompt` is
+  normal, `allow` auto-approves permitted asks, `deny` auto-rejects them. It
+  never changes the rule engine; hard `deny`s still block silently even in
+  `allow` mode. See *Session-scoped ask switch* below.
 - Commands that reach outside the working tree, or touch a denied path token
   however they spell it (`cat ~/.ssh/id_rsa`, `> foo.env`), are blocked.
 - **The agent cannot change its own pi configuration.** Anything under `~/.pi`

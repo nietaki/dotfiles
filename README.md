@@ -9,12 +9,14 @@ I'm automating it with [puter](https://github.com/nietaki/puter)
 
 - [x] models matching prompts
 - [x] simple prompts augmenting the workflow
-  - [ ] creating a plan markdown file
+  - [x] creating a plan markdown file
   - [x] reviewing what I say
   - [x] creating a prompt template
   - [x] creating an onyx note
 - [ ] ~~automatic model fallbacks plugin?~~ probably not needed
 - [x] favourite models? - built in with scoped models
-- [ ] TODO based implementation loop?
+- [x] TODO based implementation loop?
   - better yet a plan-based foreground implementation loop
 - [x] verify skill discovery
+- [x] pi web plugin
+- [ ] https://github.com/kanaka/contagent

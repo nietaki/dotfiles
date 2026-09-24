@@ -1,5 +1,13 @@
 {
   "$schema": "https://raw.githubusercontent.com/gotgenes/pi-packages/main/packages/pi-permission-system/schemas/permissions.schema.json",
+  // session-yolo.ts registers this authorizer link. `/yolo` or Ctrl+Alt+Y pick
+  // a per-session mode for `ask` decisions: prompt (default) / allow / deny.
+  // It resolves ONLY asks — applyPermissionGate runs the chain only when the
+  // rule says `ask`, so every allow/deny rule below still decides for itself.
+  // Opt-in & fail-safe: if the link is ever unregistered, the ask still prompts.
+  // See extensions/session-yolo.ts (path/external_directory `allow`s are capped
+  // back to `defer` by the package, so those asks still prompt).
+  "authorizerChain": ["session-yolo"],
   // ==========================================================================
   // SINGLE-LAYER POLICY — hard, deterministic boundaries for every tool call.
   //
