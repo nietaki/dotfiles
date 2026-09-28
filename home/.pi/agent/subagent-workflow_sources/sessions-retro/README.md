@@ -31,6 +31,13 @@ enumerate (retro-scout: one pi_sessions_list tool call, JSON transcribed verbati
   flags >1 MiB as `oversized` (head/tail sample + grep only).
 - `noteDir` (optional) — vault directory for the report note; default
   `/Users/nietaki/obsidian/pi_knowledge/sessions-retro`.
+- `hint` (optional, ≤ 4000 chars) — freeform operator guidance naming behaviours
+  or hypotheses to make sure to investigate (e.g. `"look for repeated operator
+  corrections and permission friction"`). It is injected into every digest
+  worker and into the synthesis judge as a **prioritisation hint, not evidence**:
+  workers must not manufacture findings just because the hint mentions them,
+  and must not discard well-evidenced findings the hint does not mention. The
+  judge quotes the hint verbatim in the report Summary when present.
 
 Budget: `1 + maxSessions + 1` children (≤ 18), inside the default 24-spawn cap.
 
@@ -89,7 +96,8 @@ budget. For an explicit deadline use the direct surface:
 
 ```js
 subagent({ workflowScriptPath: "/Users/nietaki/.pi/agent/subagent-workflows/sessions-retro/script.js",
-           args: { cwd: "/Users/nietaki/repos/grr-fyi", maxSessions: 6 },
+           args: { cwd: "/Users/nietaki/repos/grr-fyi", maxSessions: 6,
+                   hint: "repeated corrections; permission friction" },
            async: true, timeoutMs: 3_600_000 })
 ```
 

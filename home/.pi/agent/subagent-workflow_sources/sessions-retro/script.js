@@ -26,6 +26,13 @@
 //                     12 newest per parent, flags >1 MiB as oversized)
 //   noteDir   string  optional — vault dir for the report note; default
 //                     /Users/nietaki/obsidian/pi_knowledge/sessions-retro
+//   hint      string  optional — freeform operator guidance naming behaviours or
+//                     hypotheses to make sure to investigate (truncated at 4000
+//                     chars). Injected into every digest worker and into the
+//                     synthesis judge as a PRIORITISATION HINT, never as
+//                     evidence: workers must not manufacture findings the hint
+//                     mentions, and must not drop well-evidenced findings the
+//                     hint does not mention.
 //
 // LAUNCH: /workflow run sessions-retro cwd=/path/to/project
 //   (or pi_subagent_workflow action=run, name=sessions-retro). The registry
@@ -53,6 +60,22 @@ if (typeof args !== "object" || args === null ||
 }
 const targetCwd = args.cwd.trim();
 const maxSessions = Math.min(Math.max(Number(args.maxSessions) || 6, 1), 16);
+const operatorHint = typeof args.hint === "string" ? args.hint.trim().slice(0, 4000) : "";
+
+// Shared hint block injected into digest workers and the synthesis judge.
+// Wording contract: hint = research prompt, NOT evidence, NOT a scope filter.
+const HINT_BLOCK = operatorHint
+  ? [
+      "",
+      "OPERATOR HINT (prioritisation only — NOT evidence):",
+      operatorHint,
+      "Treat this as a hypothesis/prioritisation hint, not as evidence. Investigate it",
+      "against the transcripts, but do not manufacture findings just because the hint",
+      "mentions them. Equally, do NOT discard or down-rank findings unrelated to the",
+      "hint: it adds an investigative angle, it does not narrow the scope of the",
+      "retrospective."
+    ].join("\n")
+  : "";
 
 // ---- vault report note -------------------------------------------------------
 // The synthesize judge writes the final report here and echoes the path back
@@ -98,6 +121,7 @@ function digestTask(item, idx) {
     "YOUR SESSION: " + item.path + " (~" + item.sizeKb + " KiB).",
     "CHILD TRANSCRIPTS (same session, nested under the parent's directory):",
     kidLines,
+    HINT_BLOCK,
     "",
     "STEP 0 — GO/NO-GO.",
     "Inspect the head and tail of the PARENT file (first and last few entries).",
@@ -302,6 +326,7 @@ try {
     model: "openrouter/openai/gpt-5.6-sol",  // strong model for synthesis judgment
     task: [
       "You are the synthesis judge of a pi session retrospective for " + targetCwd + ".",
+      HINT_BLOCK,
       "Digest workers wrote per-session findings as JSON files. Files to read (use your read tool):",
       settled.map(d => "- " + d.s.outputFile + "  (from " + d.key + ")").join("\n"),
       "",
@@ -319,7 +344,7 @@ try {
       "",
       "FINAL STEP — WRITE THE REPORT NOTE (exactly one file, your write tool):", REPORT_PATH,
       "The obsidian vault is the report's destination; write no other file.",
-      "Note structure: YAML frontmatter (title, date, tags: [pi/sessions-retro], project: " + targetCwd + ", status: active), then: Summary (parents digested + children mined, digests written/skipped, headline proposals); Proposals grouped by surface, each with the literal change, what it addresses, the quoted evidence as a blockquote naming its transcript + position, confidence/effort/greenlit; Rejected findings & unproposed gaps (every claim you dropped and why — the audit trail matters); Method footer listing the digest files above and this run's nonce (" + RUN_NONCE + ").",
+      "Note structure: YAML frontmatter (title, date, tags: [pi/sessions-retro], project: " + targetCwd + ", status: active), then: Summary (parents digested + children mined, digests written/skipped, headline proposals" + (operatorHint ? "; quote the operator hint verbatim in the Summary so the reader knows what angle was suggested" : "") + "); Proposals grouped by surface, each with the literal change, what it addresses, the quoted evidence as a blockquote naming its transcript + position, confidence/effort/greenlit; Rejected findings & unproposed gaps (every claim you dropped and why — the audit trail matters); Method footer listing the digest files above and this run's nonce (" + RUN_NONCE + ").",
       "Nothing in the note may leak secrets. Return notePath = " + REPORT_PATH + " (empty string + an unproposedGaps entry if the write failed).",
       "",
       "Context also true (from the orchestration, not to be re-verified): " + skipped.length +

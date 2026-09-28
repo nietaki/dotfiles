@@ -56,6 +56,10 @@ Continue until the implementation-relevant intent is understood and no material
 assumption is awaiting confirmation. Do not prolong the interview over details
 that repository evidence or an implementer can safely resolve later.
 
+
+**Use the `ask_user_question` tool** instead of asking the questions in a message and ending your turn.
+Ending your turn would effectively end the specifically configured agent run.
+
 ## Agree the plan before writing
 
 Before modifying `.pi/feat/plan.md`, recap the proposed plan in the conversation:

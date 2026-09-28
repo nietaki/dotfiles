@@ -9,6 +9,8 @@ Interview me about the plan until we reach shared understanding — but only abo
 
 Walk the design tree branch by branch, resolving dependencies between decisions, asking no more than 3 questions at a time. For each question, provide your recommended answer.
 
+**Use the `ask_user_question` tool** instead of asking the questions in a message and ending your turn.
+
 Before asking anything, explore the codebase (and docs, history, config): if repository evidence or a sensible default can answer it, resolve it yourself and state what you found instead of asking.
 
 **Record every decision** as you go: the choice made, its rationale, and the rejected alternatives worth remembering.

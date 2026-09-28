@@ -19,4 +19,11 @@ I'm automating it with [puter](https://github.com/nietaki/puter)
   - better yet a plan-based foreground implementation loop
 - [x] verify skill discovery
 - [x] pi web plugin
-- [ ] https://github.com/kanaka/contagent
+
+Considering:
+
+- [ ] better knowledgebase integration
+  - `pi install npm:@zosmaai/pi-llm-wiki`
+- [ ] agent isolation
+  - `https://github.com/kanaka/contagent`
+

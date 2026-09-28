@@ -16,6 +16,11 @@
       "type": "string",
       "required": false,
       "description": "Vault directory for the report note (default /Users/nietaki/obsidian/pi_knowledge/sessions-retro)"
+    },
+    "hint": {
+      "type": "string",
+      "required": false,
+      "description": "Optional freeform guidance: behaviours or hypotheses to make sure to investigate. A prioritisation hint only — never evidence, and never a reason to drop unrelated findings"
     }
   }
 }
