@@ -32,6 +32,28 @@ This runs `homeshick link dotfiles` and symlinks all git-tracked files from `hom
 2. Stage them: `git add home/...`
 3. Link them: `hslink`
 
+### Recovering a detached file (symlink replaced by a regular file)
+
+If a managed `$HOME` path that should be a link shows up as a plain file with
+`ls -la` (a tool wrote-and-renamed over it), it is detached from version
+control and the repo copy is being ignored. Recovery:
+
+1. **Compare first:** `diff` the live `$HOME` file against the tracked repo
+   copy under `home/` and show the operator what a replacement would lose.
+   If the live file has newer content, merge it into the repo copy (never
+   continue living in the detached file).
+2. **Relink with force:** `hslink --force`. Note the blast radius: `--force`
+   (`-f`) overwrites *every* existing link target in the whole castle, not
+   just the detached file — get operator approval before running it when
+   unrelated replacements are possible.
+3. **Verify:** `ls -la` on the affected `$HOME` paths — they must be back to
+   `l` entries pointing into the repo.
+4. **Reload consumers:** `/reload` (or restart pi) so configs are re-read
+   through the restored symlink.
+
+Never edit the detached `$HOME` file to “fix” it — that keeps the divergence
+alive. All edits go to the repo copy, then relink.
+
 ## Unlink Broken Symlinks
 
 Use `hsunlink` to find and remove dangling symlinks left behind when dotfiles are deleted or renamed from the repo:

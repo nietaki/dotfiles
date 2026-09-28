@@ -88,11 +88,26 @@ global — it doesn't change the judge tier for other workflows.
 - **Synthesis**: 20 minutes (`timeoutMs: 1_200_000`)
 - **Outer deadline**: pass `timeoutMs` at launch (e.g. `3_600_000` for 1 hour) — async composites have no default
 
-## Limits of the `/workflow run` surface
+## Arguments via `/workflow run`
 
-The registry passes only `{workflowScript, cwd}`, so there is **no outer
-`timeoutMs`** (async composites have no default deadline) and no raised spawn
-budget. For an explicit deadline use the direct surface:
+Two different bindings feed a saved workflow — do not conflate them:
+
+- The **registry** injects only `{workflowScript, cwd}` into the runner. That
+  inner `cwd` is the pi run directory, **not** `args.cwd`; always pass the
+  target project explicitly.
+- **`/workflow run <name> k=v` accepts workflow arguments**: each `k=v` pair is
+  passed through as `args.<k>` (upstream
+  `pi-subagents-workflows/README.md`, verified 2026-09-28). Values parse as
+  JSON when they can (`6`, `true`), otherwise plain strings; quotes keep spaces
+  (`hint="repeated corrections"`).
+
+```text
+/workflow run sessions-retro cwd=/Users/nietaki/repos/myproj maxSessions=6 hint="repeated corrections"
+```
+
+What `/workflow run` does NOT provide is an outer `timeoutMs` (async composites
+have no default deadline) or a raised spawn budget. For an explicit deadline use
+the direct surface:
 
 ```js
 subagent({ workflowScriptPath: "/Users/nietaki/.pi/agent/subagent-workflows/sessions-retro/script.js",
@@ -108,9 +123,12 @@ arg, so the gates extract nothing (pi-permission-system routes unregistered
 extension tools by the `input.path` convention only; verified in source
 2026-09-23). The tool's own reads are confined to `~/.pi/agent/sessions/` by
 construction. Digest workers read transcripts with `read`/`grep`, allowed via
-`path_read` + `external_directory_read` for `~/.pi/*`. bash tree-walks (`find`,
-`du`) over the sessions store stay denied — never reintroduce them in task
-text.
+`path_read` + `external_directory_read` for `~/.pi/*`. Access is **grep-first**:
+JSONL stores one potentially huge message per line, so workers grep for
+timestamps, roles, `stopReason`, `isError`, and denial markers and `read` only
+the exact matching windows — never broad `read` offset paging over giant single
+lines. bash tree-walks (`find`, `du`) over the sessions store stay denied —
+never reintroduce them in task text.
 
 Both scout launches pass `output: false`: `retro-scout` already sets it in its
 frontmatter, and an artifact write routed into `~/.pi/agent/sessions/…` would

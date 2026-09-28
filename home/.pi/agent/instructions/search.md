@@ -42,3 +42,12 @@ eagerly available and you can use them.)
 - `github-readonly` MCP: use for GitHub **context, repository API operations,
   issues, and pull requests**. The extension's URL/clone path and this MCP are
   complementary, not interchangeable — do not assume one replaces the other.
+- `github-readonly` search size limits: `search_issues`, `search_pull_requests`,
+  `search_code`, and `search_repositories` accept `perPage` (up to 100). Start
+  with `perPage <= 10` and narrow the query instead of paging wide — a
+  `perPage: 100` result can be a 300 KB payload. Oversized tool outputs are
+  truncated and spilled whole to `$TMPDIR/pi-mcp-output-XXXX/` (readable: the
+  permission policy carves these dirs out read-only). Inspect the spill with
+  `read`/`grep` — never re-run the same search just to see what was truncated.
+  For repository discovery, `search_repositories` also supports
+  `minimal_output: true`.

@@ -34,8 +34,12 @@
 //                     mentions, and must not drop well-evidenced findings the
 //                     hint does not mention.
 //
-// LAUNCH: /workflow run sessions-retro cwd=/path/to/project
-//   (or pi_subagent_workflow action=run, name=sessions-retro). The registry
+// LAUNCH: /workflow run sessions-retro cwd=/path/to/project maxSessions=6 \
+//            hint="repeated corrections"
+//   (/workflow run passes `k=v` pairs through as args — JSON-parsed values, or
+//   quoted strings to keep spaces; verified against pi-subagents-workflows
+//   README 2026-09-28. Or pi_subagent_workflow action=run, name=sessions-retro.)
+//   The registry
 //   injects its own `cwd` = the pi run directory, which is NOT args.cwd — the
 //   project to review must be passed explicitly. Its runner passes only
 //   {workflowScript, cwd} to pi-subagents, so no outer timeoutMs/deadline and
@@ -131,9 +135,12 @@ function digestTask(item, idx) {
     "Prefer greenlit=true when in doubt — the operator launched this retro to find friction, and even short sessions may contain valuable signals.",
     "",
     "STEP 1 — DIGEST THE PARENT (only if greenlit=true).",
-    "Read the transcript in bounded windows with your read tool (it truncates per call; use",
-    "offsets). If large, skim structurally first: grep for user-message and tool-error markers,",
-    "then deep-read only the passages those point to.",
+    "Session JSONL has one potentially huge message per line — a read window can spend its",
+    "whole budget on a single 64 KiB line and still miss the target. GREP FIRST: search the",
+    "file for timestamps, role/user text, stopReason, \"isError\", and denial markers, then",
+    "read only the exact matching lines/windows. Never page a transcript with broad read",
+    "offsets; if a line exceeds the read limit, narrow with grep rather than re-reading",
+    "overlapping windows.",
     "",
     "STEP 2 — MINE CHILDREN (only ones the parent implicates).",
     "Children extend the parent session: a denied tool call, a wasted retry, or missing",

@@ -6,6 +6,8 @@ This repo is the **source of truth** for user `nietaki`'s dotfiles. It is a [hom
 
 **Always edit the files in this repo, never the dotfiles directly.** The entries in `$HOME` (e.g. `~/.pi/`, `~/.config/`) are symlinks pointing back into this repo's `home/` tree — editing them edits the repo file *through* the symlink, but creating or replacing files at those locations (editors that write-and-rename, tools that overwrite configs) can silently break the symlink and detach the file from version control. If a file does not exist here yet, create it under `home/` in the corresponding path here, stage it, and relink — do not create it in `$HOME`. (Verified 2026-09-22: `pi install npm:<pkg>` edits `~/.pi/agent/settings.json` *through* the symlink and preserves it — but keep checking `ls -la` on any config a tool rewrites.)
 
+**If a managed `$HOME` path has become a regular file** (detached by a write-and-rename), the repo copy is inert: `diff` the live file against the tracked copy and merge any newer content into the repo, then run `hslink --force` **with operator approval** (it overwrites every existing link target castle-wide, not just the broken one), verify the affected paths are symlinks again with `ls -la`, and `/reload`. Never keep editing the detached `$HOME` file — all edits go to the repo copy. Full procedure: homeshick skill, “Recovering a detached file”.
+
 **Important: `homeshick link` only links files that are tracked by git (staged or committed), and it links files individually** (there is no top-level `~/.pi` → repo directory symlink). Any new or renamed file must at least be staged before linking:
 
 ```bash

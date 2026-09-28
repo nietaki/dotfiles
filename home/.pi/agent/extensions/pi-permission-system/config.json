@@ -140,7 +140,23 @@
       // these scripts by bare name (PATH lookup; the command token is not a
       // path and is never inspected).
       "~/bin": "allow",
-      "~/bin/*": "allow"
+      "~/bin/*": "allow",
+      // MCP output-guard spill files: oversized tool results are written to a
+      // fresh dir `$TMPDIR/pi-mcp-output-XXXX*/` (mkdtemp — verified in
+      // pi-mcp-adapter/mcp-output-guard.ts 2026-09-28) and the truncation
+      // notice names that dir. Without this carve-out the agent cannot inspect
+      // its OWN already-paid-for tool output and re-runs the expensive search
+      // instead (observed: six 55–301 KB GitHub MCP results denied, 2026-09-24
+      // session). READ-ONLY here: writes with absolute-path tokens to
+      // /var/folders stay denied by `external_directory` rule `*` (verified by
+      // literal-touch denial 2026-09-28; note the pre-existing `cd` +
+      // relative-token resolution quirk applies to every carve-out equally,
+      // not just this one). Only the pi-subagents dirs below are opened both
+      // ways. Greedy `*` crosses the machine-specific
+      // /var/folders/<x>/<guid>/T levels and the spill file segments; both the
+      // /var and /private/var spellings are required (symlink resolution).
+      "/var/folders/*/pi-mcp-output-*": "allow",
+      "/private/var/folders/*/pi-mcp-output-*": "allow"
     },
     "external_directory": {
       // CWD-boundary gate (need #3 continued): reaching outside the

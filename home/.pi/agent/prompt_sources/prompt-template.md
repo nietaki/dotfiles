@@ -21,21 +21,39 @@ reserved-name list.
 
 ## 1. Establish the mode
 
-User templates live in `~/.pi/agent/prompts/`. In this setup that path is a
-homeshick-managed symlink into the dotfiles repo, so resolve it before touching
-anything:
+User template sources live in the dotfiles repo. The mapping is fixed and
+verified — never re-discover the symlink chain with `readlink`:
+
+- repo source of truth: `~/.homesick/repos/dotfiles/home/.pi/agent/prompt_sources/`
+- live path pi scans: `~/.pi/agent/prompts` → repo `home/.pi/agent/prompts`
+  (a tracked `120000` symlink) → repo `home/.pi/agent/prompt_sources`
+
+`readlink -f ~/.pi/agent/prompts` is denied by the `path` rule `~/.pi/*`, and
+one denied token kills the whole compound command — never mix it into a
+command line. Plain `ls` IS a proven read and the `~/.pi/*` read carve-out
+applies from any cwd, so discovery runs as standalone commands:
 
 ```bash
-ls -la ~/.pi/agent/prompts
-readlink -f ~/.pi/agent/prompts
+ls ~/.pi/agent/prompts/
 ```
+
+This lists the templates (the chain resolves through both symlinks to the real
+repo files). To confirm one name: `ls -la ~/.pi/agent/prompts/<name>.md`.
 
 - Template file already exists → **improvement mode** (skip to §5).
 - No such file → **creation mode** (§2–§4).
+- Writes have no carve-out: every repo or `$HOME` realpath for the template
+  lives outside a normal project cwd, and the boundary gate denies writes
+  outside the workspace. If the current cwd is NOT the dotfiles checkout
+  (`/Users/nietaki/.homesick/repos/dotfiles`), say so before writing and ask
+  the operator to reopen pi in that checkout — do not improvise a policy
+  workaround. From the dotfiles cwd, all paths below are workspace-internal.
 - Never write into a project's `.pi/prompts/` from this command, and never
-  create, replace, or rename anything directly under `$HOME` — write only at the
-  repo path the symlink resolves to. If a same-named template exists in the
-  current project, say so and confirm the operator wants the user-level file.
+  create, replace, or rename anything directly under `$HOME` — write only at
+  the repo path `home/.pi/agent/prompt_sources/<name>.md`. The live symlink
+  resolves through to it, so no linking is needed for edits; new files need
+  `git add` + `hslink` (§6). If a same-named template exists in the current
+  project, say so and confirm the operator wants the user-level file.
 
 ## 2. Interview the operator
 

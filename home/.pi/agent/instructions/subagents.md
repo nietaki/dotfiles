@@ -55,6 +55,20 @@ re-verify before trusting specifics).
   values persist as evidence — never secrets. Relative `workflowScriptPath`
   resolves against request cwd — prefer absolute.
 - Run `action: "validate"` before first real execution.
+- Quick syntax check for a saved body: the registry compiles the script inside
+  an async function wrapper, so a bare top-level `return` is legal only after
+  wrapping. `node --check` on the raw body ALWAYS fails for a legal script: as
+  CJS it errors `await is only valid in async functions...`, and with
+  `--input-type=module` it errors `SyntaxError: Illegal return statement`. Do
+  not "fix" the script over either message. Check through the wrapper instead
+  (params mirror the registry's bindings):
+  ```bash
+  node -e 'const b=require("fs").readFileSync(process.argv[1],"utf8");
+  new (Object.getPrototypeOf(async function(){}).constructor)
+  ("runs","emit","args","cwd",b); console.log("wrapped script parses OK")' \
+  "$ABS_PATH_TO_SCRIPT"
+  ```
+  A parse error this reports is real; the bare `node --check` failure is not.
 - Execute with `subagent({ workflowScriptPath: "<absolute>", args: { … }, async: true, timeoutMs: … })` and NO `action` — only `validate` and `schedule.create` take `action` together with a workflow script; `action: "run"` is rejected. Always pass the script's required `args`: a missing `args` still launches, then fails on the script's guard.
 - Launch every child that has an `outputSchema` with `acceptance: false`. If you leave it out, pi-subagents guesses an acceptance level and adds an "Acceptance Contract" asking for an `acceptanceReport`, which `structured_output` has no field for, so the child fails validation. Details: gotcha #30 in `Pi-subagents workflow authoring.md`.
 - `toolBudget.block` only activates AFTER the hard budget is exceeded — it guards against overruns, not a standing deny-list. To keep a child read-only or no-edit for its whole run, use a custom agent whose `tools:` allowlist leaves out edit/write (ours: `verifier`, see gotcha #25).
