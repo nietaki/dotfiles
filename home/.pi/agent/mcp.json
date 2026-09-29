@@ -9,34 +9,48 @@
       ]
     },
     "github-readonly": {
-      "command": "sh",
+      // Read-only GitHub surface: `--read-only` removes every write tool from
+      // the advertised schema, even inside write-capable toolsets.
+      //
+      // `command` is an absolute path on purpose: pi-mcp-adapter interpolates
+      // {env:VAR} in `args`/`env` but does NOT expand `~` or variables in
+      // `command` (server-manager.ts resolves only `cwd`/`args`/`env`), and the
+      // binary is not on PATH. Do not re-add an `sh -c` wrapper just to use
+      // $HOME.
+      "command": "/Users/nietaki/repos/github-mcp-server/github-mcp-server",
       "args": [
-        "-c",
-        "exec \"$HOME/repos/github-mcp-server/github-mcp-server\" \"$@\"",
-        "--",
+        "stdio",
         "--read-only",
         "--toolsets",
-        "context,repos,issues,pull_requests",
-        "stdio"
+        "context,repos,issues,pull_requests"
       ],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_MCP_READ_ONLY_TOKEN}"
       }
     },
-    "github-notifications": {
-      // PARKED (kept for later use). Re-enable: flip "disabled" to false and
-      // restart pi — pi-mcp-adapter connects on demand. Needs
-      // $GITHUB_MCP_NOTIFICATIONS_TOKEN set. Not denied in the permission
-      // config, but it is a write-capable GitHub surface — think before
-      // parking it back in.
-      "command": "sh",
+    "github-personal-engineering": {
+      // https://github.com/settings/personal-access-tokens/new?name=github-personal-engineering&description=pi%20MCP%20issue%E2%86%92PR%20engineering%20surface%20(personal%20repos%2C%20no%20merge%2C%20no%20contents%20write)&expires_in=90&metadata=read&contents=read&issues=write&pull_requests=write&actions=write&statuses=read
+      "command": "/Users/nietaki/repos/github-mcp-server/github-mcp-server",
       "args": [
-        "-c",
-        "exec \"$HOME/repos/github-mcp-server/github-mcp-server\" \"$@\"",
-        "--",
+        "stdio",
         "--toolsets",
-        "context,notifications",
-        "stdio"
+        "context,repos,issues,pull_requests,actions,labels",
+        "--exclude-tools",
+        "merge_pull_request,update_pull_request_branch,create_branch,create_or_update_file,push_files,delete_file,fork_repository,create_repository,label_write"
+      ],
+      "approveTools": [
+        "actions_run_trigger"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_MCP_ENGINEERING_TOKEN}"
+      }
+    },
+    "github-notifications": {
+      "command": "/Users/nietaki/repos/github-mcp-server/github-mcp-server",
+      "args": [
+        "stdio",
+        "--toolsets",
+        "context,notifications"
       ],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_MCP_NOTIFICATIONS_TOKEN}"
@@ -47,31 +61,27 @@
       "url": "https://mcp.grep.app"
     },
     "brave-search": {
-      // PARKED (migrated to pi-web-access): web search now runs through the
-      // pinned npm:pi-web-access extension and its web_search tool, configured
-      // in ~/.pi/agent/web-search.json (providers: exa + brave, credentials from
-      // the BRAVE_API_KEY env var — same wiring as below). Re-enable: flip
-      // "disabled" to false, restart pi, and remove/adjust the pi-web-access
-      // package + instructions/search.md so agents stop using the extension.
+      // PARKED (migrated to pi-web-access)
       "command": "npx",
-      "args": ["-y", "@brave/brave-search-mcp-server"],
+      "args": [
+        "-y",
+        "@brave/brave-search-mcp-server"
+      ],
       "env": {
         "BRAVE_API_KEY": "{env:BRAVE_API_KEY}"
       },
-      "excludeTools": ["brave_image_search", "brave_video_search"],
+      "excludeTools": [
+        "brave_image_search",
+        "brave_video_search"
+      ],
       "disabled": true
     },
     "exa": {
-      // PARKED (migrated to pi-web-access): Exa is now one of the two allowed
-      // search providers inside pi-web-access, keyed from the EXA_API_KEY env
-      // var (see ~/.pi/agent/web-search.json). Re-enable: flip "disabled" to
-      // false, restart pi, and retire the pi-web-access package + instructions.
+      // PARKED (migrated to pi-web-access)
       "url": "https://mcp.exa.ai/mcp?api_key={env:EXA_API_KEY}",
       "disabled": true
     },
     "openzim": {
-      // PARKED: only reachable on the home LAN (beehive.internal).
-      // Re-enable: flip "disabled" to false and reconnect on the LAN.
       "url": "http://beehive.internal:45091/mcp",
       "headers": {
         "Authorization": "Bearer openzim_non_secret"
@@ -79,23 +89,14 @@
       "disabled": true
     },
     "trmnl-plugin": {
-      // PARKED: e-ink display tools, rarely wanted interactively. Double
-      // safety: also denied in pi-permission-system/config.json (mcp
-      // surface). To re-enable, flip "disabled" AND remove the two deny
-      // rules there, or the tools load but every call is blocked.
       "url": "https://trmnl.com/mcp?api_key={env:TRMNL_MCP_API_KEY}",
       "disabled": true
     },
     "betterwright": {
-      // PARKED: BetterWright browser over MCP, pinned to the "work" profile.
-      // Re-enable: flip "disabled" to false and restart pi — pi-mcp-adapter
-      // connects on demand. The MCP server has no --session flag, so all pi
-      // sessions using this server share the default session; parallel work
-      // as the same identity will serialize on that session. For multi-session
-      // scenarios, use the bash route instead:
-      //   betterwright run --profile work --session <name> -c "..."
       "command": "betterwright",
-      "args": ["mcp"],
+      "args": [
+        "mcp"
+      ],
       "env": {
         "BETTERWRIGHT_PROFILE": "work"
       },

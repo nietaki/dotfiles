@@ -42,6 +42,12 @@ eagerly available and you can use them.)
 - `github-readonly` MCP: use for GitHub **context, repository API operations,
   issues, and pull requests**. The extension's URL/clone path and this MCP are
   complementary, not interchangeable — do not assume one replaces the other.
+- `github-personal-engineering` MCP: write-capable sibling entry over the same
+  binary, for the issue→PR loop on repositories owned by the personal account
+  (issue/PR creation, comments, reviews, CI inspection, label reads). Narrowed
+  by `--exclude-tools` (no merges, no remote contents writes, no label
+  vocabulary admin) and `approveTools` gates `actions_run_trigger`. Use it only
+  when a write is actually needed; `github-readonly` covers looking.
 - `github-readonly` search size limits: `search_issues`, `search_pull_requests`,
   `search_code`, and `search_repositories` accept `perPage` (up to 100). Start
   with `perPage <= 10` and narrow the query instead of paging wide — a

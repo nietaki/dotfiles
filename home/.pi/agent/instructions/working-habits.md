@@ -15,7 +15,7 @@ The `todo` tool has a call contract that is not obvious from its name. Getting i
 
 ## ask_user_question calls
 - Each question `header` is a short chip/tag and is HARD-LIMITED to 16 characters — longer labels fail validation (`questions.N.header: must not have more than 16 characters`). Keep it to 1–2 words.
-- Every question needs 2–4 options, each with a concise label and a description of the trade-off. Never author reserved labels (`Other`, `Type something.`) — they are appended automatically and rejected if typed.
+- Every question needs 2–5 options, each with a concise label and a description of the trade-off. Never author reserved labels (`Other`, `Type something.`) — they are appended automatically and rejected if typed.
 - Batch up to 4 independent questions in one call; keep dependent questions sequential (one call after the previous answer is known).
 
 ## Todos

@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.87.1",
   "theme": "dark",
-  "defaultProvider": "opencode-go",
-  "defaultModel": "qwen3.8-flash",
+  "defaultProvider": "openrouter",
+  "defaultModel": "openai/gpt-6-luna",
   "defaultThinkingLevel": "medium",
   "hideThinkingBlock": true,
   "tuiMode": "fullscreen",
