@@ -39,7 +39,7 @@
         "merge_pull_request,update_pull_request_branch,create_branch,create_or_update_file,push_files,delete_file,fork_repository,create_repository,label_write"
       ],
       "approveTools": [
-        "actions_run_trigger"
+        //   "actions_run_trigger"
       ],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_MCP_ENGINEERING_TOKEN}"
