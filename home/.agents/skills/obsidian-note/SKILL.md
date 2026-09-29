@@ -19,12 +19,13 @@ The invoking prompt decides why the note is being created, what session material
 ## Placement
 
 - Subfolder = **basename of the current working directory** (the repo pi is run in). Create it if missing: `mkdir -p ~/obsidian/pi_knowledge/<basename>/`.
-- An explicit folder named by the user overrides this default (e.g. "put it in dotfiles/").
+- An explicit folder named by the operator **replaces the cwd-derived subfolder entirely** — it resolves relative to the vault root, not inside the default folder (verified convention 2026-09-29: "put it under `job-postings`" while running in `dotfiles` meant `pi_knowledge/job-postings/`, NOT `pi_knowledge/dotfiles/job-postings/`). If the wording could be read as either replacement or nesting, ask before writing.
 - Before writing, list the target subfolder and reuse or update an existing note that covers the same topic instead of creating a near-duplicate.
 
 ## Filename
 
 - Descriptive Title Case, **no date prefix**: `DMARC policy graduation - nietaki.com.md`. The date lives in frontmatter.
+- Exception: **dated snapshot notes** the operator wants chronologically sortable (job-search batches, session logs) take a `YYYY-MM-DD ` prefix when explicitly requested: `2026-09-29 Job search batch - Go backend SRE DevOps remote and Poland.md`. Only on operator instruction — never apply the prefix unprompted.
 - Avoid `# ^ [ ] | " \ : / < >` in filenames — they break wikilinks. Spaces and hyphens are fine.
 - Wikilinks resolve by filename vault-wide, so filenames must stay unique across all subfolders. Search recursively with `find ~/obsidian/pi_knowledge/ -type f -name '*.md' -print | rg -i -- '<key phrase>'`, then read plausible matches before deciding whether to update or create.
 

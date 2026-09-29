@@ -1,5 +1,11 @@
 {
   "mcpServers": {
+    "apify-job-listings": {
+      "url": "https://mcp.apify.com/?tools=fetch-actor-details,fantastic-jobs/career-site-job-listing-api",
+      "headers": {
+        "Authorization": "Bearer {env:APIFY_JOBS_PAT}"
+      }
+    },
     "dash": {
       "command": "uvx",
       "args": [
