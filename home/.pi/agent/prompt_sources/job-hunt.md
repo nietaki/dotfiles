@@ -16,18 +16,20 @@ $@
 
 Treat empty or whitespace-only overrides as no changes. Otherwise interpret them as freeform adjustments to this run. Supported adjustments include:
 
-- a different Actor `limit` (applied to each branch unless the operator says otherwise); and
+- a different Actor `limit` (applied to each branch unless the operator says otherwise);
+- a different recency window (for example "last 3 days"), translated into the date parameters described in section 1; and
 - additional role-title terms, description keywords, or technologies to search **in addition to** the established profile.
 
 Do not silently replace the established role or technology terms unless the operator explicitly asks. If an override is materially ambiguous, ask before starting the paid Actor runs. Reject limits outside the Actor's supported 10–5,000 range. The limits in this template are run-specific and do not change either loaded skill's defaults.
 
 ## 1. Establish the effective query
 
-Use this base input for both branches:
+Use this base input for both branches. `datePostedAfter` is the **primary** recency filter and is always supplied; `timeRange` is the Actor's crawl bucket, chosen as the smallest bucket that contains the window `datePostedAfter` defines:
 
 ```json
 {
-  "timeRange": "7d",
+  "timeRange": "<smallest bucket containing the window, per the mapping below>",
+  "datePostedAfter": "<YYYY-MM-DD — first day of the requested window>",
   "limit": 25,
   "descriptionType": "text",
   "titleSearch": ["backend:*", "back-end:*", "SRE", "DevOps:*"],
@@ -37,6 +39,25 @@ Use this base input for both branches:
   "populateAiRemoteLocationDerived": true
 }
 ```
+
+### Window → parameters
+
+**`datePostedAfter` is always sent — never omit it.** It is the mechanism that actually selects the requested recency. `timeRange` has no 3-day or arbitrary option (`1h`, `24h`, `7d`, `6m` only), so it is chosen *afterwards*, as the smallest bucket that contains the window `datePostedAfter` defines:
+
+| Requested window | `datePostedAfter` (always set) | smallest containing `timeRange` |
+|---|---|---|
+| last hour | today in time form: `YYYY-MM-DDTHH:00:00` | `1h` |
+| last 24 hours | same clock time yesterday: `YYYY-MM-DDTHH:MM:SS` | `24h` |
+| last 2–7 days | today − (N − 1) days, `YYYY-MM-DD` | `7d` |
+| **default: last 7 days** | today − 6 days, `YYYY-MM-DD` | `7d` |
+| wider than 7 days | today − (N − 1) days, `YYYY-MM-DD` | `6m` |
+
+- Set `datePostedAfter` first from the requested window, then pick `timeRange` from the table. Never widen `timeRange` past the smallest containing bucket — it only admits more of the crawl, which costs more and leaves the date selection to `datePostedAfter` anyway.
+- For sub-day windows use the documented time form (`2026-09-30T15:00:00`) so `datePostedAfter` still expresses the whole window.
+- Compute the date once from the current local date; an N-day window covers N calendar days inclusive. Do not fine-tune for UTC offsets or for ATSs that default the time to 00:00 — the value is deliberately coarse, and `timeRange` still bounds ingestion, so a returned `date_posted` may sit at or just outside the boundary.
+- A window wider than 7 days needs `timeRange: "6m"`, for which the loaded skill records `descriptionSearch` as unsupported. If that combination is required, say so and ask before running rather than silently dropping the technology terms.
+- The Actor's own guidance flags `datePostedAfter` as a duplicate risk on regular-interval pulls, which this command is. Cross-batch deduplication is explicitly **out of scope**: deduplicate within the presented batch only (section 3).
+- State the resulting pair in one line before the runs, e.g. `last 3 days → datePostedAfter 2026-09-28, timeRange 7d`.
 
 Apply clear overrides before either run. Additional search terms extend the relevant arrays. Preserve Go-language specificity: do not add bare `go` unless the operator explicitly requests it, and then validate every hit against the description body.
 
@@ -81,7 +102,7 @@ Follow the loaded `apify-job-search` skill exactly:
 - Retain only postings whose body text genuinely contains Elixir, Golang, or an unambiguous Go-programming-context match. A title-only match does not qualify.
 - If the operator added technologies, validate those against the body as well and say which technology caused each match.
 - Deduplicate across branches by normalized posting URL. Keep distinct regional/slug variants, but mark them as variants rather than pretending they are distinct roles.
-- Compare `date_posted` to the requested window and flag stale/re-crawled listings.
+- Date filtering is done server-side by `datePostedAfter`. Once the datasets are read, spend **no** further effort on datetime questions: do not convert between UTC and local time, do not reconcile `date_posted` against `date_created`, do not chase 00:00/default timestamps, ingestion lag, re-crawl semantics, or why a row's date sits at the window edge. Present the dates exactly as the MCP returned them.
 - Assess Poland/EU eligibility after retrieval using `ai_remote_location_derived` (fallback `ai_remote_location`) and cross-check `locations_derived`. The Actor cannot reliably filter US-only eligibility server-side.
 - Use `https://<domain_derived>` for the company link; do not enable `includeCompanyDetails` merely to obtain a website.
 - Never invent or infer missing posting facts. Make contradictions explicit.
@@ -98,7 +119,7 @@ Present one combined markdown table with exactly these columns and order:
 - Use date-only `YYYY-MM-DD` under **Posted**.
 - Put AI-derived eligibility in **Remote locations**, including source-location disagreement when relevant.
 - Explain every assessment emoji in plain English under **Notes**.
-- Use the skill's expressive assessment legend: 🎯 good fit, 📍 likely location-incompatible, 🧂 technology only nice-to-have, ⚠️ other weak description match, 🦖 stale, ♻️ duplicate/variant, 🧊 talent pool/evergreen.
+- Use the skill's expressive assessment legend: 🎯 good fit, 📍 likely location-incompatible, 🧂 technology only nice-to-have, ⚠️ other weak description match, 🦖 stale, ♻️ duplicate/variant, 🧊 talent pool/evergreen. Apply 🦖 only when the returned `date_posted` plainly falls outside the requested window — read it off the data, do not investigate it.
 - Rank strong Poland/EU-eligible fits first and likely location-incompatible roles below them; do not silently discard the latter.
 
 If a branch returns no validated results, state that this search returned none under the effective filters and time window — not that no such jobs exist.
@@ -111,11 +132,13 @@ Always write or update a note after presenting the table. The operator explicitl
 ~/obsidian/pi_knowledge/job-postings/
 ```
 
-This replaces the `obsidian-note` skill's cwd-derived folder. Follow the skill's deduplication and safe-write procedure. The filename is an explicitly requested dated snapshot exception and must begin with the current local date:
+This replaces the `obsidian-note` skill's cwd-derived folder. Follow the skill's safe-write procedure. The filename is an explicitly requested dated snapshot exception and must begin with the current local date:
 
 ```text
 YYYY-MM-DD Job search batch - <concise effective scope>.md
 ```
+
+Don't read any of the other, existing `job-postings/` obsidian notes - each is independent and they should not influence each other.
 
 Use a concise, filename-safe scope derived from the effective technologies/roles and the remote + Poland branches. Before writing, inspect the target folder and search the vault for a near-duplicate. Update the same batch note when appropriate; if a substantively different query already has a same-date note, distinguish the filename by effective scope rather than overwriting it.
 
