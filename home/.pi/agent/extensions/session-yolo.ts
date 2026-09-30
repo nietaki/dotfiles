@@ -47,6 +47,13 @@
  *   allow   — link approves the asks it is permitted to (see envelope cap above)
  *   deny    — link refuses asks with a teaching reason (strict / headless)
  *
+ * FOOTER DISPLAY
+ * The mode is published as the plain-text `session-yolo` extension status
+ * (`ctx.ui.setStatus`), which npm:pi-powerline-footer promotes into its own
+ * powerline segment via `powerline.customItems` in settings.json. Segment
+ * color and the "session-yolo" prefix therefore live in that config, NOT here:
+ * this file emits ANSI-free text only.
+ *
  * CONTROLS (operator-facing; deliberately NOT model-callable for changes)
  *   /yolo [on|off|allow|deny|prompt|toggle|status]  — set or inspect the mode
  *   Ctrl+Alt+Y  — toggle prompt <-> allow
@@ -92,21 +99,18 @@ const SESSION_SERVICES_KEY = Symbol.for(
 const LINK_NAME = "session-yolo";
 const STATUS_KEY = "session-yolo";
 
-// Truecolor matches pi-footer's own model-name rendering (see footer-provider).
-const DIM = "\x1b[38;2;120;120;120m";
-const AMBER = "\x1b[38;2;255;176;0m";
-const RED = "\x1b[38;2;255;95;95m";
-const RESET = "\x1b[39m";
-
+// Plain text only — pi-powerline-footer renders this status as its own segment
+// and applies the `color` from `powerline.customItems`. Two rules for the value:
+//  - no ANSI escapes (they would fight the configured segment color);
+//  - never start with "[" — powerline treats a leading bracket as a
+//    notification-style status and hoists it above the editor instead of
+//    showing it in the bar.
+// The label is the bare mode; the "session-yolo" prefix comes from config.
 const MODE_LABEL: Record<AskMode, string> = {
-  prompt: "session-yolo:prompt",
-  allow: "session-yolo:auto-allow",
-  deny: "session-yolo:auto-deny",
+  prompt: "prompt",
+  allow: "auto-allow",
+  deny: "auto-deny",
 };
-
-function modeColor(mode: AskMode): string {
-  return mode === "allow" ? AMBER : mode === "deny" ? RED : DIM;
-}
 
 /** Resolve the node's own service from the documented process-global map. */
 function getPermissionService(
@@ -131,13 +135,10 @@ export default function sessionYoloExtension(pi: ExtensionAPI): void {
 
   const publishStatus = (): void => {
     if (!lastCtx) return;
-    // Always visible, like the provider segment, so "is YOLO on?" is at a glance.
-    // Append a subtle marker if the allow/deny mode is inert (link not active).
+    // Published in every mode (including `prompt`) so "is YOLO on?" is at a
+    // glance. Append a subtle marker when the allow/deny mode is inert.
     const inert = mode !== "prompt" && !linkRegistered ? " (!)" : "";
-    lastCtx.ui.setStatus(
-      STATUS_KEY,
-      `${modeColor(mode)}${MODE_LABEL[mode]}${inert}${RESET}`,
-    );
+    lastCtx.ui.setStatus(STATUS_KEY, `${MODE_LABEL[mode]}${inert}`);
   };
 
   const setMode = (next: AskMode, ctx: ExtensionContext, quiet = false): void => {
@@ -210,9 +211,12 @@ export default function sessionYoloExtension(pi: ExtensionAPI): void {
     try {
       disposeAuthorizer = service.registerAuthorizer(LINK_NAME, authorize);
       linkRegistered = true;
-    } catch {
-      // Duplicate registration throws; treat the existing link as ours.
-      linkRegistered = true;
+    } catch (error) {
+      // Only a duplicate registration means the link is already live. Any other
+      // failure stays fail-safe: linkRegistered stays false, so the status shows
+      // the " (!)" inert marker instead of claiming an active link.
+      const msg = error instanceof Error ? error.message : String(error);
+      linkRegistered = /duplicate|already/i.test(msg);
     }
     publishStatus();
   };
@@ -224,8 +228,10 @@ export default function sessionYoloExtension(pi: ExtensionAPI): void {
     ensureRegistered(sessionId);
   });
 
-  // Keep a fresh context and re-publish the footer segment at turn boundaries,
-  // the same reason footer-provider republishes on these events.
+  // pi core wipes every extension status (FooterDataProvider
+  // .clearExtensionStatuses, via resetExtensionUI) when a session is
+  // invalidated (new / fork / switch) and on /reload, so keep a fresh context
+  // and re-publish the status when a session (re)starts and at turn boundaries.
   pi.on("session_start", (_event, ctx) => {
     lastCtx = ctx;
     publishStatus();
@@ -239,10 +245,6 @@ export default function sessionYoloExtension(pi: ExtensionAPI): void {
     } catch {
       /* sessionManager may be unavailable in some hosts */
     }
-    publishStatus();
-  });
-  pi.on("model_select", (_event, ctx) => {
-    lastCtx = ctx;
     publishStatus();
   });
   pi.on("session_shutdown", () => {

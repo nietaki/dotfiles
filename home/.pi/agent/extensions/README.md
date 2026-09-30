@@ -74,9 +74,10 @@ surface = `path` deny + `path_read` allow (and drop it from
     profiles are reachable by path-aware tools. The "never reveal stored
     secrets" rule in the browser skill is behavioural for this tree, not
     policy-enforced.
-- `footer-provider.ts` — publishes the active model's provider into the
-  `@henryqw/pi-footer` status line via `ctx.ui.setStatus`. Purely cosmetic; it
-  survived the mode-stack removal because it was never part of it.
+- `footer-provider.ts` — **deleted 2026-10** with the `@henryqw/pi-footer` →
+  `npm:pi-powerline-footer` migration: the provider is now shown by the footer
+  package itself (`powerline.model.display: "qualified"` in settings.json), so
+  the custom `setStatus` glue is gone.
 - `instructions.ts` — appends `~/.pi/agent/instructions/*.md` to the system
   prompt as one `# Pi Instructions` block, built once at extension load in
   filename order so the bytes are stable across turns (prompt-cache friendly).
@@ -92,9 +93,12 @@ surface = `path` deny + `path_read` allow (and drop it from
   (prompt / allow / deny), registered as a `pi-permission-system` authorizer
   link. `/yolo [on|off|allow|deny|toggle|status]` or **Ctrl+Alt+Y** change it; a
   read-only `session_yolo_status` tool lets the *agent report* the mode (to
-  propose enabling it before a long autonomous run) but never change it; the
-  footer shows the current mode (`ask:prompt` / `ask:auto-allow` /
-  `ask:auto-deny`). Full writeup in *Session-scoped ask switch* below.
+  propose enabling it before a long autonomous run) but never change it. The
+  extension publishes only a plain-text status (`prompt` / `auto-allow` /
+  `auto-deny`); `powerline.customItems` in settings.json promotes that key into
+  its own right-aligned powerline segment with the `session-yolo` prefix and a
+  theme color — no ANSI in the extension. Full writeup in *Session-scoped ask
+  switch* below.
 - This README — the reasoning.
 
 ## Session-scoped ask switch (`session-yolo.ts`)

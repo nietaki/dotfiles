@@ -4,23 +4,42 @@
   "defaultProvider": "openrouter",
   "defaultModel": "openai/gpt-6-luna",
   "defaultThinkingLevel": "medium",
-  "hideThinkingBlock": false,
+  "hideThinkingBlock": true,
   "tuiMode": "fullscreen",
   "defaultTools": [
     "+codemode"
   ],
   "packages": [
     "npm:@gotgenes/pi-permission-system@31.1.3",
-    "npm:@narumitw/pi-lsp@0.49.7",
     "npm:@juicesharp/rpiv-ask-user-question",
-    "npm:@henryqw/pi-footer@1.1.1",
-    "npm:betterwright",
-    "npm:pi-subagents",
     "npm:@juicesharp/rpiv-todo",
-    "npm:pi-subagents-workflows@0.2.1",
+    "npm:@narumitw/pi-lsp@0.49.7",
+    "npm:betterwright",
+    "npm:pi-powerline-footer",
     "npm:pi-prompt-template-model",
+    "npm:pi-subagents",
+    "npm:pi-subagents-workflows@0.2.1",
     "npm:pi-web-access@0.31.0"
   ],
+  "powerline": {
+    "preset": "default",
+    "placement": "below",
+    "welcome": false,
+    "customItems": [
+      {
+        "id": "session-yolo",
+        "position": "right",
+        "prefix": "session-yolo",
+        "color": "accent"
+      }
+    ],
+    "model": {
+      "display": "qualified"
+    },
+    "cache_read": {
+      "format": "both"
+    }
+  },
   "subagents": {
     "modelScope": {
       "enforce": true,
