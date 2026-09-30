@@ -19,8 +19,7 @@ I'm automating it with [puter](https://github.com/nietaki/puter)
   - better yet a plan-based foreground implementation loop
 - [x] verify skill discovery
 - [x] pi web plugin
-- [ ] pi native mcp
-- [ ] codemode
+- [x] pi native mcp
 
 Considering:
 

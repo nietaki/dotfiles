@@ -66,7 +66,7 @@
       //   extensions/*.ts   -> arbitrary code, runs at next start, ALL projects
       //   instructions/*.md -> injected into every future system prompt
       //   prompts/*.md      -> slash-command templates
-      //   mcp.json          -> commands the MCP adapter spawns
+      //   mcp.json          -> commands Pi's built-in MCP support spawns
       //   models.json       -> custom providers, incl. baseUrl (redirects traffic)
       //   npm/              -> what gets installed on next start
       // Costs nothing in the documented workflow: the repo is the source of
@@ -143,22 +143,24 @@
       // path and is never inspected).
       "~/bin": "allow",
       "~/bin/*": "allow",
-      // MCP output-guard spill files: oversized tool results are written to a
-      // fresh dir `$TMPDIR/pi-mcp-output-XXXX*/` (mkdtemp — verified in
-      // pi-mcp-adapter/mcp-output-guard.ts 2026-09-28) and the truncation
-      // notice names that dir. Without this carve-out the agent cannot inspect
-      // its OWN already-paid-for tool output and re-runs the expensive search
-      // instead (observed: six 55–301 KB GitHub MCP results denied, 2026-09-24
-      // session). READ-ONLY here: writes with absolute-path tokens to
-      // /var/folders stay denied by `external_directory` rule `*` (verified by
-      // literal-touch denial 2026-09-28; note the pre-existing `cd` +
-      // relative-token resolution quirk applies to every carve-out equally,
-      // not just this one). Only the pi-subagents dirs below are opened both
-      // ways. Greedy `*` crosses the machine-specific
-      // /var/folders/<x>/<guid>/T levels and the spill file segments; both the
-      // /var and /private/var spellings are required (symlink resolution).
+      // Tool-result spill files: built-in MCP truncates model-facing text over
+      // 20KB middle-out and writes the FULL text to `$TMPDIR/pi-mcp-<hex>.txt`
+      // (mode 0600; extensions/mcp/tools.js saveToTempFile), naming the path in
+      // the result. The adapter-era variant wrote whole files into
+      // `$TMPDIR/pi-mcp-output-XXXX*/` (mkdtemp — pi-mcp-adapter/mcp-output-guard.ts
+      // 2026-09-28). `*/pi-mcp-*` covers both spellings. Without this carve-out
+      // the agent cannot inspect its OWN already-paid-for tool output and re-runs
+      // the expensive search instead (observed: six 55–301 KB GitHub MCP results
+      // denied, 2026-09-24 session). READ-ONLY here: writes with absolute-path
+      // tokens to /var/folders stay denied by `external_directory` rule `*`
+      // (verified by literal-touch denial 2026-09-28; note the pre-existing `cd` +
+      // relative-token resolution quirk applies to every carve-out equally, not
+      // just this one). Only the pi-subagents dirs below are opened both ways.
+      // Greedy `*` crosses the machine-specific
+      // /var/folders/<x>/<guid>/T levels and the file segments; both the /var and
+      // /private/var spellings are required (symlink resolution).
       "/var/folders/*": "allow",
-      "/private/var/folders/*/pi-mcp-output-*": "allow"
+      "/private/var/folders/*/pi-mcp-*": "allow"
     },
     "external_directory": {
       // CWD-boundary gate (need #3 continued): reaching outside the
@@ -240,8 +242,22 @@
       "*": "allow"
     },
     "mcp": {
-      // MCP servers are processes with their own file/network reach, so they
-      // are gated here (the `bash` map never sees MCP tool invocations).
+      // ADAPTER-ERA SURFACE (kept for compatibility only). The surface is
+      // derived from the invoked tool name, so this map matched the adapter's
+      // `mcp` gateway tool. Under built-in MCP there is no `mcp` tool: servers
+      // register `mcp__<server>__<tool>` keeping hyphens
+      // (`mcp__github-personal-engineering__…`; names over 64 chars lose their
+      // tail to an 8-hex suffix), and that registered name is the per-tool
+      // surface — gate one with a top-level `"mcp__<server>__<tool>"` (or
+      // `"mcp__<server>__*"`) key. Use the HYPHENATED spelling: an
+      // underscore-spelled surface key matches nothing and silently falls
+      // through to `"*"` (verified 2026-09-30 — a hyphen `deny` blocked calls
+      // made with either spelling, an underscore `deny` blocked nothing). Codemode
+      // reports the underscore identifier form in `ALL_TOOLS`/`searchTools()`
+      // results, which is a different namespace from the permission surface. See
+      // extensions/README.md "Built-in MCP". TRMNL unreachability is enforced in
+      // mcp.json (`enabled: false` + `exposure: "hidden"`), which is what
+      // actually keeps its tools from ever being registered.
       "*": "allow",
       "trmnl-plugin": "deny",
       "trmnl:*": "deny"

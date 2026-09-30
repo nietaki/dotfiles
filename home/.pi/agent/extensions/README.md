@@ -45,7 +45,8 @@ surface = `path` deny + `path_read` allow (and drop it from
     startup, so a write there is self-modification with a delay:
     `extensions/*.ts` is arbitrary code that runs at next start in *every*
     project; `instructions/*.md` is injected into every future system prompt;
-    `mcp.json` is commands the adapter spawns; `models.json` defines providers
+    `mcp.json` is commands Pi's built-in MCP support spawns; `models.json`
+    defines providers
     including `baseUrl`, so it can redirect API traffic; `npm/` is what gets
     installed. The old shape allowed all of that and carved out only
     `auth.json`, `sessions/*`, `settings.json` and this config file.
@@ -179,6 +180,119 @@ picked up on the next config refresh once the symlink points back at the repo.
   ask to edit) the repo copy under `home/.pi/...` and relink. Direct state
   surgery in `~/.pi` — clearing a stale cache, pruning `npm/` — is a manual
   step, by design.
+
+## Built-in MCP (2026-09-30: off `pi-mcp-adapter`)
+
+MCP now runs on Pi's own support: `~/.pi/agent/mcp.json` (this repo's
+`home/.pi/agent/mcp.json`) is read directly, servers connect at session start,
+and `/mcp` is the built-in manager. `settings.json` carries
+`"defaultTools": ["+codemode"]` and `mcp.json` sets `"autoEnableCodemode":
+true`, so tools are reached from `codemode` as `mcp__<server>__<tool>`.
+
+Two spellings of that name exist, and the difference is load-bearing:
+
+- **Registered tool name — hyphens kept**: `mcp__github-readonly__get_me`,
+  `mcp__github-personal-engineering__add_comment_to_pending_review`. This is
+  what `/mcp`, `pi mcp list`, the nested-call log, and **permission surfaces**
+  use. Names longer than 64 characters lose their tail to an 8-hex suffix
+  (`mcp__github-personal-engineering__add_reply_to_pull_req_fe1189df`).
+- **Codemode identifier — underscores**: `mcp__github_readonly__get_me`. Every
+  non-`[A-Za-z0-9_$]` character becomes `_` (`toCodemodeIdentifier`), so hyphens
+  turn into underscores. This is the spelling `ALL_TOOLS` and `searchTools()`
+  *results* report, and the `tools.<name>` property. Both spellings resolve when
+  called; `describeTool` accepts both. `searchTools`' `namespace:` filter is
+  matched exactly against the **hyphen** namespace `mcp__<server>`.
+
+  Verified 2026-09-30 by temporarily denying both spellings and calling each way:
+  a `"mcp__github-readonly__get_me": "deny"` rule blocked calls written with the
+  hyphen **and** with the underscore identifier (the surface is always the
+  registered hyphenated name), while `"mcp__github_readonly__search_issues":
+  "deny"` blocked nothing — an underscore-spelled surface key matches no tool and
+  silently falls through to the `"*"` allow. Permission rules therefore must use
+  hyphens. (The denial message prints `(rule '*')` because a string value is
+  shorthand for the surface's `"*"` pattern.)
+
+What the migration changed in the config surface:
+
+| Adapter | Built-in |
+|---|---|
+| `{env:VAR}` interpolation | `${VAR}` (or `!command` for the whole value) |
+| `"disabled": true` | `"enabled": false` |
+| `excludeTools` | `toolExposure: { "<tool>": "hidden" }` |
+| `approveTools` | **no equivalent** — gate it here instead |
+| `mcp({ connect })` / `mcp({})` gateway | automatic connect; `/mcp` for state and errors |
+| `mcp` / `mcpScript` tools | `codemode` (+ `tool_search` if enabled) |
+| spill dir `$TMPDIR/pi-mcp-output-XXXX*/` | file `$TMPDIR/pi-mcp-<hex>.txt` (mode `0600`) |
+
+Consequences for this policy file:
+
+- **`permission.mcp` is dead under built-in MCP.** The surface is derived from
+  the invoked tool's **registered name**, and built-in MCP tools are named
+  `mcp__<server>__<tool>` (hyphens kept), never `mcp`. The block is kept so the
+  pattern still works if the adapter is ever reinstalled; real gating of a
+  built-in tool is a per-tool-name surface.
+- **Per-tool gating shape** (the replacement for the old `approveTools`; not
+  enabled — `actions_run_trigger` is deliberately callable, matching what the
+  adapter config actually did, since its `approveTools` list contained only a
+  commented-out entry). Add it directly to `permission`, keyed by the built-in
+  tool name:
+
+  ```json
+  "mcp__github-personal-engineering__actions_run_trigger": "ask"
+  ```
+
+  Surface keys are wildcard-matched, so `"mcp__github-personal-engineering__*"`
+  covers a whole server — use the **hyphenated registered name**, because the
+  surface comes from the tool-call event, not from codemode's identifier. A
+  `_`-spelled rule silently matches nothing. Last-match-wins means it must
+  appear **after** the
+  `"*": "allow"` fallback. Nested calls made from a `codemode` script pass
+  through the same `tool_call` handlers (carrying the codemode call as
+  `parentToolCallId`), so this gates script-driven calls too.
+- **TRMNL stays unreachable by config, not by this file**: `mcp.json` keeps it
+  `"enabled": false` *and* `"exposure": "hidden"`, so the tools are never
+  registered and never callable. The `mcp` denies below are belt-and-braces.
+- **Deliberate: no per-tool `direct` exposure, budget left at 3000**
+  (decided 2026-09-30, measured rather than assumed). `selectCatalog()` fills the
+  budget **cheapest-first per namespace**, not most-usefully, so raising it buys
+  trivia. With all five servers connected, the declared 13 are
+  `get_latest_release` ×2, `get_tag` ×2, `get_label` ×2, `list_issue_types` ×2,
+  `get_me`, the four cheap Dash/Apify/Grep entries — while every verb the
+  `github-mcp` skill actually prescribes (`issue_read` rank 15/22,
+  `pull_request_read` rank 22/22, `search_documentation` rank 4/4 in Dash) is
+  **not** declared and arrives via `searchTools()`. Measured costs, kept here so
+  the decision can be revisited with numbers: declaring all 68 MCP tools would
+  cost **20,466 tokens**; a 9-tool hot shortlist would add **~2.9k** (direct
+  tools leave the codemode catalog rather than double-counting — verified: the
+  listing went from “13 of 71” to “13 of 68” when three tools were made
+  `direct`). Lowering the budget instead pushes `get-dataset-items` (565) and
+  `searchGitHub` (659) behind a discovery hop, so 3000 stands.
+- **`timeout: 180` on `apify-job-listings`, and only there.** Not for the reason
+  first assumed: the Actor tool self-caps its own wait (“max seconds 0–45,
+  default 30 … For long-running Actors the response returns at the cap with the
+  current run status; follow `nextStep` to poll via get-actor-run”), so a run
+  never blocks on the 60 s default. The pin is insurance for the genuinely slow
+  paths — `get-dataset-items` paging a large dataset and remote HTTP stalls. All
+  other servers stay at the 60 s default because their calls are fast and
+  local.
+- **Disabled servers register nothing.** Verified from a live session: with
+  `trmnl-plugin`, `betterwright`, `brave-search`, `exa`, `openzim`, and
+  `github-notifications` all `enabled: false`, `ALL_TOOLS` contains exactly the
+  68 MCP tools of the five enabled servers and no tool name for any parked
+  server. `pi-permission-system` therefore has nothing to gate for them; the
+  `mcp.json` flag is the control.
+- **The codemode declaration list is trimmed.** Measured in a session with all
+  five servers connected: 68 MCP tools callable, but only 13 declared (10 MCP +
+  the 3 resource tools) under the default `codemode.inlineBudget` of 3000
+  estimated tokens — `github-readonly` reported “22 tools, 2 shown”,
+  `github-personal-engineering` “35 tools, 2 shown”. Most tools are reachable
+  only through `searchTools()` / `ALL_TOOLS`; raise `codemode.inlineBudget` in
+  `settings.json` only if you want more declared.
+- **Oversized-output reads**: built-in truncates model-facing text over 20 KB
+  middle-out and writes the full text to `$TMPDIR/pi-mcp-<hex>.txt`; the
+  `external_directory_read` carve-out now matches `pi-mcp-*` (which also covers
+  the adapter-era `pi-mcp-output-XXXX/` dirs). Codemode scripts always get the
+  whole `CallToolResult`, so filtering in the script is the preferred path.
 
 ## What we gave up (2026-09-21)
 

@@ -44,7 +44,13 @@ Briefly state that the Apify Actor is pay-per-event (the Store page listed appro
 
 ## 2. Run the two branches
 
-Use `fantastic-jobs/career-site-job-listing-api` through the configured `apify-job-listings` MCP server.
+Call the `apify-job-listings` server's tools from the built-in `codemode` tool
+(the Actor is `fantastic-jobs/career-site-job-listing-api`). The Actor tool's
+registered name is hashed because the prefixed name exceeds Pi's 64-character
+limit, so discover it with `searchTools("career site job listing", { namespace:
+"mcp__apify-job-listings" })` and call it through `tools[name]` rather than
+typing the hashed name from memory. Follow the loaded `apify-job-search` skill
+for the exact invocation and result-parsing pattern.
 
 1. **Remote branch:** base input plus:
    ```json
@@ -56,7 +62,11 @@ Use `fantastic-jobs/career-site-job-listing-api` through the configured `apify-j
    ```
    Do not set `aiWorkArrangementFilter` on this branch; onsite, hybrid, and remote-in-Poland roles are all eligible. Do not narrow this to `"Warsaw, Poland"` unless explicitly instructed — that city-level form was verified to miss relevant listings.
 
-The branches are independent and may run in parallel. After each successful run, read only that run's default dataset with `get-dataset-items`; never infer results from the immediate `itemCount`, which may lag. Do not fetch more rows than the effective Actor limit.
+The branches are independent: run both Actor calls concurrently in one script
+with `Promise.allSettled`. After each successful run, read only that run's
+default dataset with `mcp__apify-job-listings__get-dataset-items`; never infer
+results from the immediate `itemCount`, which may lag. Do not fetch more rows
+than the effective Actor limit.
 
 Retrieve at least:
 

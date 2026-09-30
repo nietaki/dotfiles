@@ -1,9 +1,21 @@
 # Web Search & Page Access
 
-Web access runs through the `pi-web-access` extension (not the old Brave/Exa
+Web access runs through the `pi-web-access` extension (not the parked Brave/Exa
 MCP servers). For current events, documentation, or any time-sensitive fact:
 search the web instead of relying on training data. Cite the URL when results
 inform an answer.
+
+MCP servers themselves run through Pi's **built-in** MCP support
+(`~/.pi/agent/mcp.json`, `/mcp`, `pi mcp list`). Their tools are registered as
+`mcp__<server>__<tool>` with the server/tool hyphens kept
+(`mcp__github-readonly__list_issues`); inside codemode the same tools appear
+under the underscore identifier form (`mcp__github_readonly__list_issues`) and
+either spelling resolves when called. Reach them through the `codemode` tool,
+which this setup enables permanently (`defaultTools: ["+codemode"]`). Only a
+slice is declared — measured 13 of 68 MCP tools with all five servers connected
+— so find the rest with `searchTools()` (its `namespace:` filter takes the
+hyphen form) or by filtering `ALL_TOOLS`. Registered names over 64 characters
+get an 8-hex suffix, so never type a long name from memory.
 
 ## Tools
 
@@ -46,14 +58,19 @@ eagerly available and you can use them.)
   binary, for the issue→PR loop on repositories owned by the personal account
   (issue/PR creation, comments, reviews, CI inspection, label reads). Narrowed
   by `--exclude-tools` (no merges, no remote contents writes, no label
-  vocabulary admin) and `approveTools` gates `actions_run_trigger`. Use it only
-  when a write is actually needed; `github-readonly` covers looking.
+  vocabulary admin). `actions_run_trigger` (workflow dispatch) is callable and
+  is **not** approval-gated — built-in MCP has no `approveTools`; a gate would
+  be a `pi-permission-system` rule (shape in `extensions/README.md`). Use this
+  entry only when a write is actually needed; `github-readonly` covers looking.
 - `github-readonly` search size limits: `search_issues`, `search_pull_requests`,
   `search_code`, and `search_repositories` accept `perPage` (up to 100). Start
   with `perPage <= 10` and narrow the query instead of paging wide — a
-  `perPage: 100` result can be a 300 KB payload. Oversized tool outputs are
-  truncated and spilled whole to `$TMPDIR/pi-mcp-output-XXXX/` (readable: the
-  permission policy carves these dirs out read-only). Inspect the spill with
-  `read`/`grep` — never re-run the same search just to see what was truncated.
-  For repository discovery, `search_repositories` also supports
-  `minimal_output: true`.
+  `perPage: 100` result can be a 300 KB payload. Direct tool results over 20 KB
+  reach the model with the middle cut out and the full text saved to a
+  `pi-mcp-<hex>.txt` file under `$TMPDIR`, whose path the result names (readable:
+  the permission policy carves `/private/var/folders/*/pi-mcp-*` out read-only).
+  Prefer filtering inside a `codemode` script — scripts always receive the
+  complete `CallToolResult` — and inspect the spill file with `read`/`grep` only
+  when a direct call already produced one. Never re-run the same search just to
+  see what was truncated. For repository discovery, `search_repositories` also
+  supports `minimal_output: true`.

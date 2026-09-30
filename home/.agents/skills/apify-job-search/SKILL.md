@@ -5,7 +5,47 @@ description: Search recent English- or Polish-language backend, SRE, and DevOps 
 
 # Apify Job Search
 
-Use the configured `apify-job-listings` MCP server and its `fantastic-jobs--career-site-job-listing-api` Actor tool to find jobs from company career sites. Return source postings, not invented or inferred job details.
+Use the configured `apify-job-listings` MCP server and its Fantastic.jobs
+Career Site Job Listing API Actor tool to find jobs from company career sites.
+Return source postings, not invented or inferred job details.
+
+## Invoking through codemode
+
+The server connects automatically at session start under Pi's built-in MCP
+support; call its tools from a `codemode` script. Registered tool names keep the
+server and tool hyphens (`mcp__apify-job-listings__get-dataset-items`); codemode
+lists them under an underscore identifier
+(`mcp__apify_job_listings__get_dataset_items`) and both spellings resolve when
+called. The Actor tool's registered name is **hashed** because
+`mcp__apify-job-listings__fantastic-jobs--career-site-job-listing-api` exceeds
+Pi's 64-character limit — the real names are
+`mcp__apify-job-listings__fantastic-jobs--career-site-jo_dba742b8` (registered)
+and `mcp__apify_job_listings__fantastic_jobs__career_site_jo_dba742b8`
+(`ALL_TOOLS`). Discover it instead of typing either from memory — note the
+`namespace:` filter takes the hyphen form:
+
+```js
+const found = await searchTools("career site job listing", { namespace: "mcp__apify-job-listings", limit: 5 });
+const runTool = found.map(t => t.name).find(n => n.includes("career_site_jo"));
+const result = await tools[runTool]({ /* Actor input below */ });
+return { runTool, isError: result.isError, content: result.content, structuredContent: result.structuredContent };
+```
+
+The management tools are short enough to name directly:
+`mcp__apify-job-listings__get-dataset-items`,
+`mcp__apify-job-listings__fetch-actor-details`,
+`mcp__apify-job-listings__get-actor-run`. Codemode receives the whole
+`CallToolResult`; check `isError` before using the payload, and read the JSON out
+of the text content blocks (or `structuredContent` when the server supplies it)
+rather than assuming an adapter-normalized shape. A server-level error result
+resolves in the script, but a call the permission gate blocks **throws** — so
+wrap gated calls in `try/catch` if one branch failing must not abort the script.
+The two location branches are independent, so run them concurrently with
+`Promise.allSettled`.
+
+The Actor is pay-per-event; see the pricing note below. Never run it as a
+connectivity or migration smoke-test — use
+`mcp__apify-job-listings__fetch-actor-details` for that.
 
 ## Search profile
 
@@ -94,7 +134,18 @@ Poland branch: same input, replacing `aiWorkArrangementFilter` with `locationSea
 
 ## Read and present results
 
-After each successful Actor run, read only the default dataset created by that run using `get-dataset-items`, with a limit no larger than the requested Actor limit. Select at least these fields:
+After each successful Actor run, read only the default dataset created by that
+run using `mcp__apify-job-listings__get-dataset-items`, with a limit no larger
+than the requested Actor limit. Parse the returned content blocks (or
+`structuredContent`) to get the items; `itemCount` on the run is not the item
+list.
+
+A run response is **not** proof the Actor finished. The Actor tool self-caps its
+own wait ("max seconds 0–45, default 30… for long-running Actors the response
+returns at the cap with the current run status"), so read the returned status
+and follow its `nextStep`, polling
+`mcp__apify-job-listings__get-actor-run`, before reading the dataset —
+otherwise you are querying a run that is still open. Select at least these fields:
 
 - `date_posted` — preserve the posting timestamp (ISO format; don't invent a timezone if absent)
 - `organization`

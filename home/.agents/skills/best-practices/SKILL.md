@@ -5,7 +5,12 @@ description: Find best practices for a given tech stack when implementing new fu
 
 ## What to do
 
-Use the search and documentation tools configured in this session (e.g. Brave, Exa, or other MCP servers — discover them with the MCP search tool if unsure) to research the best-practice approaches to solving the problem at hand. If external research is unavailable, state that limitation rather than guessing.
+Use the search and documentation tools configured in this session (the
+`pi-web-access` tools, plus any MCP server tools available through the built-in
+`codemode` tool — list the callable set with `ALL_TOOLS` or find one with
+`searchTools()` inside a codemode script) to research the best-practice
+approaches to solving the problem at hand. If external research is unavailable,
+state that limitation rather than guessing.
 
 The best-practice might be a library to use, a standard way to achieve a given goal in the programming language, or a customary design pattern when there's more than way to achieve a given goal.
 
