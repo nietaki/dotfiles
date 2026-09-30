@@ -7,7 +7,9 @@
   // Opt-in & fail-safe: if the link is ever unregistered, the ask still prompts.
   // See extensions/session-yolo.ts (path/external_directory `allow`s are capped
   // back to `defer` by the package, so those asks still prompt).
-  "authorizerChain": ["session-yolo"],
+  "authorizerChain": [
+    "session-yolo"
+  ],
   // ==========================================================================
   // SINGLE-LAYER POLICY — hard, deterministic boundaries for every tool call.
   //
@@ -155,7 +157,7 @@
       // ways. Greedy `*` crosses the machine-specific
       // /var/folders/<x>/<guid>/T levels and the spill file segments; both the
       // /var and /private/var spellings are required (symlink resolution).
-      "/var/folders/*/pi-mcp-output-*": "allow",
+      "/var/folders/*": "allow",
       "/private/var/folders/*/pi-mcp-output-*": "allow"
     },
     "external_directory": {
