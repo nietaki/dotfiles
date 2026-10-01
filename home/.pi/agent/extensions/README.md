@@ -106,6 +106,19 @@ surface = `path` deny + `path_read` allow (and drop it from
   its own right-aligned powerline segment with the `session-yolo` prefix and a
   theme color — no ANSI in the extension. Full writeup in *Session-scoped ask
   switch* below.
+- `generation-rate.ts` — publishes the latest assistant message's output-token rate
+  (`NN t/s`) as the `token-rate` extension status, which
+  `powerline.customItems` renders **before** `session-yolo` in the `muted`
+  colour that the built-in `cache_read` segment uses. Timing is taken between
+  the assistant `message_start` and `message_end` events with a monotonic
+  clock: Pi exposes no provider-side generation duration, so this is the only
+  event-driven option. Consequence: the number is **generation time only** —
+  it excludes time-to-first-token, tool execution, and idle time between
+  turns, and a multi-call turn updates the footer once per call.
+  Aborted/error messages are skipped rather than reported as a rate. (The file
+  is *not* named `token-rate.ts` like its status key: the repo-wide `.gitignore`
+  secret-hygiene pattern `*token*` silently ignores any path containing
+  "token", and an ignored file is never linked by homeshick.)
 - This README — the reasoning.
 
 ## Session-scoped ask switch (`session-yolo.ts`)

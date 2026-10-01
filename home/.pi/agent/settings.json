@@ -28,6 +28,11 @@
     "welcome": false,
     "customItems": [
       {
+        "id": "token-rate",
+        "position": "right",
+        "color": "muted"
+      },
+      {
         "id": "session-yolo",
         "position": "right",
         "prefix": "session-yolo",
