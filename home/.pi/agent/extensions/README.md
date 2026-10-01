@@ -78,10 +78,17 @@ surface = `path` deny + `path_read` allow (and drop it from
   `npm:pi-powerline-footer` migration: the provider is now shown by the footer
   package itself (`powerline.model.display: "qualified"` in settings.json), so
   the custom `setStatus` glue is gone.
-- `instructions.ts` — appends `~/.pi/agent/instructions/*.md` to the system
-  prompt as one `# Pi Instructions` block, built once at extension load in
-  filename order so the bytes are stable across turns (prompt-cache friendly).
-  Edits to instruction files need a restart or `/reload`.
+- `instructions.ts` — injects `~/.pi/agent/instructions/*.md` into the system
+  prompt as structured `contextFiles` (Pi's `<project_context>` surface), so Pi
+  can diff the section into the transcript and `pi-context-view` lists each file
+  under **Instruction Files**. Files are read once at extension load in filename
+  order, so the bytes are stable across turns (prompt-cache friendly). Edits to
+  instruction files need a restart or `/reload`.
+  **Do not go back to returning `systemPrompt` from `before_agent_start`**: that
+  sets Pi's `forceSystemPrompt`, which turns the whole prompt into one opaque
+  replacement — the transcript keeps only the structured sections, and anything
+  appended after `</cwd>` is outside every section, so `pi-context-view` can only
+  show it as unattributed extension prose (~4.2k tokens of our instructions).
 - `subagent-outputs.ts` — `/subagent-outputs [filter]`: TUI browser over
   pi-subagents child output artifacts (picker, then a manual-windowed
   markdown scroller: a nested ScrollView never works inside pi's
