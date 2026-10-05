@@ -4,7 +4,7 @@
   "defaultProvider": "openrouter",
   "defaultModel": "openai/gpt-6-luna",
   "defaultThinkingLevel": "medium",
-  "hideThinkingBlock": false,
+  "hideThinkingBlock": true,
   "tuiMode": "fullscreen",
   "defaultTools": [
     "+codemode"

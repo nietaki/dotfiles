@@ -274,7 +274,8 @@
       "*": "allow",
       "timeout *": "allow",
       "git push *": "deny",
-      "git reset *": "deny"
+      "git reset *": "deny",
+      "gh *": "deny"
     }
   }
 }

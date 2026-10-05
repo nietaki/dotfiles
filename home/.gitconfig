@@ -10,6 +10,14 @@
   st = status
   br = branch
   co = checkout
+  # Create a sibling worktree and a new branch from the current HEAD.
+  # For example, `git wt-new issue 42 add telemetry` creates the branch
+  # `issue-42-add-telemetry` in `<repo>-issue-42-add-telemetry`.
+  # Arguments are joined with hyphens; slashes are rejected to keep the
+  # worktree in a single sibling directory. Existing branches are not reset.
+  wt-new = "!f() { if [ \"$#\" -eq 0 ]; then echo \"usage: git wt-new <name> [name parts...]\" >&2; return 2; fi; slug=\"$1\"; shift; for part in \"$@\"; do slug=\"$slug-$part\"; done; case \"$slug\" in */*) echo \"git wt-new: '/' is not allowed in the generated name: $slug\" >&2; return 2;; esac; git check-ref-format --branch \"$slug\" >/dev/null || return 2; root=$(git rev-parse --show-toplevel) || return; git worktree add -b \"$slug\" \"$root-$slug\" HEAD; }; f"
+  # Show the branch and working-tree status of every associated worktree.
+  wt-status = "!f() { git worktree list --porcelain | while IFS= read -r line; do case \"$line\" in \"worktree \"*) path=${line#worktree }; printf '\\n==> %s\\n' \"$path\"; git -C \"$path\" status --short --branch;; esac; done; }; f"
   nuke = reset --hard HEAD
   amend = commit -a --amend
   ca = commit -a
