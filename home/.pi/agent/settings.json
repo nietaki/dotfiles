@@ -1,10 +1,10 @@
 {
-  "lastChangelogVersion": "0.99.2",
+  "lastChangelogVersion": "1.0.3",
   "theme": "dark",
   "defaultProvider": "openrouter",
   "defaultModel": "openai/gpt-6-luna",
   "defaultThinkingLevel": "medium",
-  "hideThinkingBlock": true,
+  "hideThinkingBlock": false,
   "tuiMode": "fullscreen",
   "defaultTools": [
     "+codemode"
@@ -20,7 +20,8 @@
     "npm:pi-prompt-template-model",
     "npm:pi-subagents",
     "npm:pi-subagents-workflows@0.2.1",
-    "npm:pi-web-access@0.31.0"
+    "npm:pi-web-access@0.31.0",
+    "~/repos/pi-retrospect"
   ],
   "powerline": {
     "preset": "default",

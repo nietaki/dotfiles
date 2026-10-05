@@ -272,6 +272,7 @@
       // allowlist. Everything else is bounded by path/external_directory
       // above, which catches *where* a command writes, not *what* it is.
       "*": "allow",
+      "timeout *": "allow",
       "git push *": "deny",
       "git reset *": "deny"
     }
