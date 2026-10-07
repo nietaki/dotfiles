@@ -1,3 +1,8 @@
+---
+name: subagent-orchestration
+description: Use `pi-subagents` advanced orchestration features well - advanced prompt templates, script-based orchestration and other details
+---
+
 # Subagent orchestration Guidelines
 
 Conventions for working with `pi-subagents` in this setup. Deeper, source-verified
