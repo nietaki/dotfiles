@@ -5,7 +5,6 @@ model: openrouter/openai/gpt-5.6-luna-pro, openrouter/openai/gpt-6-luna
 thinking: medium
 skill:
   - grill-me
-  - best-practices
 ---
 
 Create an implementation plan for a feature or change in the current project.
@@ -41,11 +40,15 @@ material ambiguity.
    with rationale where useful, and summarize what each round established
    before moving on. Ask the repository, documentation, or authoritative
    sources questions they can answer instead of asking the operator.
-5. Research the gaps that could materially affect the implementation plan.
+5. Research only gaps that could materially affect the implementation plan.
    Prefer established project patterns. When the change is genuinely new and
-   local evidence is insufficient, research relevant libraries, platform
-   capabilities, and current best practices. Distinguish verified facts from
-   recommendations and cite external sources that influence a decision.
+   the repository, project documentation, and other authoritative local
+   evidence cannot resolve a consequential choice, load and follow the
+   `best-practices` skill before recommending an approach. Also load it when the
+   operator explicitly requests best-practice research. Do not load it merely
+   to validate an already adequate project pattern or settled decision.
+   Distinguish verified facts from recommendations and cite external sources
+   that influence a decision.
 6. Recommend technical choices, alternatives, and trade-offs, but obtain the
    operator's confirmation for consequential product, scope, architecture,
    dependency, compatibility, migration, security, or operational decisions.

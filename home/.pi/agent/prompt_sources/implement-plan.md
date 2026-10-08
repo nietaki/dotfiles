@@ -5,7 +5,6 @@ model: opencode-go/qwen3.8-flash, opencode-go/deepseek-v4.1-flash
 thinking: medium
 skill:
   - tdd
-  - best-practices
 ---
 
 Implement the approved plan for the current project. Coordinate the work in this
@@ -37,6 +36,15 @@ silently override the plan's goals or non-goals when the two conflict.
 4. Briefly state the task sequence before implementation begins. If the plan is
    internally contradictory or cannot be implemented responsibly, explain the
    blocker and stop rather than inventing a replacement plan.
+
+Prefer the approved plan, project documentation, established repository
+patterns, and nearby examples over external research. Do not load the
+`best-practices` skill merely because the implementation is complex or uses an
+unfamiliar library. Load and follow it only when the operator or plan explicitly
+requests research, or when implementation exposes a consequential technical
+choice that the plan and authoritative project evidence cannot responsibly
+resolve. Do not use new research to relitigate an approved decision unless
+current evidence shows that it is infeasible, unsafe, or materially stale.
 
 ## Implement sequentially
 

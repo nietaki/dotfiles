@@ -1,48 +1,81 @@
 ---
 name: best-practices
-description: Find best practices for a given tech stack when implementing new functionality.
+description: Conditionally research current best practices when project evidence cannot resolve a consequential technical choice or the operator explicitly requests research.
 ---
 
-## What to do
+# Best-practices research
 
-Use the search and documentation tools configured in this session (the
-`pi-web-access` tools, plus any MCP server tools available through the built-in
-`codemode` tool — list the callable set with `ALL_TOOLS` or find one with
-`searchTools()` inside a codemode script) to research the best-practice
-approaches to solving the problem at hand. If external research is unavailable,
+## Decide whether research is warranted
+
+Loading this skill provides a research procedure. It does not by itself mean
+that external research is required.
+
+Use the procedure when:
+
+- the operator explicitly asks for best-practice research;
+- distinctly new functionality lacks a suitable project precedent;
+- a consequential implementation choice cannot be resolved from the approved
+  plan, project documentation, existing code, or other authoritative local
+  evidence; or
+- current external facts could materially change the choice.
+
+Do not perform external research when:
+
+- an approved plan already resolves the decision and no contrary evidence has
+  appeared;
+- the repository contains a clear, applicable pattern;
+- the question is a routine implementation detail; or
+- research would merely validate an approach that is already adequately
+  established.
+
+When research is not warranted, continue the parent task without producing a
+best-practices report. Do not use research to relitigate an approved decision
+unless current evidence shows that it is infeasible, unsafe, or materially
+stale.
+
+## Research procedure
+
+When the activation criteria above are met, use the search and documentation
+tools configured in this session: the `pi-web-access` tools plus any applicable
+MCP server tools available through the built-in `codemode` tool. List the
+callable set with `ALL_TOOLS` or find a tool with `searchTools()` inside a
+codemode script when necessary. If warranted external research is unavailable,
 state that limitation rather than guessing.
 
-The best-practice might be a library to use, a standard way to achieve a given goal in the programming language, or a customary design pattern when there's more than way to achieve a given goal.
-
-### Research protocol
+The relevant practice might be a library to use, a standard facility of the
+language or platform, or a customary design pattern for the problem.
 
 Consult sources in this priority order:
 
-1. The project's own conventions, docs, and existing code.
-2. Official documentation, specifications, and maintained reference implementations of the stack in question.
-3. Issue discussions and well-regarded open-source code for practical trade-offs.
-4. StackOverflow threads, reddit threads, and engineering blog posts — supplemental evidence only, not authoritative defaults.
+1. The project's own conventions, documentation, and existing code.
+2. Official documentation, specifications, and maintained reference
+   implementations for the stack in question.
+3. Issue discussions and well-regarded open-source code that illuminate
+   practical trade-offs.
+4. Stack Overflow or Reddit discussions and engineering blog posts as
+   supplemental evidence only, not authoritative defaults.
 
-Bad sources are marketing materials and generic listicles aimed at inexperienced engineers.
+Avoid marketing materials and generic listicles aimed at inexperienced
+practitioners.
 
-**Stopping criterion:** Stop once you can name the realistic options, the constraints that separate them, and the decision criteria. Don't keep iterating for marginal detail.
+**Stopping criterion:** stop once the realistic options, the constraints that
+separate them, and the decision criteria are clear. Do not keep researching for
+marginal detail.
 
-### Presenting research results
+## Present the results
 
-After performing the research, describe the alternatives with their advantages and disadvantages, along with your suggestion. Cite the URL of every source that materially affected the recommendation, with a date for time-sensitive claims. If no reliable external source was found, say so. Prefer unordered lists over long paragraphs (whenever reasonable).
+Describe the realistic alternatives, their advantages and disadvantages, and
+your recommendation. Cite the URL of every source that materially affects the
+recommendation, including a date for time-sensitive claims. If no reliable
+external source was found, say so. Prefer concise unordered lists over long
+paragraphs when reasonable.
 
-For small, easily-contained approaches provide example code snippets based on existing code - don't try to adapt them to the specifics of the current project (yet).
+For a small, self-contained approach, an illustrative code snippet based on the
+project's style may be useful, but do not prematurely adapt it into the project
+or begin implementation merely because research was requested.
 
-In some cases, the research results don't need to be long-winded - sometimes the user isn't very experienced
-with a given library or programming language and just needs a simple example of how things are usually done, without
-diving into alternatives and minute trade-offs.
-
-If there are any important caveats to the proposed approaches that could impact the "right" decision - make sure to mention them. The caveats could be related to, for example, performance implications, causing tight coupling, ease of refactoring, vendor lock-in, or viral licensing implications.
-
-## When to use the skill
-
-Use when planning the implementation of distinctly new functionality/system in a given project.
-Do not use when there's existing patterns in the repository that can be followed.
-
-Also use when the user asks for you to research best practices.
-
+Scale the explanation to the decision. A straightforward library or language
+idiom may need only a short example, while a consequential choice should make
+its trade-offs explicit. Call out caveats that could change the decision, such
+as performance, coupling, migration cost, maintainability, vendor lock-in, or
+licensing implications.
