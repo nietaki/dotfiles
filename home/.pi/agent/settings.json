@@ -18,8 +18,8 @@
     "npm:pi-powerline-footer",
     "npm:pi-prompt-template-model",
     "npm:pi-subagents",
-    "npm:pi-subagents-workflows@0.2.1",
-    "npm:pi-web-access@0.31.0",
+    "npm:pi-subagents-workflows",
+    "npm:pi-web-access",
     "~/repos/pi-retrospect"
   ],
   "_temporarily_disabled_packages": [
