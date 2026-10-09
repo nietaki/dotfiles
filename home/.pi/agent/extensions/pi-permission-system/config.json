@@ -273,7 +273,7 @@
       // above, which catches *where* a command writes, not *what* it is.
       "*": "allow",
       "timeout *": "allow",
-      "git push *": "deny",
+      "git push *": "allow",
       "git reset *": "deny",
       "gh *": "deny"
     }

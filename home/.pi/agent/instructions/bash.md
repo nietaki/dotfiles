@@ -38,7 +38,8 @@ Standard programs:
 - `mix`
 - `mkdir`
 - `rg`
-- `sed`
 - `tail`
 - `tar`
 - `which`
+
+Prefer `grep` over `sed` when usable, as `sed` might be blocked by the permission system in siutations where `grep` wouldn't
