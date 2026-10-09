@@ -20,7 +20,8 @@
     "npm:pi-subagents",
     "npm:pi-subagents-workflows",
     "npm:pi-web-access",
-    "~/repos/pi-retrospect"
+    "~/repos/pi-retrospect",
+    "~/repos/pi-simple-snippets"
   ],
   "_temporarily_disabled_packages": [
     "npm:betterwright"
@@ -56,6 +57,13 @@
   },
   "piRetrospect": {
     "markSteeringMessages": true
+  },
+  "piSimpleSnippets": {
+    "shortcut": "ctrl+shift+s",
+    "snippets": {
+      "use-mcp": "Use your MCP tools to find the information",
+      "ok": "Reply with exactly: 'OK'"
+    }
   },
   "subagents": {
     "modelScope": {
