@@ -55,6 +55,18 @@ throwing; check it before using the payload. A call the permission gate blocks i
 the opposite case: it **throws**, so wrap a gated write in `try/catch` when one
 denied branch must not abort the rest of the script.
 
+### Trust successful writes
+
+When a GitHub write returns a non-error result reporting success, treat the
+operation as complete and use any identifiers or URLs in that result. Do not
+read the created or updated entity back merely to verify the write; that adds
+latency and consumes context without improving the result. Reads needed before
+a safe read-modify-write operation are unaffected.
+
+After a timeout or otherwise ambiguous failure, inspect remote state before
+retrying so a completed write is not duplicated. A permission rejection,
+`isError` result, or thrown call is not success.
+
 ### Two spellings of one name
 
 Verified against this build:

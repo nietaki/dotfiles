@@ -165,11 +165,10 @@ this conversation.
 
 When posting is requested, follow the loaded `github-issues` skill exactly:
 fetch the current Pi runtime metadata immediately before the write, append the
-required attribution, add one new top-level issue comment, and read the issue
-comments back to verify the complete posted body. After an ambiguous result,
-inspect recent comments for the exact body before retrying so the plan is never
-posted twice.
+required attribution, and add one new top-level issue comment. Treat a
+successful write result as final. After an ambiguous result, inspect recent
+comments for the exact body before retrying so the plan is never posted twice.
 
 Finish by reporting the issue number and URL, whether a comment was posted, and,
-when available, the verified comment URL. Do not begin implementation or branch
+when available, the returned comment URL. Do not begin implementation or branch
 setup.

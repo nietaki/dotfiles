@@ -1,5 +1,5 @@
 ---
-description: "[parent-run] Create a verified GitHub issue from the current session's decisions and findings."
+description: "[parent-run] Create a GitHub issue from the current session's decisions and findings."
 argument-hint: "[additional issue guidance]"
 skill: github-issues, github-mcp
 ---
@@ -14,4 +14,4 @@ Treat the following optional input as additional requirements, not as permission
 $@
 </additional-guidance>
 
-After creation and verification, report the issue title, number, and URL.
+After successful creation, report the issue title, number, and URL from the write result.

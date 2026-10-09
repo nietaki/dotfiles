@@ -174,11 +174,8 @@ updates, because those operations do not post textual content.
 4. Fetch the current Pi model and thinking level and append the attribution to
    the final body.
 5. Call `issue_write` with `method: "create"`, the exact repository, title,
-   body, and only the validated labels and intended assignees.
-6. Read the created issue back with `issue_read` method `get`; also use
-   `get_labels` when labels were requested or inherited from the template.
-   Verify the title, full body, labels, and intended assignees before reporting
-   success.
+   body, and only the validated labels and intended assignees. Report success
+   from the write result without reading the issue back.
 
 If the create result is ambiguous, search or read remote state for a newly
 created issue with the same title and body before retrying. Never create a
@@ -199,8 +196,6 @@ second issue merely because a response timed out.
    textual fields intentionally being replaced. In particular, omit labels,
    assignees, state, milestone, and type unless the operator also requested
    those changes. Existing comments are never replaced by a body rewrite.
-6. Read the issue back and compare the complete title/body with the intended
-   result.
 
 An explicit request to replace or polish the remote draft is sufficient
 approval. A request to "draft" or "suggest" formatting is not a request to
@@ -211,8 +206,6 @@ write remotely.
 1. Compose the comment's core content without changing the issue body.
 2. Fetch the current Pi runtime metadata and append or replace the attribution.
 3. Call `add_issue_comment` with the exact `owner`, `repo`, and `issue_number`.
-4. Verify the comment through the tool result or `issue_read` method
-   `get_comments`.
 
 After an ambiguous failure, read recent comments and compare the complete body
 before retrying so the same comment is not posted twice.
@@ -282,8 +275,6 @@ new label without first preserving the existing set.
 4. Otherwise union the requested label with every current label name and call
    `issue_write` with `method: "update"`, `issue_number`, and the full `labels`
    array. Do not include the issue body.
-5. Fetch labels again and verify that the requested label was added and no
-   existing label was lost.
 
 ## Assign the authenticated user
 
@@ -297,13 +288,10 @@ assignee set, so preserve existing assignees.
 4. Otherwise union it with the current assignees and call `issue_write` with
    `method: "update"`, `issue_number`, and the full `assignees` array. Do not
    include the issue body.
-5. Read the issue again and verify that the authenticated user is assigned and
-   no existing assignee was lost.
 
-## Verify and report writes
+## Report writes
 
-After every mutation, verify the visible remote state rather than treating a
-successful tool invocation alone as proof. Report the issue number and URL,
-what changed, and any template metadata that was deliberately omitted. For a
-no-op, say why no mutation was needed. On an unresolved error, preserve the
-known remote state and report the blocker without claiming success.
+Follow the `github-mcp` successful-write policy. Report the issue number and
+URL, what changed, and any template metadata deliberately omitted. For a no-op,
+say why no mutation was needed. On an unresolved error, preserve the known
+remote state and report the blocker without claiming success.
