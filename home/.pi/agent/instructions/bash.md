@@ -16,6 +16,7 @@
 - Don't overuse `&&` to join bash commands that could be executed sequentially
   - For example prefer `git add .` and a separate `git commit -m "commit msg"` over `git add . && git commit -m "commit msg"`
   - **DO** use the `&&` for your investigations, like `command_that_could_fail && echo "command succeeded"`
+- Always set (sensible) timeouts in the `bash` tool. Use 300 seconds by default and only set longer timeouts for operations that you expect to be long-running.
 
 ## Standard programs
 

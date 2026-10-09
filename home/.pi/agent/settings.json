@@ -21,7 +21,7 @@
     "npm:pi-subagents-workflows",
     "npm:pi-web-access",
     "~/repos/pi-retrospect",
-    "~/repos/pi-simple-snippets"
+    "~/repos/pi-simple-snippets-issue-1-autocomplete-expansion"
   ],
   "_temporarily_disabled_packages": [
     "npm:betterwright"
@@ -56,10 +56,14 @@
     "keepRecentTokens": 20000
   },
   "piRetrospect": {
-    "markSteeringMessages": true
+    "markSteeringMessages": true,
+    "allowedProjects": [
+      "*"
+    ]
   },
   "piSimpleSnippets": {
     "shortcut": "ctrl+shift+s",
+    "expandOnCompletion": true,
     "snippets": {
       "use-mcp": "Use your MCP tools to find the information",
       "ok": "Reply with exactly: 'OK'"
