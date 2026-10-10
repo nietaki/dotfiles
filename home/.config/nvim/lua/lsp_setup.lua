@@ -12,7 +12,6 @@ require('symbols-outline').setup()
 
 local relevant_servers = {
   'glsl_analyzer',
-  'lexical',
   'gopls',
   'elixirls',
   'dockerls',
