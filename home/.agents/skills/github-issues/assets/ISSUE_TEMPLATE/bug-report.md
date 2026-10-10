@@ -2,7 +2,6 @@
 name: Bug Report
 about: Report incorrect or unexpected software behavior
 title: "bug: "
-labels: ["bug"]
 assignees: ""
 ---
 

@@ -2,7 +2,6 @@
 name: Feature Proposal
 about: Propose a well-specified enhancement or new feature
 title: "feat: "
-labels: ["enhancement"]
 assignees: ""
 ---
 
