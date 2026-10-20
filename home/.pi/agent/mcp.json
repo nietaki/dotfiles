@@ -88,9 +88,7 @@
       "enabled": false
     },
     "trmnl-plugin": {
-      "url": "https://trmnl.com/mcp?api_key=${TRMNL_MCP_API_KEY}",
-      "exposure": "hidden",
-      "enabled": false
+      "url": "https://trmnl.com/mcp?api_key=${TRMNL_MCP_API_KEY}"
     },
     "betterwright": {
       "command": "betterwright",

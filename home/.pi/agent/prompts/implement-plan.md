@@ -1,7 +1,7 @@
 ---
 description: "[parent-run] Implement the approved project plan sequentially using tracked TODOs"
 argument-hint: "[extra-guidance]"
-model: opencode-go/qwen3.8-flash, opencode-go/deepseek-v4.1-flash
+model: opencode-go/qwen3.8-flash, openrouter/deepseek/deepseek-v4.1-flash
 thinking: medium
 skill:
   - tdd

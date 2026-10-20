@@ -16,20 +16,39 @@ re-verify before trusting specifics).
   are spent — that is the design, not a bug to work around.
 - To run a role on a different model deliberately, edit `agentOverrides` +
   `modelScope` and reload pi. Check live state with `/subagents-models`.
-- Roster (budget tiering, prices verified 2026-09): cheap bulk on
-  `opencode-go` (qwen3.8-flash, deepseek-v4.1-flash, glm-5.3-flash — $10/mo
-  Go sub), openai gpt models hosted by `openrouter` (gpt-6-luna,
-  gpt-5.6-luna-pro, gpt-5.6-sol — pay-as-you-go; openrouter sol is half the
-  direct-openai price), `vllm-local/qwen3.8-27b` as free local overflow.
+- Roster (budget tiering, prices verified 2026-10 against the live OpenRouter
+  catalog): cheap bulk on `opencode-go` (qwen3.8-flash, glm-5.3-flash —
+  $10/mo Go sub), openai gpt models hosted by `openrouter`
+  (gpt-6-luna, gpt-5.6-luna-pro, gpt-5.6-sol — pay-as-you-go; openrouter sol is
+  half the direct-openai price), `openrouter/deepseek/*` served by the operator's
+  own DeepSeek keys through OpenRouter BYOK (deepseek-v4.1-flash $0.038/M in ·
+  $0.08/M out, images on; deepseek-v4-pro-0813 $0.66/M in · $1.98/M out,
+  text-only), `vllm-local/qwen3.8-27b` as free local overflow.
+- OpenRouter catalog models need no `models.json` entry — they appear in the
+  registry already. Wiring a new one in means adding the exact
+  `openrouter/<vendor>/<id>` string to `enabledModels` (startup + `Ctrl+P`
+  scope) and to `modelScope.allow` plus the `agents.<role>.allow` lists that
+  should reach it. `openrouter/deepseek/deepseek-v4.1-flash` is allowed for
+  researcher / scout / delegate / retro-scout and
+  `openrouter/deepseek/deepseek-v4-pro-0813` for researcher. It replaced the
+  legacy `opencode-go/deepseek-v4.1-flash` in every list (2026-10 migration),
+  so researcher and scout `agentOverrides` now default to it, while the other
+  opencode-go roles still start on qwen3.8-flash.
+- BYOK cost bookkeeping: Pi's footer computes cost from OpenRouter's listed
+  price, but DeepSeek invoices the inference and OpenRouter takes 5% of that
+  list price only past its $25k/month BYOK allowance. OpenRouter's default
+  "use shared capacity" fallback still serves a request on OpenRouter credits
+  when the BYOK key fails — set "never use shared capacity" on the DeepSeek key
+  in the OpenRouter BYOK settings if a run must not spend credits.
 - Model fallback is NOT a feature: each launch resolves one model and a 429 /
   quota failure is returned, never re-routed (pi-subagents docs/models.md).
   On such a failure the PARENT relaunches the same task once on the role's
   fallback model via an explicit per-run `model:` override — no fallback logic
   belongs in workflow scripts. Per-role chains (main → fallback):
   - worker → qwen3.8-flash → openrouter/openai/gpt-6-luna
-  - delegate → qwen3.8-flash → opencode-go/deepseek-v4.1-flash
-  - scout → opencode-go/deepseek-v4.1-flash → opencode-go/glm-5.3-flash
-  - researcher → opencode-go/deepseek-v4.1-flash → openrouter/openai/gpt-5.6-luna-pro
+  - delegate → qwen3.8-flash → openrouter/deepseek/deepseek-v4.1-flash
+  - scout → openrouter/deepseek/deepseek-v4.1-flash → opencode-go/glm-5.3-flash
+  - researcher → openrouter/deepseek/deepseek-v4.1-flash → openrouter/openai/gpt-5.6-luna-pro
   - reviewer / verifier → openrouter/openai/gpt-5.6-luna-pro → qwen3.8-flash
   - oracle / evidence-auditor / retro-judge → openrouter/openai/gpt-5.6-sol → openrouter/openai/gpt-5.6-luna-pro
   Both models of each chain are in `modelScope` (global + agent lists), so

@@ -69,7 +69,7 @@ subagent({ workflowScriptPath: "/Users/nietaki/.pi/agent/subagent-workflows/feat
   run, and those paths are passed to every auditor as pre-existing.
 - Model tiers: `worker` and `verifier` are both pinned to
   `opencode-go/qwen3.8-flash` (settings `agentOverrides` / `agents/verifier.md`
-  frontmatter); `scout` is `opencode-go/deepseek-v4.1-flash`; closing `reviewer`
+  frontmatter); `scout` is `openrouter/deepseek/deepseek-v4.1-flash`; closing `reviewer`
   is overridden to `openrouter/openai/gpt-5.6-sol` for stronger cross-task
   judgment (fallback if sol is rate-limited: `openrouter/openai/gpt-5.6-luna-pro`).
 - The decompose child passes `output: false`: scout's `output: context.md`
