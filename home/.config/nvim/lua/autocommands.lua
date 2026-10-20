@@ -16,10 +16,16 @@ local trim_whitespace = function()
 end
 
 au.register_filetype_specific = function()
+  -- C sources are excluded from autoformat-on-save: keep the file's own style.
+  local no_autoformat_extensions = { c = true, h = true }
+
   vim.api.nvim_create_autocmd('BufWritePre', {
     callback = function(opts)
       local bufno = opts.buf
       trim_whitespace()
+      if no_autoformat_extensions[vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufno), ':e')] then
+        return
+      end
       local capable_clients =
           vim.lsp.get_clients({ bufnr = bufno, method = vim.lsp.protocol.Methods.textDocument_formatting })
       if #capable_clients > 0 then

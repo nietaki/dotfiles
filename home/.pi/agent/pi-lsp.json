@@ -1,0 +1,14 @@
+  {
+    "timeout": 60000,
+    "servers": {
+      "elixir-ls": {
+        "command": [
+          "elixir-ls"
+        ],
+        "extensions": [
+          ".ex",
+          ".exs"
+        ]
+      }
+    }
+  }
