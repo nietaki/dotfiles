@@ -160,7 +160,10 @@
       // /var/folders/<x>/<guid>/T levels and the file segments; both the /var and
       // /private/var spellings are required (symlink resolution).
       "/var/folders/*": "allow",
-      "/private/var/folders/*/pi-mcp-*": "allow"
+      "/private/var/folders/*/pi-mcp-*": "allow",
+      // Bare entry covers the .app itself; `*` is greedy across the bundle.
+      "/Applications/STM32CubeIDE.app": "allow",
+      "/Applications/STM32CubeIDE.app/*": "allow"
     },
     "external_directory": {
       // CWD-boundary gate (need #3 continued): reaching outside the
@@ -236,7 +239,11 @@
       // expansion, so that rule matched a literal directory named `${TMPDIR}`
       // and never applied.
       "/var/folders/*/pi-subagents-*": "allow",
-      "/private/var/folders/*/pi-subagents-*": "allow"
+      "/private/var/folders/*/pi-subagents-*": "allow",
+      // Execute the STM32CubeIDE launcher (headless/CI build). Scoped to the
+      // single binary: child processes it spawns (Java, GNU toolchain) are
+      // never seen by the gate, so no wildcard is needed here.
+      "/Applications/STM32CubeIDE.app/Contents/MacOS/STM32CubeIDE": "allow"
     },
     "skill": {
       "*": "allow"

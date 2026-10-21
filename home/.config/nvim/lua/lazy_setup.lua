@@ -113,6 +113,9 @@ require("lazy").setup(
         config = function()
           -- ensure parsers are installed
           require("nvim-treesitter").install({
+            --c/cpp
+            "c",
+            "cpp",
             "lua",
             "javascript",
             "typescript",

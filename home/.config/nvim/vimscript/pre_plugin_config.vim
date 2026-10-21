@@ -12,7 +12,15 @@ set timeoutlen=1000
 " set foldlevel=20
 set nofoldenable
 
-" cpp syntax highlighting config
+" *.h files: Neovim <= 0.12 detects them as cpp, which means the cpp treesitter
+" grammar and the cpp ftplugins get used for plain C headers. Upstream fixed the
+" default (Vim 9.1.1325 / Neovim 0.13 master: *.h -> c, with content-aware upgrade
+" to cpp/objcpp, overridable with g:filetype_h). Until this runs on 0.13+, force C.
+" TODO: drop this line when the stable Neovim has the new detection.
+let g:c_syntax_for_h = 1
+
+" cpp syntax highlighting config (regex syntax only - has no effect on buffers
+" where treesitter highlighting takes over)
 let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_class_decl_highlight = 1

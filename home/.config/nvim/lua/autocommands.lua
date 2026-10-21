@@ -37,18 +37,20 @@ au.register_filetype_specific = function()
   vim.api.nvim_create_autocmd(
     { 'BufNewFile', 'BufRead', 'BufReadPost' }, {
       pattern = { '*.livemd', '*.md' },
-      callback = function()
-        vim.opt.filetype = 'markdown'
-        vim.opt.syntax = 'markdown'
+      callback = function(ev)
+        -- buffer-local on purpose: vim.opt would write the global default and leak
+        -- this filetype into later buffers that have no filetype of their own
+        vim.bo[ev.buf].filetype = 'markdown'
+        vim.bo[ev.buf].syntax = 'markdown'
       end,
     })
 
   vim.api.nvim_create_autocmd(
     { 'BufNewFile', 'BufRead', 'BufReadPost' }, {
       pattern = { '*.ino' },
-      callback = function()
-        vim.opt.filetype = 'cpp'
-        vim.opt.syntax = 'cpp'
+      callback = function(ev)
+        vim.bo[ev.buf].filetype = 'cpp'
+        vim.bo[ev.buf].syntax = 'cpp'
       end,
     })
 end
