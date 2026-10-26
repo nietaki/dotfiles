@@ -1,4 +1,5 @@
 set nocompatible
+set nomodeline
 
 set showmatch
 " set autoindent
