@@ -1,7 +1,7 @@
 ---
 description: "[parent-run] Create a polished, shareable Obsidian note from the current session, guided by optional focus and must-include context."
 argument-hint: "[focus and must-include guidance]"
-model: "openrouter/openai/gpt-5.6-luna-pro, opencode-go/qwen3.8-flash"
+model: "openai/gpt-5.6-luna, opencode-go/qwen3.8-flash"
 thinking: medium
 skill: obsidian-note
 ---

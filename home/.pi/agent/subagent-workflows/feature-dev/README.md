@@ -70,8 +70,8 @@ subagent({ workflowScriptPath: "/Users/nietaki/.pi/agent/subagent-workflows/feat
 - Model tiers: `worker` and `verifier` are both pinned to
   `opencode-go/qwen3.8-flash` (settings `agentOverrides` / `agents/verifier.md`
   frontmatter); `scout` is `openrouter/deepseek/deepseek-v4.1-flash`; closing `reviewer`
-  is overridden to `openrouter/openai/gpt-5.6-sol` for stronger cross-task
-  judgment (fallback if sol is rate-limited: `openrouter/openai/gpt-5.6-luna-pro`).
+  is overridden to `openai/gpt-5.6-sol` for stronger cross-task
+  judgment (fallback if sol is rate-limited: `openai/gpt-5.6-luna`).
 - The decompose child passes `output: false`: scout's `output: context.md`
   frontmatter would route an artifact write into `~/.pi/agent/sessions/…`,
   which our permission policy write-denies (`~/.pi/*`).

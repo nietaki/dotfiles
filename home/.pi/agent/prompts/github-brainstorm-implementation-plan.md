@@ -1,7 +1,7 @@
 ---
 description: "[parent-run] Brainstorm and optionally publish an implementation plan for a GitHub issue"
 argument-hint: "[issue-url-or-number]"
-model: openrouter/openai/gpt-5.6-luna-pro
+model: openai/gpt-5.6-luna
 thinking: high
 skill:
   - brainstorm

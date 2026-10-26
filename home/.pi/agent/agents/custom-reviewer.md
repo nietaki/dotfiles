@@ -1,7 +1,7 @@
 ---
 name: custom-reviewer
 description: Independent read-only project reviewer with diff inspection and broad local validation
-model: openrouter/openai/gpt-5.6-luna-pro
+model: openai/gpt-5.6-luna
 tools: read, grep, find, ls, bash, watchdog_diff, contact_supervisor
 thinking: high
 systemPromptMode: replace

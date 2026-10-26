@@ -1,7 +1,7 @@
 ---
 description: "[parent-run] Review recent Pi sessions and report evidence-grounded improvements to the harness"
 argument-hint: "[cwd, time period, and additional issues]"
-model: openrouter/openai/gpt-5.6-sol
+model: openai/gpt-5.6-sol
 thinking: max
 skill:
   - pi-retrospect

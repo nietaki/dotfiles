@@ -1,7 +1,7 @@
 ---
 description: "[parent-run] create or improve a pi-prompt-template-model prompt template via guided interview"
 argument-hint: "<template-name> [notes]"
-model: openrouter/openai/gpt-5.6-sol, openrouter/openai/gpt-5.6-luna-pro, openrouter/deepseek/deepseek-v4.1-flash
+model: openai/gpt-5.6-sol, openai/gpt-5.6-luna, openrouter/deepseek/deepseek-v4.1-flash
 skill: prompt-template-authoring
 ---
 

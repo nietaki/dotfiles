@@ -75,7 +75,7 @@ permission policy, dotfiles stay propose-only.
 ## Model tiers
 
 - **Enumerate + digest workers** (retro-scout): `openrouter/deepseek/deepseek-v4.1-flash`, pinned in the agent's frontmatter — cheap, fast extraction with a 384K output allowance for long transcripts
-- **Synthesis judge** (retro-judge): `openrouter/openai/gpt-5.6-sol`, pinned in the agent's frontmatter (and passed per-launch) — strong judgment for merging duplicates, ranking by confidence × gain / effort, grounding proposals in evidence (fallback if sol is rate-limited: `openrouter/openai/gpt-5.6-luna-pro`)
+- **Synthesis judge** (retro-judge): `openai/gpt-5.6-sol`, pinned in the agent's frontmatter (and passed per-launch) — strong judgment for merging duplicates, ranking by confidence × gain / effort, grounding proposals in evidence (fallback if sol is rate-limited: `openai/gpt-5.6-luna`)
 
 `retro-judge` is the builtin reviewer's discipline + `write`, scoped to the
 report note — kept a dedicated user agent so the builtin reviewer (code/plan

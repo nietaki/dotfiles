@@ -16,17 +16,30 @@ re-verify before trusting specifics).
   are spent — that is the design, not a bug to work around.
 - To run a role on a different model deliberately, edit `agentOverrides` +
   `modelScope` and reload pi. Check live state with `/subagents-models`.
-- Roster (budget tiering, prices verified 2026-10 against the live OpenRouter
-  catalog): cheap bulk on `opencode-go` (qwen3.8-flash, glm-5.3-flash —
-  $10/mo Go sub), openai gpt models hosted by `openrouter`
-  (gpt-6-luna, gpt-5.6-luna-pro, gpt-5.6-sol — pay-as-you-go; openrouter sol is
-  half the direct-openai price), `openrouter/deepseek/*` served by the operator's
+- Roster (budget tiering; OpenRouter prices verified 2026-10 against its live
+  catalog. The OpenAI models moved off OpenRouter to the ChatGPT subscription on
+  2026-10-22, so they now draw on flat plan quota instead of per-token prices):
+  cheap bulk on `opencode-go` (qwen3.8-flash, glm-5.3-flash —
+  $10/mo Go sub), OpenAI gpt models on the built-in `openai` provider via Sign in
+  with ChatGPT (`gpt-6-luna`, `gpt-5.6-luna`, `gpt-5.6-sol` — 272K context, where
+  the same ids were listed at 1.05M through `openrouter`; `openrouter/openai/*-pro`
+  variants have no subscription equivalent, so every `*-pro` role collapsed onto
+  plain `openai/gpt-5.6-luna`), `openrouter/deepseek/*` served by the operator's
   own DeepSeek keys through OpenRouter BYOK (deepseek-v4.1-flash $0.038/M in ·
   $0.08/M out, images on; deepseek-v4-pro-0813 $0.66/M in · $1.98/M out,
   text-only), `vllm-local/qwen3.8-27b` as free local overflow.
+- Two subscription caveats, both verified against Pi 1.4.0 `docs/models.md` and
+  `pi --list-models`: (1) the `openai` `gpt-6-luna` *classifier* (Decisions API)
+  needs an API key and is deliberately not listed while signed in with ChatGPT,
+  so `models.classify()` and OpenRouter image models still require `openrouter`;
+  (2) `gpt-5.6-sol` → `gpt-5.6-luna` fallback chains now stay inside one provider,
+  so a plan rate limit hits both tiers — the DeepSeek and opencode-go roles are
+  the only cross-provider overflow left.
 - OpenRouter catalog models need no `models.json` entry — they appear in the
-  registry already. Wiring a new one in means adding the exact
-  `openrouter/<vendor>/<id>` string to `enabledModels` (startup + `Ctrl+P`
+  registry already. The same holds for built-in providers such as `openai` (its
+  credential lives in `auth.json` as `type: oauth`, not in `models.json`).
+  Wiring a new one in means adding the exact
+  `openrouter/<vendor>/<id>` (or `openai/<id>`) string to `enabledModels` (startup + `Ctrl+P`
   scope) and to `modelScope.allow` plus the `agents.<role>.allow` lists that
   should reach it. `openrouter/deepseek/deepseek-v4.1-flash` is allowed for
   researcher / scout / delegate / retro-scout and
@@ -45,12 +58,12 @@ re-verify before trusting specifics).
   On such a failure the PARENT relaunches the same task once on the role's
   fallback model via an explicit per-run `model:` override — no fallback logic
   belongs in workflow scripts. Per-role chains (main → fallback):
-  - worker → qwen3.8-flash → openrouter/openai/gpt-6-luna
+  - worker → qwen3.8-flash → openai/gpt-6-luna
   - delegate → qwen3.8-flash → openrouter/deepseek/deepseek-v4.1-flash
   - scout → openrouter/deepseek/deepseek-v4.1-flash → opencode-go/glm-5.3-flash
-  - researcher → openrouter/deepseek/deepseek-v4.1-flash → openrouter/openai/gpt-5.6-luna-pro
-  - reviewer / verifier → openrouter/openai/gpt-5.6-luna-pro → qwen3.8-flash
-  - oracle / evidence-auditor / retro-judge → openrouter/openai/gpt-5.6-sol → openrouter/openai/gpt-5.6-luna-pro
+  - researcher → openrouter/deepseek/deepseek-v4.1-flash → openai/gpt-5.6-luna
+  - reviewer / verifier → openai/gpt-5.6-luna → qwen3.8-flash
+  - oracle / evidence-auditor / retro-judge → openai/gpt-5.6-sol → openai/gpt-5.6-luna
   Both models of each chain are in `modelScope` (global + agent lists), so
   the fallback relaunch passes enforcement.
 - The watchdog is deliberately OFF. Its config belongs in Pi settings

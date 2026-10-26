@@ -1,7 +1,7 @@
 ---
 description: "[parent-run] Interactively research and write an implementation plan for a feature or change"
 argument-hint: "<feature-or-change>"
-model: openrouter/openai/gpt-5.6-luna-pro, openrouter/openai/gpt-6-luna
+model: openai/gpt-5.6-luna, openai/gpt-6-luna
 thinking: medium
 skill:
   - grill-me

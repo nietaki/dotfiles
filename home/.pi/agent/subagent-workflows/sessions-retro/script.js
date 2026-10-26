@@ -330,7 +330,7 @@ try {
   board = await runs.run("synthesize", {
     agent: "retro-judge",
     context: "fresh",
-    model: "openrouter/openai/gpt-5.6-sol",  // strong model for synthesis judgment
+    model: "openai/gpt-5.6-sol",  // strong model for synthesis judgment
     task: [
       "You are the synthesis judge of a pi session retrospective for " + targetCwd + ".",
       HINT_BLOCK,

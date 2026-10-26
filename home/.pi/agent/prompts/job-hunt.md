@@ -1,7 +1,7 @@
 ---
 description: "[parent-run] Search recent Go/Elixir backend, SRE, and DevOps jobs in remote and Poland branches, present assessed results, and save a dated Obsidian summary."
 argument-hint: "[process overrides, e.g. limit 40; also search Rust and Kubernetes]"
-model: "opencode-go/qwen3.8-flash, openrouter/openai/gpt-6-luna"
+model: "opencode-go/qwen3.8-flash, openai/gpt-6-luna"
 skill:
   - obsidian-note
   - apify-job-search

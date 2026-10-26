@@ -1,7 +1,7 @@
 ---
 description: "[child task] Review current project changes or a specified project aspect and return prioritized, evidence-backed improvement suggestions without modifying project files."
 argument-hint: "[focus]"
-model: openrouter/openai/gpt-5.6-luna-pro, openrouter/openai/gpt-6-luna
+model: openai/gpt-5.6-luna, openai/gpt-6-luna
 thinking: high
 subagent: custom-reviewer
 inheritContext: false
