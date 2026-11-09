@@ -43,6 +43,11 @@
             "xhigh": "xhigh",
             "max": null
           }
+        },
+        "deepseek-v4.1-flash": {
+          "thinkingLevelMap": {
+            "off": "none"
+          }
         }
       }
     }

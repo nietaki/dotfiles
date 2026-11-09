@@ -74,7 +74,7 @@ permission policy, dotfiles stay propose-only.
 
 ## Model tiers
 
-- **Enumerate + digest workers** (retro-scout): `openrouter/deepseek/deepseek-v4.1-flash`, pinned in the agent's frontmatter — cheap, fast extraction with a 384K output allowance for long transcripts
+- **Enumerate + digest workers** (retro-scout): `opencode-go/deepseek-v4.1-flash`, pinned in the agent's frontmatter — cheap, fast extraction. The opencode-go pin caps output at 384K tokens (the openrouter variant of the same model allows ~922K), plentiful for bounded digests, but that is the ceiling to watch if a digest ever truncates
 - **Synthesis judge** (retro-judge): `openai/gpt-5.6-sol`, pinned in the agent's frontmatter (and passed per-launch) — strong judgment for merging duplicates, ranking by confidence × gain / effort, grounding proposals in evidence (fallback if sol is rate-limited: `openai/gpt-5.6-luna`)
 
 `retro-judge` is the builtin reviewer's discipline + `write`, scoped to the
