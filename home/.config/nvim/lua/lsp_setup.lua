@@ -21,6 +21,29 @@ local relevant_servers = {
   'lua_ls',
 }
 
+if vim.g.chosenCmp == 'blink' then
+  local capabilities = require('blink.cmp').get_lsp_capabilities({
+    textDocument = {
+      completion = {
+        completionItem = {
+          snippetSupport = false,
+        },
+      },
+    },
+  })
+
+  vim.lsp.config('*', { capabilities = capabilities })
+  vim.lsp.config('lua_ls', {
+    settings = {
+      Lua = {
+        completion = {
+          callSnippet = 'Disable',
+          keywordSnippet = 'Disable',
+        },
+      },
+    },
+  })
+end
 
 require('mason-lspconfig').setup({
   ensure_installed = relevant_servers,

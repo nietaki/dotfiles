@@ -176,7 +176,18 @@ local opts = {
   -- C-k: Toggle signature help (if signature.enabled = true)
   --
   -- See :h blink-cmp-config-keymap for defining your own keymap
-  keymap = { preset = 'super-tab' },
+  keymap = {
+    preset = 'super-tab',
+    ['<Tab>'] = {
+      function(cmp)
+        if cmp.is_menu_visible() then
+          return cmp.select_and_accept()
+        end
+      end,
+      'fallback',
+    },
+    ['<S-Tab>'] = { 'fallback' },
+  },
 
   appearance = {
     -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
@@ -189,15 +200,18 @@ local opts = {
 
   -- Default list of enabled providers defined so that you can extend it
   -- elsewhere in your config, without redefining it, due to `opts_extend`
-  -- sources = {
-  --   default = { 'lsp', 'path', 'snippets', 'buffer' },
-  -- },
   sources = {
-    default = { 'lazydev', 'copilot', 'lsp', 'snippets', 'emoji', 'path' },
+    default = { 'lazydev', 'copilot', 'lsp', 'emoji', 'path' },
     per_filetype = {
       copilot = { 'lsp', 'path' },
-      markdown = { 'snippets', 'emoji', 'path' },
+      markdown = { 'emoji', 'path' },
     },
+    transform_items = function(_, items)
+      local snippet_kind = require('blink.cmp.types').CompletionItemKind.Snippet
+      return vim.tbl_filter(function(item)
+        return item.kind ~= snippet_kind
+      end, items)
+    end,
     providers = {
       copilot = {
         name = 'copilot',
@@ -231,16 +245,6 @@ local opts = {
           )
         end,
       },
-
-      snippets = {
-        opts = {
-          filter_snippets = function(ft, file)
-            if vim.tbl_contains({ 'opencode', 'gitcommit' }, ft) then
-              return false
-            end
-          end
-        }
-      }
     }
   },
 
@@ -255,9 +259,7 @@ local opts = {
 return {
   {
     'saghen/blink.cmp',
-    -- optional: provides snippets for the snippet source
     dependencies = {
-      'rafamadriz/friendly-snippets',
       'fang2hou/blink-copilot',
       'moyiz/blink-emoji.nvim',
     },
