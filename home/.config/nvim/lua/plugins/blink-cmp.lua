@@ -201,7 +201,7 @@ local opts = {
   -- Default list of enabled providers defined so that you can extend it
   -- elsewhere in your config, without redefining it, due to `opts_extend`
   sources = {
-    default = { 'lazydev', 'copilot', 'lsp', 'emoji', 'path' },
+    default = { 'lazydev', 'copilot', 'lsp', 'emoji', 'path', 'buffer' },
     per_filetype = {
       copilot = { 'lsp', 'path' },
       markdown = { 'emoji', 'path' },
@@ -213,6 +213,16 @@ local opts = {
       end, items)
     end,
     providers = {
+      buffer = {
+        min_keyword_length = 3,
+        max_items = 5,
+        score_offset = -5,
+        opts = {
+          get_bufnrs = function()
+            return { vim.api.nvim_get_current_buf() }
+          end,
+        },
+      },
       copilot = {
         name = 'copilot',
         module = 'blink-copilot',
