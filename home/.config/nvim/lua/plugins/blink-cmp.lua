@@ -178,15 +178,16 @@ local opts = {
   -- See :h blink-cmp-config-keymap for defining your own keymap
   keymap = {
     preset = 'super-tab',
-    ['<Tab>'] = {
-      function(cmp)
-        if cmp.is_menu_visible() then
-          return cmp.select_and_accept()
+    ['<C-e>'] = {
+      'hide',
+      function()
+        if vim.snippet.active() then
+          vim.snippet.stop()
+          return true
         end
       end,
       'fallback',
     },
-    ['<S-Tab>'] = { 'fallback' },
   },
 
   appearance = {
@@ -196,7 +197,15 @@ local opts = {
   },
 
   -- (Default) Only show the documentation popup when manually triggered
-  completion = { documentation = { auto_show = false } },
+  completion = {
+    documentation = { auto_show = false },
+    trigger = { show_in_snippet = false },
+  },
+
+  -- Use Neovim's built-in vim.snippet API for LSP-provided snippets.
+  snippets = {
+    preset = 'default',
+  },
 
   -- Default list of enabled providers defined so that you can extend it
   -- elsewhere in your config, without redefining it, due to `opts_extend`
@@ -206,12 +215,6 @@ local opts = {
       copilot = { 'lsp', 'path' },
       markdown = { 'emoji', 'path' },
     },
-    transform_items = function(_, items)
-      local snippet_kind = require('blink.cmp.types').CompletionItemKind.Snippet
-      return vim.tbl_filter(function(item)
-        return item.kind ~= snippet_kind
-      end, items)
-    end,
     providers = {
       buffer = {
         min_keyword_length = 3,

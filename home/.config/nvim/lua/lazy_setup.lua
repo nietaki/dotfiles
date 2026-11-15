@@ -125,6 +125,7 @@ require("lazy").setup(
             "erlang",
             "eex",
             "html",
+            "heex",
             "css",
             "gitcommit",
             --shell
