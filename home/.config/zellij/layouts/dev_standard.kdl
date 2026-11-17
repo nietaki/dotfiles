@@ -3,16 +3,19 @@ layout {
         pane size=1 borderless=true {
             plugin location="zellij:tab-bar"
         }
-        pane split_direction="vertical" {
-            pane command="nvim" name="project neovim" size="70%" {
+        pane stacked=true {
+            // `-i` sources .zshrc, but the project env comes from prompt hooks (direnv/mise),
+            // which `zsh -ic` never reaches; `cd .` fires the chpwd hooks that load them.
+            pane command="zsh" name="project neovim" expanded=true {
+                args "-ic" "cd . && nvim"
                 start_suspended true
             }
-            pane size="30%" stacked=true {
-                pane
-                pane command="opencode" name="opencode" expanded=true {
-                    start_suspended true
-                }
+            pane command="zsh" name="pi" {
+                args "-ic" "cd . && pi"
+                start_suspended true
             }
+            pane
+            children
         }
         pane size=1 borderless=true {
             plugin location="zellij:status-bar"

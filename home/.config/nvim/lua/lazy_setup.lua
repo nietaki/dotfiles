@@ -139,6 +139,7 @@ require("lazy").setup(
             --json
             "json",
             "yaml",
+            "kdl",
             "toml",
             "vim",
             "vimdoc",
