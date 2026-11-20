@@ -227,10 +227,10 @@
     "{\"source\":\"npm:@gotgenes/pi-permission-system@31.1.3\",\"scope\":\"user\"}": "31.1.3",
     "{\"source\":\"npm:pi-powerline-footer\",\"scope\":\"user\"}": "0.22.0",
     "{\"source\":\"npm:pi-prompt-template-model\",\"scope\":\"user\"}": "0.12.3",
-    "{\"source\":\"npm:pi-subagents\",\"scope\":\"user\"}": "0.87.0",
-    "{\"source\":\"npm:pi-web-access\",\"scope\":\"user\"}": "0.47.0",
+    "{\"source\":\"npm:pi-subagents\",\"scope\":\"user\"}": "0.89.0",
+    "{\"source\":\"npm:pi-web-access\",\"scope\":\"user\"}": "0.48.0",
     "{\"source\":\"~/repos/pi-retrospect\",\"scope\":\"user\"}": "0.4.0",
     "{\"source\":\"~/repos/pi-simple-snippets-issue-1-autocomplete-expansion\",\"scope\":\"user\"}": "0.1.2",
-    "{\"source\":\"npm:pi-context-view\",\"scope\":\"user\"}": "0.8.3"
+    "{\"source\":\"npm:pi-context-view\",\"scope\":\"user\"}": "0.8.4"
   }
 }

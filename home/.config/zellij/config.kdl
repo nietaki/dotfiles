@@ -321,7 +321,10 @@ default_mode "locked"
 // The name of the default layout to load on startup
 // Default: "default"
 //
-// default_layout "compact"
+// Since zellij 0.46 the welcome screen creates the session with this layout
+// directly on <Enter> (the layout picker moved to <Ctrl l>), so this is what
+// a plain "new session" from the welcome screen ends up using.
+default_layout "dev_standard"
 
 // The folder in which Zellij will look for layouts
 // (Requires restart)
@@ -523,15 +526,23 @@ theme_dir "/Users/nietaki/.config/zellij/themes"
 //
 // stacked_resize false
 
+// Whether stacked panes display as a list with the expanded pane pinned to the
+// bottom (zellij 0.45+ "stacked list" UI, costs one row per pane).
+// false restores the previous in-place rendering (single title/frame).
+// Alternative: stacked_pane_list_orientation "horizontal" for a single row.
+// Default: true
+//
+stacked_pane_list false
+
 // Whether to show tips on startup
 // Default: true
 //
-// show_startup_tips false
+show_startup_tips false
 
 // Whether to show release notes on first version run
 // Default: true
 //
-// show_release_notes false
+show_release_notes false
 
 // Whether to enable mouse hover effects and pane grouping functionality
 // default is true
