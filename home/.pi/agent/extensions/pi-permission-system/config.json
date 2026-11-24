@@ -1,13 +1,29 @@
 {
   "$schema": "https://raw.githubusercontent.com/gotgenes/pi-packages/main/packages/pi-permission-system/schemas/permissions.schema.json",
-  // session-yolo.ts registers this authorizer link. `/yolo` or Ctrl+Alt+Y pick
-  // a per-session mode for `ask` decisions: prompt (default) / allow / deny.
-  // It resolves ONLY asks — applyPermissionGate runs the chain only when the
-  // rule says `ask`, so every allow/deny rule below still decides for itself.
-  // Opt-in & fail-safe: if the link is ever unregistered, the ask still prompts.
-  // See extensions/session-yolo.ts (path/external_directory `allow`s are capped
-  // back to `defer` by the package, so those asks still prompt).
+  // Both links resolve ONLY asks — applyPermissionGate runs the chain only when
+  // the rule says `ask`, so every allow/deny rule below still decides for itself.
+  // Opt-in & fail-safe: if a link is ever unregistered, the ask still prompts.
+  // Order matters: the first link that decides wins, later ones see only defers.
+  //
+  //   wrapper-floor — extensions/wrapper-floor.ts
+  //     Lifts the package's indirection-wrapper floor for `time`/`timeout`/
+  //     `nice`/`nohup` when the command BEHIND the wrapper resolves to `allow`
+  //     on its own. That floor is why `bash: {"*": "allow"}` still prompted on
+  //     `time make lint`: `time` is hardcoded in INDIRECTION_WRAPPER_NAMES and
+  //     the gate clamps an `allow` up to `ask` AFTER resolution
+  //     (wrapper-analysis.ts, bash-command.ts :: resolveWrapperUnit), so no rule
+  //     in the `bash` map below can lift it — an `allow` there is inert.
+  //     Never matches the opaque sentinel (`bash -c`, `eval`), never matches
+  //     `sudo`/`env`/`xargs`, and defers whenever the inner command is not
+  //     itself allowed (so `time git reset --hard` still prompts).
+  //
+  //   session-yolo — extensions/session-yolo.ts
+  //     `/yolo` or Ctrl+Alt+Y pick a per-session mode for the asks that remain:
+  //     prompt (default) / allow / deny.
+  //     (path/external_directory `allow`s are capped back to `defer` by the
+  //     package, so those asks still prompt.)
   "authorizerChain": [
+    "wrapper-floor",
     "session-yolo"
   ],
   // ==========================================================================
@@ -57,6 +73,7 @@
       "*": "allow",
       "*.env": "deny",
       "*.env.*": "deny",
+      "*.env.j2": "allow",
       "*.env.example": "allow",
       "*.envrc-priv": "deny",
       "~/.ssh/*": "deny",
@@ -279,7 +296,12 @@
       // allowlist. Everything else is bounded by path/external_directory
       // above, which catches *where* a command writes, not *what* it is.
       "*": "allow",
-      "timeout *": "allow",
+      // NO `time *` / `timeout *` / `nice *` / `nohup *` entries: an `allow`
+      // here cannot lift the indirection-wrapper floor (see `authorizerChain`
+      // above), so such a rule would read as a permission that does not exist.
+      // The chain link is what resolves those asks without prompting. To force
+      // a prompt for one of them instead, write `"ask"` for that wrapper —
+      // a non-allow is decided before the floor and the floor then leaves it be.
       "git push *": "allow",
       "git reset *": "deny",
       "gh *": "deny"

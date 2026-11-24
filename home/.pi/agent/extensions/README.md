@@ -33,11 +33,15 @@ surface = `path` deny + `path_read` allow (and drop it from
 ## Files
 
 - `pi-permission-system/config.json` — the policy.
-  - **`authorizerChain: ["session-yolo"]`** (added 2026-09-24) is the opt-in
-    activation for the `session-yolo.ts` ask switch (see *Session-scoped ask
-    switch* below). Naming a link is the only thing that gives it authority; a
-    link that is registered but not named here decides nothing, and a named link
-    that never registered is skipped fail-safe (asks still prompt).
+  - **`authorizerChain: ["wrapper-floor", "session-yolo"]`** is the opt-in
+    activation for this directory's two ask links (order = precedence; the first
+    link to decide wins). `wrapper-floor` (2026-11-24) lifts the package's
+    indirection-wrapper floor for `time`/`timeout`/`nice`/`nohup`; `session-yolo`
+    (2026-09-24) is the manual `/yolo` switch. See *The indirection-wrapper
+    floor* and *Session-scoped ask switch* below. Naming a link is the only thing
+    that gives it authority; a link that is registered but not named here decides
+    nothing, and a named link that never registered is skipped fail-safe (asks
+    still prompt).
   - **Hard denies** for secrets: `*.env`, `*.env.*` (with `*.env.example`
     allowed back), `*.envrc-priv`, `~/.ssh/*`.
   - **`~/.pi` is read-only, wholesale** (flipped from a broad `allow` + four
@@ -64,7 +68,10 @@ surface = `path` deny + `path_read` allow (and drop it from
     `/private/tmp`, `${TMPDIR}`). `external_directory_read` adds read-only reach
     for `~/.pi`, `~/repos/**` and the Go module cache (`~/go/pkg/mod/**`);
     writes there stay denied.
-  - **`bash`**: `"*": "allow"` plus `"git push *"` and `"git reset *"` denies.
+  - **`bash`**: `"*": "allow"`, `"git push *": "allow"`, `"git reset *": "deny"`,
+    `"gh *": "deny"`. Deliberately **no** `time *` / `timeout *` rule: an `allow`
+    there cannot lift the package's wrapper floor (*The indirection-wrapper
+    floor* below), so such a rule only reads as a permission that does not exist.
     Trailing-` *` is optional-suffix in the matcher, so bare `git push` is
     covered (verified in the source).
   - `~/.betterwright` was opened as a deliberate whole-tree decision
@@ -106,6 +113,12 @@ surface = `path` deny + `path_read` allow (and drop it from
   its own right-aligned powerline segment with the `session-yolo` prefix and a
   theme color — no ANSI in the extension. Full writeup in *Session-scoped ask
   switch* below.
+- `wrapper-floor.ts` — a no-UI authorizer link that resolves the
+  `<indirection-bash-wrapper>` ask for `time`/`timeout`/`nice`/`nohup` when the
+  command behind the prefix is itself allowed. Nothing to operate: it defers on
+  anything it does not positively understand, and it never touches the opaque
+  (`bash -c`/`eval`) floor or `sudo`/`env`/`xargs`. Full writeup in *The
+  indirection-wrapper floor* below.
 - `generation-rate.ts` — publishes the latest assistant message's output-token rate
   (`NN t/s`) as the `token-rate` extension status, which
   `powerline.customItems` renders **before** `session-yolo` in the `muted`
@@ -186,6 +199,57 @@ picked up on the next config refresh once the symlink points back at the repo.
 - Skills live in `~/.agents/skills/` (repo-tracked, the harness-neutral Agent
   Skills location pi auto-discovers) — no settings entry needed.
 
+## The indirection-wrapper floor (`wrapper-floor.ts`)
+
+**Symptom.** `time make lint` prompts — and with no interactive UI (a headless
+`-p` run, a subagent) it is hard-**blocked** with `confirmation_unavailable` —
+even though `bash` is `"*": "allow"`.
+
+**Cause.** `time`, `timeout`, `nice`, `nohup`, `sudo`, `env`, `xargs`, … are
+hardcoded as *indirection wrappers*
+(`src/access-intent/bash/wrapper-analysis.ts :: INDIRECTION_WRAPPER_NAMES`, matched
+on **basename**, so `/usr/bin/time` counts too). For such a unit the gate clamps a
+resolved `allow` **up** to `ask` *after* rule resolution
+(`handlers/gates/bash-command.ts :: resolveCommandUnit -> resolveWrapperUnit`),
+stamping the synthetic `matchedPattern` `<indirection-bash-wrapper>`. Verified
+2026-11-24 against the installed 31.1.3 by driving its own parser:
+
+- **No `bash` rule can lift it.** An `allow` is inert; only a `deny`/`ask` decides
+  earlier. `"timeout *": "allow"` sat in this config for months and never did
+  anything — which is why it is now gone.
+- The package lifts the floor itself only for a *proven pure reader* behind the
+  wrapper (wrapper transparency, 21-word core: `cat head tail wc grep … ls sort`),
+  so `time ls -la` is silent while `time make lint` prompts.
+- The opaque floor (`<opaque-bash-wrapper>`: `bash -c`, `eval`) is a *different*
+  sentinel and is not touched by this link.
+
+**Fix.** `wrapper-floor.ts` registers a second authorizer link that allows the ask
+only when (a) the sentinel is the indirection one, (b) the wrapper's head word is
+in `SAFE_WRAPPERS` (`time`, `timeout`, `nice`, `nohup`), and (c) the peeled
+`executedUnit` resolves to `allow` on its own through the injected
+`PermissionQuery`. Everything else **defers** to the normal dialog, so
+`sudo`/`env`/`xargs`, `bash -c`, and `time git reset --hard` (inner `deny`) behave
+exactly as before — `time gh pr list` defers, then the `gh *` rule blocks it.
+
+Verified end-to-end 2026-11-24 in a headless `pi -p --tools bash` session, where a
+wrong verdict surfaces as a hard block rather than a prompt: `time sleep 0.2` →
+`decidedBy: {kind: "authorizer", name: "wrapper-floor"}`; `time gh pr list` and
+`bash -c 'echo opaque-ok'` → still denied.
+
+**Not a licence to widen.** A link only ever sees `ask`s (the chain is not
+consulted for `allow`/`deny`), so it cannot override a rule. Do not add
+`sudo`/`doas`/`env`/`xargs` to `SAFE_WRAPPERS`: those change *who* runs the
+command or *what* it is fed, which is the case the floor exists for.
+
+**Activate:** `git add home/.pi/agent/extensions/wrapper-floor.ts`, `hslink`, then
+`/reload`. The `config.json` symlink caveat in the `session-yolo` section above
+applies here too — a `/permission-system` save detaches that symlink and silently
+un-tracks `authorizerChain`.
+
+**Escape hatch without code.** `command time …` and `\time …` parse with head
+word `command`/`\time`, so no floor applies at all — but that is a *bypass*, not a
+fix: `command time git reset --hard` sails through too. Prefer the link.
+
 ## Daily use
 
 - Read-only commands anywhere inside the boundary run silently.
@@ -197,6 +261,10 @@ picked up on the next config refresh once the symlink points back at the repo.
   normal, `allow` auto-approves permitted asks, `deny` auto-rejects them. It
   never changes the rule engine; hard `deny`s still block silently even in
   `allow` mode. See *Session-scoped ask switch* below.
+- **Timing commands no longer prompt.** `time`/`timeout`/`nice`/`nohup` prefixes
+  are resolved by `wrapper-floor.ts` when the command behind them is allowed;
+  the dialog reappears only when it is not (or for `sudo`/`env`/`xargs`, which
+  keep their floor).
 - Commands that reach outside the working tree, or touch a denied path token
   however they spell it (`cat ~/.ssh/id_rsa`, `> foo.env`), are blocked.
 - **The agent cannot change its own pi configuration.** Anything under `~/.pi`
